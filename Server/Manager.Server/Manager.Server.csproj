@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.26.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.26.0" />
+    <PackageReference Include="TencentCloudSDK" Version="3.0.692" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Manager.Core\Manager.Core.csproj" />
+    <ProjectReference Include="..\..\Common\Manager.Extensions\Manager.Extensions.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Manager.Infrastructure\Manager.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Manager.Redis.Infrastructure\Manager.Redis.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
