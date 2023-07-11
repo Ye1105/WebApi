@@ -12,7 +12,7 @@ namespace Manager.API.Controllers
     [Route("v2/api/tests")]
     [ApiExplorerSettings(GroupName = nameof(ApiVersionInfo.V2))]
     [CustomExceptionFilter]
-    public class TestsV2Controller : ControllerBase
+    public class TestsV2Controller : ApiController
     {
         //[CustomSelect]
         //public IAccountInfoService accountInfoServiceProp { get; set; }
@@ -22,7 +22,7 @@ namespace Manager.API.Controllers
         public IActionResult TestPermisson()
         {
             //var ac = accountInfoServiceProp;
-            return Ok(ApiResult.Success("v2test"));
+            return Ok(Success("v2test"));
 
             //throw new Exception("test error");
         }

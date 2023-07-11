@@ -28,7 +28,7 @@ namespace Manager.Core.RequestModels
         /// 0：关注 1：特别关注
         /// </summary>
         [JsonProperty("relation")]
-        public RelationEnum? Relation { get; set; }
+        public FocusRelation? Relation { get; set; }
 
         /// <summary>
         /// 关注的渠道 0 Mobile 1 HTML5

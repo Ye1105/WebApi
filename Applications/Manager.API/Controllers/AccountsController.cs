@@ -13,7 +13,7 @@ namespace Manager.API.Controllers
     [Route("v1/api/accounts")]
     [ApiExplorerSettings(GroupName = nameof(ApiVersionInfo.V1))]
     [CustomExceptionFilter]
-    public class AccountsController : ControllerBase
+    public class AccountsController : ApiController
     {
         private readonly IAccountService accountService;
 
@@ -50,26 +50,26 @@ namespace Manager.API.Controllers
             var account = await accountService.GetAccountBy(x => x.UId == req.UId);
             if (account == null)
             {
-                return Ok(ApiResult.Fail("账号不存在"));
+                return Ok(Fail("账号不存在"));
             }
 
             //2.判断除当前用户之外的 name mail phone 是否已经有存在
             var accountName = await accountService.GetAccountBy(x => x.Name == req.Name && x.UId != req.UId, false);
             if (accountName != null)
             {
-                return Ok(ApiResult.Fail("账号名称已存在"));
+                return Ok(Fail("账号名称已存在"));
             }
 
             var accountMail = await accountService.GetAccountBy(x => x.Mail.ToLower() == req.Mail.ToLower() && x.UId != req.UId, false);
             if (accountMail != null)
             {
-                return Ok(ApiResult.Fail("邮箱已存在"));
+                return Ok(Fail("邮箱已存在"));
             }
 
             var accountPhone = await accountService.GetAccountBy(x => x.Phone == req.Phone && x.UId != req.UId, false);
             if (accountPhone != null)
             {
-                return Ok(ApiResult.Fail("手机号已存在"));
+                return Ok(Fail("手机号已存在"));
             }
 
             //3.修改账号信息
@@ -77,7 +77,7 @@ namespace Manager.API.Controllers
             account.Mail = req.Mail;
             account.Phone = req.Phone;
 
-            return await accountService.ModifyAccount(account) ? Ok(ApiResult.Success("修改成功")) : Ok(ApiResult.Fail("修改失败"));
+            return await accountService.ModifyAccount(account) ? Ok(Success("修改成功")) : Ok(Fail("修改失败"));
         }
     }
 }

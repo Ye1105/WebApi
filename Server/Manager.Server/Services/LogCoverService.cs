@@ -38,8 +38,8 @@ namespace Manager.Server.Services
 
                 var dic = new Dictionary<object, CrudEnum>
                 {
-                    { logCover, CrudEnum.Create },
-                    { accountInfo, CrudEnum.Update }
+                    { logCover, CrudEnum.CREATE },
+                    { accountInfo, CrudEnum.UPDATE }
                 };
 
                 var res = await baseService.BatchTransactionAsync(dic);
@@ -48,7 +48,7 @@ namespace Manager.Server.Services
                 {
                     using var cli = Instance(RedisBaseEnum.Zeroth);
 
-                    var keyName = $"{RedisConstants.Prefix_AccountInfoAndAvatarAndCover}{logCover.UId}";
+                    var keyName = $"{RedisConstants.PREFIX_ACCOUNT_INFO}{logCover.UId}";
 
                     var keyNamePagedList = $"{Prefix_CoverPagedList}{logCover.UId}";
 
@@ -120,14 +120,14 @@ namespace Manager.Server.Services
                 }
                 else
                 {
-                    var count = await baseService.Entities<LogCover>().Where(x => x.UId == uId && x.Status == (sbyte)Status.Enable).CountAsync();
+                    var count = await baseService.Entities<LogCover>().Where(x => x.UId == uId && x.Status == (sbyte)Status.ENABLE).CountAsync();
                     if (count == 0)
                     {
                         await cli.SetExAsync(keyName, 300, "");
                     }
                     else
                     {
-                        var data = await baseService.Entities<LogCover>().Where(x => x.UId == uId && x.Status == (sbyte)Status.Enable).AsNoTracking().ToListAsync();
+                        var data = await baseService.Entities<LogCover>().Where(x => x.UId == uId && x.Status == (sbyte)Status.ENABLE).AsNoTracking().ToListAsync();
                         var pipe = cli.StartPipe();
 
                         foreach (var item in data)

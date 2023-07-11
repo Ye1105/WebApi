@@ -13,7 +13,7 @@ namespace Manager.API.Controllers
     [Route("v1/api/ranks")]
     [ApiExplorerSettings(GroupName = nameof(ApiVersionInfo.V1))]
     [CustomExceptionFilter]
-    public class RanksController : ControllerBase
+    public class RanksController : ApiController
     {
         private readonly IRankService rankService;
         private readonly IBlogService blogService;
@@ -48,9 +48,9 @@ namespace Manager.API.Controllers
                     totalCount = result.TotalCount,
                     list = result
                 };
-                return Ok(ApiResult.Success("获取博客热门排行成功", JsonData));
+                return Ok(Success("获取博客热门排行成功", JsonData));
             }
-            return Ok(ApiResult.Fail("暂无数据"));
+            return Ok(Fail("暂无数据"));
         }
     }
 }

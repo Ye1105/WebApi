@@ -4,7 +4,6 @@ using Manager.Core;
 using Manager.Core.Enums;
 using Manager.Core.Models.Blogs;
 using Manager.Core.RequestModels;
-using Manager.Extensions;
 using Manager.Server.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +15,7 @@ namespace Manager.API.Controllers
     [Route("v1/api/comment-forwards")]
     [ApiExplorerSettings(GroupName = nameof(ApiVersionInfo.V1))]
     [CustomExceptionFilter]
-    public class CommentForwardsController : ControllerBase
+    public class CommentForwardsController : ApiController
     {
         private readonly IBlogService blogService;
 
@@ -40,21 +39,21 @@ namespace Manager.API.Controllers
              */
 
             //0.参数校验
-            bool validator = JsonSchemaHelper.Validator<AddBlogCommentAndForwardRequest>(req, out IList<string> errorMessages);
-            if (!validator)
-            {
-                return Ok(ApiResult.Fail(errorMessages, "参数错误"));
-            }
+            //bool validator = JsonSchemaHelper.Validator<AddBlogCommentAndForwardRequest>(req, out IList<string> errorMessages);
+            //if (!validator)
+            //{
+            //    return Ok(ApiResult.Fail(errorMessages, "参数错误"));
+            //}
 
             var id = Guid.NewGuid();
             var dt = DateTime.Now;
-            var status = (sbyte)Status.Enable;
+            var status = (sbyte)Status.ENABLE;
 
             //1.判断 blog 是否存在
-            var v = await blogService.GetBlogBy(x => x.Id == req.BlogComment.BId && x.Status == (sbyte)Status.Enable, false);
+            var v = await blogService.GetBlogBy(x => x.Id == req.BlogComment.BId && x.Status == (sbyte)Status.ENABLE, false);
             if (v == null)
             {
-                return Ok(ApiResult.Fail("博客不存在"));
+                return Ok(Fail("博客不存在"));
             }
 
             // 2.新增【blog、blogComment、blogForward】事务
@@ -66,7 +65,7 @@ namespace Manager.API.Controllers
                 Type = (sbyte)req.Blog.Type,
                 FId = req.Blog.FId,
                 Body = req.Blog.Body,
-                Top = (sbyte)TopEnum.no,
+                Top = (sbyte)BoolType.NO,
                 Created = dt,
                 Status = status
             };
@@ -82,7 +81,7 @@ namespace Manager.API.Controllers
                 PId = req.BlogComment.PId,
                 Grp = req.BlogComment.Grp,
                 Created = dt,
-                Top = (sbyte)TopEnum.no,
+                Top = (sbyte)BoolType.NO,
                 Status = status
             };
 
@@ -100,7 +99,7 @@ namespace Manager.API.Controllers
             };
 
             var res = await blogService.AddBlogCommentAndForward(blog, blogComment, blogForward);
-            return res ? Ok(ApiResult.Success("评论并转发博客成功")) : Ok(ApiResult.Fail("评论转发博客失败"));
+            return res ? Ok(Success("评论并转发博客成功")) : Ok(Fail("评论转发博客失败"));
         }
     }
 }

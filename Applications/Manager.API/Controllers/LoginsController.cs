@@ -1,5 +1,6 @@
 using Manager.API.Utility;
 using Manager.API.Utility.Filters;
+using Manager.API.Utility.Schemas;
 using Manager.Core;
 using Manager.Core.Enums;
 using Manager.Core.RequestModels;
@@ -7,8 +8,13 @@ using Manager.Core.Settings;
 using Manager.Extensions;
 using Manager.JwtAuthorizePolicy.IServices;
 using Manager.Server.IServices;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Schema;
+using Newtonsoft.Json;
+using Org.BouncyCastle.Ocsp;
 using System.Text.RegularExpressions;
 
 namespace Manager.API.Controllers
@@ -17,8 +23,7 @@ namespace Manager.API.Controllers
     [Route("v1/api")]
     [ApiExplorerSettings(GroupName = nameof(ApiVersionInfo.V1))]
     [CustomExceptionFilter]
-    [TypeFilter(typeof(CustomLogAsyncActionFilterAttribute))]
-    public class LoginsController : ControllerBase
+    public class LoginsController : ApiController
     {
         private readonly IAccountService accountService;
         private readonly IAccountInfoService accountInfoService;
@@ -47,54 +52,62 @@ namespace Manager.API.Controllers
         public async Task<IActionResult> GetLoginPwd([FromForm] string phone, [FromForm] string pwd)
         {
             /*
-             * 1.校验参数 phone 是否为手机号
+             * 1.jsonschema 校验
              * 2.账号是否存在
              * 3.获取账号表 账号信息表
              * 4.账号Token认证
              */
 
-            //1.校验参数 phone 是否为手机号
-            var validator = phone.Validator(
-                RegexHelper.PhonePattern,
-                (phone, pattern) => Regex.IsMatch(phone, pattern)
-            );
-            if (!validator)
+            //1.jsonschema 校验
+
+            var req = new
             {
-                return Ok(ApiResult.Fail("不是合法的手机号"));
+                phone,
+                pwd
+            };
+
+            var jsonSchema = await JsonSchemas.GetSchema("login-pwd");
+
+            var schema = JSchema.Parse(jsonSchema);
+
+            var validate = JObject.Parse(JsonConvert.SerializeObject(req)).IsValid(schema, out IList<string> errorMessages);
+            if (!validate)
+            {
+                return Ok(Fail(errorMessages, "参数错误"));
             }
 
             //2.账号是否存在
-            var account = await accountService.GetAccountBy(phone, pwd, false);
+            var account = await accountService.GetAccountBy(phone, pwd, isTrack: false);
             if (account == null)
             {
-                return Ok(ApiResult.Fail("账号或密码不正确"));
+                return Ok(Fail("账号或密码不正确"));
             }
             else
             {
                 /* 账号状态 */
-                if (account.Status != (sbyte)Status.Enable)
+                if (account.Status != (sbyte)Status.ENABLE)
                 {
-                    return Ok(ApiResult.Fail($"账号状态:{EnumDescriptionAttribute.GetEnumDescription((Status)account.Status)}"));
+                    return Ok(Fail($"账号状态:{EnumDescriptionAttribute.GetEnumDescription((Status)account.Status)}"));
                 }
 
                 /* AccessToken RefreshToken */
 
                 if (!authenticateService.IsAuthenticated(new AuthenticateRequest() { Id = account.Id, UId = account.UId }, out string AccessToken, out string RefreshToken))
                 {
-                    return Ok(ApiResult.Fail("账号认证失败"));
+                    return Ok(Fail("账号认证失败"));
                 }
 
                 /* RefreshToken 存入 Redis */
                 var tokenRes = jWTService.AddRefreshToken(account.UId, RefreshToken);
                 if (!tokenRes.Item1)
                 {
-                    return Ok(ApiResult.Fail(tokenRes.Item2));
+                    return Ok(Fail(tokenRes.Item2));
                 }
 
                 /* AccountInfo */
-                var accountInfo = await accountInfoService.GetAccountInfoAndAvatarAndCoverById(account.UId, true);
+                var accountInfo = await accountInfoService.FirstOrDefaultAsync(account.UId, isCache: true);
 
-                return Ok(ApiResult.Success("账号认证成功", new { account, accountInfo, AccessToken, RefreshToken }));
+                return Ok(Success("账号登录成功", new { account, accountInfo, AccessToken, RefreshToken }));
             }
         }
 
@@ -121,18 +134,18 @@ namespace Manager.API.Controllers
             );
             if (!validator)
             {
-                return Ok(ApiResult.Fail("不是合法的手机号"));
+                return Ok(Fail("不是合法的手机号"));
             }
 
             //1.2校验参数 phone 是否为验证码
-            if (appSettings.Value.ServerStatus == (sbyte)ServerStatusEnum.Formal)
+            if (appSettings.Value.ServerStatus == (sbyte)ServerType.F0RMAL)
             {
                 if (!sms.Validator
                     (RegexHelper.SmsPattern,
                     (sms, pattern) => Regex.IsMatch(sms, pattern))
                 )
                 {
-                    return Ok(ApiResult.Fail("验证码格式不正确"));
+                    return Ok(Fail("验证码格式不正确"));
                 }
 
                 var dt = DateTime.Now;
@@ -141,7 +154,7 @@ namespace Manager.API.Controllers
                 var res = tencentService.GetTencentSms(phone, sms, dt.AddMinutes(-5), dt);
                 if (!res)
                 {
-                    return Ok(ApiResult.Fail("验证码过期"));
+                    return Ok(Fail("验证码过期"));
                 }
             }
 
@@ -149,33 +162,33 @@ namespace Manager.API.Controllers
             var account = await accountService.GetAccountBy(x => x.Phone == phone, false);
             if (account == null)
             {
-                return Ok(ApiResult.Fail("手机号不存在"));
+                return Ok(Fail("手机号不存在"));
             }
             else
             {
                 /* 账号状态 */
-                if (account.Status != (sbyte)Status.Enable)
+                if (account.Status != (sbyte)Status.ENABLE)
                 {
-                    return Ok(ApiResult.Fail($"账号状态:{EnumDescriptionAttribute.GetEnumDescription((Status)account.Status)}"));
+                    return Ok(Fail($"账号状态:{EnumDescriptionAttribute.GetEnumDescription((Status)account.Status)}"));
                 }
 
                 /* AccessToken RefreshToken */
                 if (!authenticateService.IsAuthenticated(new AuthenticateRequest() { Id = account.Id, UId = account.UId }, out string AccessToken, out string RefreshToken))
                 {
-                    return Ok(ApiResult.Fail("账号认证失败"));
+                    return Ok(Fail("账号认证失败"));
                 }
 
                 /* RefreshToken 存入 Redis */
                 var tokenRes = jWTService.AddRefreshToken(account.UId, RefreshToken);
                 if (!tokenRes.Item1)
                 {
-                    return Ok(ApiResult.Fail(tokenRes.Item2));
+                    return Ok(Fail(tokenRes.Item2));
                 }
 
                 /* AccountInfo */
-                var accountInfo = await accountInfoService.GetAccountInfoAndAvatarAndCoverById(account.UId, true);
+                var accountInfo = await accountInfoService.FirstOrDefaultAsync(account.UId, true);
 
-                return Ok(ApiResult.Success("账号认证成功", new { account, accountInfo, AccessToken, RefreshToken }));
+                return Ok(Success("账号认证成功", new { account, accountInfo, AccessToken, RefreshToken }));
             }
         }
     }

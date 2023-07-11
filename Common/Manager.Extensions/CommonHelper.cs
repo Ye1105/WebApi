@@ -78,31 +78,5 @@
                 Directory.CreateDirectory(str);
             }
         }
-
-        /// <summary>
-        /// 校验 Dictionary 是否包含键名且键值不为null
-        /// </summary>
-        /// <param name="dic"></param>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public static bool DicValidate(this Dictionary<string, object> dic, string key)
-        {
-            return dic.ContainsKey(key) && dic[key] is not null;
-        }
-
-        /// <summary>
-        /// 校验 Dictionary 是否包含键名且键值不为null
-        /// </summary>
-        /// <param name="dic"></param>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public static bool DicValidate(this Dictionary<string, object> dic, string key, out object value)
-        {
-            value = null;
-            var res = dic.ContainsKey(key) && dic[key] is not null;
-            if (res) value = dic[key];
-            return res;
-        }
     }
 }

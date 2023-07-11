@@ -3,33 +3,23 @@
     public class RedisConstants
     {
         /// <summary>
-        /// 【存储过程】最受欢迎博客排行
+        /// 【Key】 JWT_REFRESH_TOKEN
         /// </summary>
-        public static readonly string Proc_SelRankTop = "SelRankTop";
-
-        /// <summary>
-        /// 【Key】 jwt_refresh_token
-        /// </summary>
-        public static readonly string JwtRefreshToken = "JwtRefreshToken";
+        public static readonly string JWT_REFRESH_TOKEN = "jwt_refresh_token";
 
         /// <summary>
         /// 用户信息 | 头像 | 封面
         /// </summary>
-        public static readonly string Prefix_AccountInfoAndAvatarAndCover = "AccountInfoAndAvatarAndCover:";
+        public static readonly string PREFIX_ACCOUNT_INFO = "account_info:";
 
         /// <summary>
         /// 图片列表 【每个图片博客对应的图片列表】
         /// </summary>
-        public static readonly string Prefix_ImagesBelongToEachBlog = "Images:";
+        public static readonly string PREFIE_IMAGE = "blog_images:";
 
         /// <summary>
         /// 视频 【每个视频博客对应的视频】
         /// </summary>
-        public static readonly string Prefix_VideoBelongToEachBlog = "Videos:";
-
-        /// <summary>
-        /// 【热榜】
-        /// </summary>
-        public static readonly string RankTop = "RankTop";
+        public static readonly string PREFIX_VIDEO = "blog_videos:";
     }
 }

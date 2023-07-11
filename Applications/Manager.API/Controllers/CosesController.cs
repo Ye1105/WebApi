@@ -29,7 +29,7 @@ namespace Manager.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("{number}/auths")]
-        public IActionResult GetTencentAuthorization(TencentCosEnum number)
+        public IActionResult GetTencentAuthorization(TencentCos number)
         {
             string[] allowActions = new string[] {  // 允许的操作范围，这里以上传操作为例
                     "name/cos:PutObject",
@@ -61,7 +61,7 @@ namespace Manager.API.Controllers
 
             switch (number)
             {
-                case TencentCosEnum.Video:
+                case TencentCos.VIDEO:
                     var tencentCos = appSettings.Value.TencentCos;
                     values.Add("bucket", tencentCos.Bucket);
                     values.Add("region", tencentCos.Region);
@@ -74,7 +74,7 @@ namespace Manager.API.Controllers
 
                     break;
 
-                case TencentCosEnum.Picture:
+                case TencentCos.PICTURE:
 
                     var TencentCosTwo = appSettings.Value.TencentCosTwo;
                     values.Add("bucket", TencentCosTwo.Bucket);
@@ -92,7 +92,7 @@ namespace Manager.API.Controllers
                     break;
             }
 
-            return Ok(ApiResult.Success(credential));
+            return Ok(ApiController.Success(credential));
         }
     }
 }

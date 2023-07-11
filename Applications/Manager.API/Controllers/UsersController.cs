@@ -1,6 +1,7 @@
 ﻿using Manager.API.Utility;
 using Manager.API.Utility.Filters;
 using Manager.Core;
+using Manager.Core.AuthorizationModels;
 using Manager.Core.Enums;
 using Manager.Server.IServices;
 using Microsoft.AspNetCore.Authorization;
@@ -8,12 +9,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Manager.API.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = Policys.API)]
+    //[Authorize]
     [ApiController]
     [Route("v1/api/users")]
     [ApiExplorerSettings(GroupName = nameof(ApiVersionInfo.V1))]
     [CustomExceptionFilter]
-    public class UsersController : ControllerBase
+    public class UsersController : Controller
     {
         private readonly IAccountInfoService accountInfoService;
         private readonly IUserFocusService userFocusService;
@@ -45,10 +47,10 @@ namespace Manager.API.Controllers
             //1.Account AccountInfo
             //var account = await accountService.GetAccountBy(x => x.UId == uId, false);
 
-            var accountInfo = await accountInfoService.GetAccountInfoAndAvatarAndCoverById(uId, true);
+            var accountInfo = await accountInfoService.FirstOrDefaultAsync(uId, true);
 
             //2.1 博客数量
-            var blogCount = await blogService.GetBlogCountBy(x => x.UId == uId && x.Status == (sbyte)Status.Enable);
+            var blogCount = await blogService.GetBlogCountBy(x => x.UId == uId && x.Status == (sbyte)Status.ENABLE);
 
             //2.2 关注数
             var focusCount = await userFocusService.GetUserFocusCountBy(x => x.UId == uId);
@@ -59,7 +61,7 @@ namespace Manager.API.Controllers
             //3.关注关系
             var relation = wId != null && wId != Guid.Empty ? await userFocusService.GetUserFocusBy(x => x.BuId == uId && x.UId == wId) : null;
 
-            return Ok(ApiResult.Success("账号和用户信息获取成功", new { accountInfo, blogCount, focusCount, fanCount, relation }));
+            return Ok(ApiController.Success("账号和用户信息获取成功", new { accountInfo, blogCount, focusCount, fanCount, relation }));
         }
     }
 }

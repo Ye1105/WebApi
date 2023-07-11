@@ -17,7 +17,7 @@ namespace Manager.API.Controllers
     [Route("v1/api/tokens")]
     [ApiExplorerSettings(GroupName = nameof(ApiVersionInfo.V1))]
     [CustomExceptionFilter]
-    public class TokensController : Controller
+    public class TokensController : ApiController
     {
         private readonly IAccountService accountService;
         private readonly IAccountInfoService accountInfoService;
@@ -56,7 +56,7 @@ namespace Manager.API.Controllers
             var result = JwtHelper.JWTJieM(req.RefreshToken, securityKey);
             if (result == "expired" || result == "invalid" || result == "error" || result == "notvalid")
             {
-                return Ok(ApiResult.Fail($"Token:{result}", "Token校验失败"));
+                return Ok(Fail($"Token:{result}", "Token校验失败"));
             }
 
             //2.从 RefreshToken 中获取 uId
@@ -68,7 +68,7 @@ namespace Manager.API.Controllers
             var refreshToken = await jWTService.ExsitRefreshToken(uId, req.RefreshToken);
             if (!refreshToken.Item1)
             {
-                return Ok(ApiResult.Fail(refreshToken.Item2));
+                return Ok(Fail(refreshToken.Item2));
             }
 
             //4.重新获取用户信息
@@ -76,32 +76,32 @@ namespace Manager.API.Controllers
             if (account != null)
             {
                 /* 账号状态 */
-                if (account.Status != (sbyte)Status.Enable)
+                if (account.Status != (sbyte)Status.ENABLE)
                 {
-                    return Ok(ApiResult.Fail($"账号状态:{EnumDescriptionAttribute.GetEnumDescription((Status)account.Status)}"));
+                    return Ok(Fail($"账号状态:{EnumDescriptionAttribute.GetEnumDescription((Status)account.Status)}"));
                 }
 
                 //5.重新生成accessToken和refreshToken，并写入user_refreshtoken redis表
                 //5.1生成accessToken,refreshToken
                 if (!authenticateService.IsAuthenticated(new AuthenticateRequest() { Id = account.Id, UId = account.UId }, out string AccessToken, out string RefreshToken))
                 {
-                    return Ok(ApiResult.Fail("账号认证失败"));
+                    return Ok(Fail("账号认证失败"));
                 }
 
                 //将生成refreshToken的原始信息存到数据库/redis中
                 var tokenRes = jWTService.AddRefreshToken(account.UId, RefreshToken);
                 if (!tokenRes.Item1)
                 {
-                    return Ok(ApiResult.Fail(tokenRes.Item2));
+                    return Ok(Fail(tokenRes.Item2));
                 }
 
-                var accountInfo = await accountInfoService.GetAccountInfoAndAvatarAndCoverById(account.UId, true);
+                var accountInfo = await accountInfoService.FirstOrDefaultAsync(account.UId, true);
 
-                return Ok(ApiResult.Success("账号认证成功", new { account, accountInfo, AccessToken, RefreshToken }));
+                return Ok(Success("账号认证成功", new { account, accountInfo, AccessToken, RefreshToken }));
             }
             else
             {
-                return Ok(ApiResult.Fail("账号不存在"));
+                return Ok(Fail("账号不存在"));
             }
         }
     }

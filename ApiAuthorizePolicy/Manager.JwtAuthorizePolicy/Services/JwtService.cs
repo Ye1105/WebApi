@@ -17,7 +17,7 @@ namespace Manager.JwtAuthorizePolicy.Services
 
                 var pipe = cli.StartPipe();
 
-                pipe.HSet(RedisConstants.JwtRefreshToken, uId.Str(), refreshToken);
+                pipe.HSet(RedisConstants.JWT_REFRESH_TOKEN, uId.Str(), refreshToken);
 
                 pipe.EndPipe();
 
@@ -36,7 +36,7 @@ namespace Manager.JwtAuthorizePolicy.Services
             //return crudJWT.ExsitRefreshToken(uId, refreshToken);
             using var redis = Instance(RedisBaseEnum.Zeroth);
 
-            var res = await redis.HGetAsync(RedisConstants.JwtRefreshToken, uId.Str());
+            var res = await redis.HGetAsync(RedisConstants.JWT_REFRESH_TOKEN, uId.Str());
             if (res == null)
             {
                 return Tuple.Create(false, "用户Token不存在");

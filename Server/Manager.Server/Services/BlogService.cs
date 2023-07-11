@@ -19,12 +19,12 @@ namespace Manager.Server.Services
         /*
          *【我是粉丝】我关注但未关注我的：私密的、好友圈的看不到
          */
-        private List<sbyte> FanSortList { get; set; } = new List<sbyte>() { (sbyte)BlogSort.Public, (sbyte)BlogSort.Fan, (sbyte)BlogSort.Hotpush, (sbyte)BlogSort.Advertise };
+        private List<sbyte> FanSortList { get; set; } = new List<sbyte>() { (sbyte)BlogSort.PUBLIC, (sbyte)BlogSort.FAN, (sbyte)BlogSort.HOT_PUSH, (sbyte)BlogSort.ADVERTISE };
 
         /*
          * 【好友圈的】：只有私密的看不到
          */
-        public List<sbyte> FriendSortList { get; set; } = new List<sbyte>() { (sbyte)BlogSort.Public, (sbyte)BlogSort.Friend, (sbyte)BlogSort.Fan, (sbyte)BlogSort.Hotpush, (sbyte)BlogSort.Advertise };
+        public List<sbyte> FriendSortList { get; set; } = new List<sbyte>() { (sbyte)BlogSort.PUBLIC, (sbyte)BlogSort.FRIEND, (sbyte)BlogSort.FAN, (sbyte)BlogSort.HOT_PUSH, (sbyte)BlogSort.ADVERTISE };
 
         private readonly IBase baseService;
         private readonly IAccountInfoService accountInfoService;
@@ -56,27 +56,27 @@ namespace Manager.Server.Services
             //blog表
             var dic = new Dictionary<object, CrudEnum>
             {
-                { blog, CrudEnum.Create }
+                { blog, CrudEnum.CREATE }
             };
             //blog_image表
             if (blog.Images != null && blog.Images.Any())
             {
-                blog.Images.ToList().ForEach(i => dic.Add(i, CrudEnum.Create));
+                blog.Images.ToList().ForEach(i => dic.Add(i, CrudEnum.CREATE));
             }
             //blog_video表
             if (blog.Video != null)
             {
-                dic.Add(blog.Video, CrudEnum.Create);
+                dic.Add(blog.Video, CrudEnum.CREATE);
             }
             //blog_topic表
             if (blogTopic != null && blogTopic.Any())
             {
-                blogTopic.ForEach(b => dic.Add(b, CrudEnum.Create));
+                blogTopic.ForEach(b => dic.Add(b, CrudEnum.CREATE));
             }
             //user_topic表
             if (userTopic != null)
             {
-                dic.Add(userTopic, CrudEnum.Create);
+                dic.Add(userTopic, CrudEnum.CREATE);
             }
             return await baseService.BatchTransactionAsync(dic);
         }
@@ -86,27 +86,27 @@ namespace Manager.Server.Services
             //blog表
             var dic = new Dictionary<object, CrudEnum>
             {
-                { blog, CrudEnum.Create }
+                { blog, CrudEnum.CREATE }
             };
             //blog_image表
             if (blog.Images != null && blog.Images.Any())
             {
-                blog.Images.ToList().ForEach(i => dic.Add(i, CrudEnum.Create));
+                blog.Images.ToList().ForEach(i => dic.Add(i, CrudEnum.CREATE));
             }
             //blog_video表
             if (blog.Video != null)
             {
-                dic.Add(blog.Video, CrudEnum.Create);
+                dic.Add(blog.Video, CrudEnum.CREATE);
             }
             //blog_topic表
             if (blogTopic != null && blogTopic.Any())
             {
-                blogTopic.ForEach(b => dic.Add(b, CrudEnum.Create));
+                blogTopic.ForEach(b => dic.Add(b, CrudEnum.CREATE));
             }
             //user_topic表
             if (userTopic != null)
             {
-                dic.Add(userTopic, CrudEnum.Create);
+                dic.Add(userTopic, CrudEnum.CREATE);
             }
             return baseService.BatchTransactionSync(dic);
         }
@@ -133,7 +133,7 @@ namespace Manager.Server.Services
                 {
                     #region [主页的博客]=>我自己+朋友圈+我是粉丝的博客
 
-                    case (sbyte)BlogScope.Home:
+                    case (sbyte)BlogScope.HOME:
 
                         //我自己发布的博客
                         if (wId != null && wId != Guid.Empty)
@@ -193,7 +193,7 @@ namespace Manager.Server.Services
                         }
 
                         //热推和广告的博客
-                        query = query.Union(baseService.Entities<Blog>().Where(x => x.Sort >= (sbyte)BlogSort.Hotpush && x.Sort <= (sbyte)BlogSort.Advertise));
+                        query = query.Union(baseService.Entities<Blog>().Where(x => x.Sort >= (sbyte)BlogSort.HOT_PUSH && x.Sort <= (sbyte)BlogSort.ADVERTISE));
 
                         break;
 
@@ -201,7 +201,7 @@ namespace Manager.Server.Services
 
                     #region [朋友圈的博客]=>只查询朋友圈的博客
 
-                    case (sbyte)BlogScope.Friend:
+                    case (sbyte)BlogScope.FRIEND:
 
                         /*
                          * 好友圈（相互关注的人）
@@ -219,7 +219,7 @@ namespace Manager.Server.Services
                             /*
                              * 【好友圈的】：只有私密的看不到
                              */
-                            query = query.Where(x => friendsList.Contains(x.UId) && x.Sort != (int)BlogSort.Private);
+                            query = query.Where(x => friendsList.Contains(x.UId) && x.Sort != (int)BlogSort.PRIVATE);
                         }
                         else
                         {
@@ -232,11 +232,11 @@ namespace Manager.Server.Services
 
                     #region [特别关注的博客]=>只查询特别关注的博客
 
-                    case (sbyte)BlogScope.Focus:
+                    case (sbyte)BlogScope.FOCUS:
 
                         //我特别关注的人
                         focusList = baseService.Entities<UserFocus>()
-                            .Where("UId=@0 and Relation=@1", wId, (int)FocusRelationEnum.SpecialFocus)
+                            .Where("UId=@0 and Relation=@1", wId, (int)FocusRelation.SPECIAL_FOCUS)
                             .Select(x => x.BuId);
 
                         if (focusList != null && focusList.Any())
@@ -245,7 +245,7 @@ namespace Manager.Server.Services
                             friendsList = from A in baseService.Entities<UserFocus>()
                                           join B in baseService.Entities<UserFocus>()
                                              on A.BuId equals B.UId
-                                          where A.UId == wId && A.Relation == (int)FocusRelationEnum.SpecialFocus && B.BuId == wId
+                                          where A.UId == wId && A.Relation == (int)FocusRelation.SPECIAL_FOCUS && B.BuId == wId
                                           select B.UId;
 
                             if (friendsList != null && friendsList.Any())
@@ -278,7 +278,7 @@ namespace Manager.Server.Services
 
                     #region [自定义分组的博客]=>只查询自定义分组的博客
 
-                    case (sbyte)BlogScope.Group:
+                    case (sbyte)BlogScope.GROUP:
                         if (!string.IsNullOrWhiteSpace(grp))
                         {
                             MySqlParameter[] myGroupParameter =
@@ -415,19 +415,19 @@ namespace Manager.Server.Services
             if (blog == null) return;
 
             //1.1 关联 images
-            if (blog.Type == (int)BlogType.Image)
+            if (blog.Type == (int)BlogType.IMAGE)
             {
                 blog.Images = await blogImageService.GetBlogImageListById(blog.Id);
             }
 
             //1.2 关联 video 表
-            if (blog.Type == (int)BlogType.Video)
+            if (blog.Type == (int)BlogType.VIDEO)
             {
                 blog.Video = await blogVideoService.GetBlogVideoById(blog.Id);
             }
 
             //2.获取 accountInfo 表
-            blog.AccountInfo = await accountInfoService.GetAccountInfoAndAvatarAndCoverById(blog.UId);
+            blog.AccountInfo = await accountInfoService.FirstOrDefaultAsync(blog.UId);
 
             //3.获取博客评论数
             blog.Comment = await blogCommentService.GetBlogCommentCountBy(x => x.BId == blog.Id);
@@ -494,7 +494,7 @@ namespace Manager.Server.Services
 
         public async Task<bool> ModifyBlog(Blog blog)
         {
-            return await baseService.ModifyAsync(blog) > 0;
+            return await baseService.UpdateAsync(blog) > 0;
         }
 
         public async Task<Tuple<bool, string>> DelBlog(Blog blog)
@@ -510,10 +510,10 @@ namespace Manager.Server.Services
                  * 1.2  事务删除转发
                  */
 
-                blog.Status = (sbyte)Status.Disable;
+                blog.Status = (sbyte)Status.DISABLE;
                 var dic = new Dictionary<object, CrudEnum>
                 {
-                    { blog, CrudEnum.Update }
+                    { blog, CrudEnum.UPDATE }
                 };
                 /*
                  * 1. 判定当前blog是否时转发blog
@@ -523,17 +523,17 @@ namespace Manager.Server.Services
                 {
                     // 2,原创blog type 类型  -1.全部  0.图片  1.视频   2.头条文章  3.音乐  4.普通文字(表情)
                     // 2.1 事务删除【博客、视频】
-                    if (blog.Type == (sbyte)BlogType.Video)
+                    if (blog.Type == (sbyte)BlogType.VIDEO)
                     {
-                        var blogVideo = await blogVideoService.GetBlogVideoBy(x => x.BId == blog.Id && x.Status == (int)Status.Enable);
+                        var blogVideo = await blogVideoService.GetBlogVideoBy(x => x.BId == blog.Id && x.Status == (int)Status.ENABLE);
                         if (blogVideo == null)
                         {
                             return Tuple.Create(false, "博客关联的视频不存在");
                         }
                         else
                         {
-                            blogVideo.Status = (int)Status.Disable;
-                            dic.Add(blogVideo, CrudEnum.Update);
+                            blogVideo.Status = (int)Status.DISABLE;
+                            dic.Add(blogVideo, CrudEnum.UPDATE);
                             var res = await baseService.BatchTransactionAsync(dic);
 
                             //删除blog对应blogVideo的缓存
@@ -542,7 +542,7 @@ namespace Manager.Server.Services
                             {
                                 using var cli = Instance(RedisBaseEnum.Zeroth);
 
-                                var keyVideo = $"{RedisConstants.Prefix_VideoBelongToEachBlog}{blog.Id}";
+                                var keyVideo = $"{RedisConstants.PREFIX_VIDEO}{blog.Id}";
 
                                 await cli.DelAsync(keyVideo);
                             }
@@ -551,15 +551,15 @@ namespace Manager.Server.Services
                         }
                     }
                     // 2.2 事务删除【博客、图片】
-                    else if (blog.Type == (sbyte)BlogType.Image)
+                    else if (blog.Type == (sbyte)BlogType.IMAGE)
                     {
-                        var blogImages = await blogImageService.GetBlogImageListBy(x => x.BId == blog.Id && x.Status == (int)Status.Enable);
+                        var blogImages = await blogImageService.GetBlogImageListBy(x => x.BId == blog.Id && x.Status == (int)Status.ENABLE);
                         if (blogImages != null && blogImages.Any())
                         {
                             foreach (var item in blogImages)
                             {
-                                item.Status = (sbyte)Status.Disable;
-                                dic.Add(item, CrudEnum.Update);
+                                item.Status = (sbyte)Status.DISABLE;
+                                dic.Add(item, CrudEnum.UPDATE);
                             }
                             var res = await baseService.BatchTransactionAsync(dic);
 
@@ -569,7 +569,7 @@ namespace Manager.Server.Services
                             {
                                 using var cli = Instance(RedisBaseEnum.Zeroth);
 
-                                var keyImages = $"{RedisConstants.Prefix_ImagesBelongToEachBlog}{blog.Id}";
+                                var keyImages = $"{RedisConstants.PREFIE_IMAGE}{blog.Id}";
 
                                 await cli.DelAsync(keyImages);
                             }
@@ -584,22 +584,22 @@ namespace Manager.Server.Services
                     // 2.3 只删除博客
                     else
                     {
-                        var res = await baseService.ModifyAsync(blog) > 0;
+                        var res = await baseService.UpdateAsync(blog) > 0;
                         return res ? Tuple.Create(true, "") : Tuple.Create(false, "删除博客失败");
                     }
                 }
                 // 1.2  事务删除转发
                 else
                 {
-                    var blogForward = await baseService.FirstOrDefaultAsync<BlogForward>(x => x.Id == blog.Id && x.Status == (int)Status.Enable, true);
+                    var blogForward = await baseService.FirstOrDefaultAsync<BlogForward>(x => x.Id == blog.Id && x.Status == (int)Status.ENABLE, true);
                     if (blogForward == null)
                     {
                         return Tuple.Create(false, "关联的转发博客不存在");
                     }
                     else
                     {
-                        blogForward.Status = (sbyte)Status.Disable;
-                        dic.Add(blogForward, CrudEnum.Create);
+                        blogForward.Status = (sbyte)Status.DISABLE;
+                        dic.Add(blogForward, CrudEnum.CREATE);
                         var res = await baseService.BatchTransactionAsync(dic);
                         return res ? Tuple.Create(true, "") : Tuple.Create(false, "删除博客失败");
                     }
@@ -615,9 +615,9 @@ namespace Manager.Server.Services
         {
             var dic = new Dictionary<object, CrudEnum>
             {
-                { blog, CrudEnum.Create},
-                { blogComment, CrudEnum.Create},
-                { blogForward, CrudEnum.Create}
+                { blog, CrudEnum.CREATE},
+                { blogComment, CrudEnum.CREATE},
+                { blogForward, CrudEnum.CREATE}
             };
             return await baseService.BatchTransactionAsync(dic);
         }

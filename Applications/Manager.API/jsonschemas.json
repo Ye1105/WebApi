@@ -1,0 +1,22 @@
+{
+  "login-pwd": {
+    "type": "object",
+    "description": "密码登陆",
+    "properties": {
+      "phone": {
+        "type": "string",
+        "title": "手机",
+        "pattern": "^1[3456789]\\d{9}$"
+      },
+      "pwd": {
+        "type": "string",
+        "title": "密码（匹配6-12个不是空白字符的字符）",
+        "pattern": "^[\\S]{6,12}$"
+      }
+    },
+    "required": [
+      "phone",
+      "pwd"
+    ]
+  }
+}

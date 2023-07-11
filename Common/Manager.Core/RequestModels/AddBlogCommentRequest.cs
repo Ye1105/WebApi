@@ -39,7 +39,7 @@ namespace Manager.Core.RequestModels
         ///类型 : 0.评论 1.【回复】来评论【评论】  2.【回复】来评论【回复】
         /// </summary>
         [JsonProperty("type")]
-        public CommentTypeEnum Type { get; set; }
+        public CommentType Type { get; set; }
 
         /// <summary>
         /// 父节点

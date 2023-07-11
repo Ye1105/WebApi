@@ -15,7 +15,7 @@ namespace Manager.API.Controllers
     [Route("v1/api/covers")]
     [ApiExplorerSettings(GroupName = nameof(ApiVersionInfo.V1))]
     [CustomExceptionFilter]
-    public class CoversController : Controller
+    public class CoversController : ApiController
     {
         private readonly ILogCoverService logCoverService;
 
@@ -51,12 +51,12 @@ namespace Manager.API.Controllers
                 Height = height,
                 Width = width,
                 Created = DateTime.Now,
-                Status = (sbyte)Status.UnderReview
+                Status = (sbyte)Status.UNDER_REVIEW
             };
 
             var res = await logCoverService.AddLogCover(logCover);
 
-            return res.Item1 ? Ok(ApiResult.Success("上传封面成功")) : Ok(ApiResult.Fail(res.Item2));
+            return res.Item1 ? Ok(Success("上传封面成功")) : Ok(Fail(res.Item2));
         }
 
         /// <summary>
@@ -80,10 +80,10 @@ namespace Manager.API.Controllers
                     list = result
                 };
 
-                return Ok(ApiResult.Success(JsonData));
+                return Ok(Success(JsonData));
             }
             else
-                return Ok(ApiResult.Fail("查询封面分页列表为空"));
+                return Ok(Fail("查询封面分页列表为空"));
         }
     }
 }

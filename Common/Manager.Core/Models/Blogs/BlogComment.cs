@@ -64,13 +64,13 @@ namespace Manager.Core.Models.Blogs
         /// 0 非置顶  1 置顶
         /// </summary>
         [JsonProperty("top")]
-        public sbyte? Top { get; set; } = (sbyte)TopEnum.no;
+        public sbyte? Top { get; set; } = (sbyte)BoolType.NO;
 
         /// <summary>
         /// 0 启用  1 禁用 2 审核中 3 审核失败
         /// </summary>
         [JsonProperty("status")]
-        public sbyte? Status { get; set; } = (sbyte)Enums.Status.Enable;
+        public sbyte? Status { get; set; } = (sbyte)Enums.Status.ENABLE;
 
         /// <summary>
         /// 点赞数

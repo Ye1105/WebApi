@@ -14,7 +14,7 @@ namespace Manager.API.Controllers
     [Route("v1/api/videos")]
     [ApiExplorerSettings(GroupName = nameof(ApiVersionInfo.V1))]
     [TypeFilter(typeof(CustomExceptionFilterAttribute))]
-    public class VideosController : Controller
+    public class VideosController : ApiController
     {
         private readonly IBlogVideoLikeService blogVideoLikeService;
         private readonly IBlogVideoService blogVideoService;
@@ -57,9 +57,9 @@ namespace Manager.API.Controllers
                     list = result
                 };
 
-                return Ok(ApiResult.Success("获取博客视频列表成功", JsonData));
+                return Ok(Success("获取博客视频列表成功", JsonData));
             }
-            return Ok(ApiResult.Fail("暂无数据"));
+            return Ok(Fail("暂无数据"));
         }
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace Manager.API.Controllers
         public async Task<IActionResult> AddBlogVideoLike(Guid vId, Guid uId)
         {
             var res = await blogVideoLikeService.AddBlogVideoLike(vId, uId);
-            return res.Item1 ? Ok(ApiResult.Success()) : Ok(ApiResult.Fail(res.Item2));
+            return res.Item1 ? Ok(Success()) : Ok(Fail(res.Item2));
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace Manager.API.Controllers
         public async Task<IActionResult> DeleteBlogVideoLike(Guid vId, Guid uId)
         {
             var res = await blogVideoLikeService.DelBlogVideoLike(vId, uId);
-            return res.Item1 ? Ok(ApiResult.Success()) : Ok(ApiResult.Fail(res.Item2));
+            return res.Item1 ? Ok(Success()) : Ok(Fail(res.Item2));
         }
     }
 }

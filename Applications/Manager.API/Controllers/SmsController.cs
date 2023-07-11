@@ -18,7 +18,7 @@ namespace Manager.API.Controllers
     [ApiExplorerSettings(GroupName = nameof(ApiVersionInfo.V1))]
     [CustomExceptionFilter]
     [TypeFilter(typeof(CustomLogAsyncActionFilterAttribute))]
-    public class SmsController : Controller
+    public class SmsController : ApiController
     {
         private readonly ITencentService tencentService;
         private readonly IOptions<AppSettings> appSettings;
@@ -58,14 +58,14 @@ namespace Manager.API.Controllers
                 (phone, pattern) => Regex.IsMatch(phone, pattern)
             ))
             {
-                return Ok(ApiResult.Fail("不是合法的手机号"));
+                return Ok(Fail("不是合法的手机号"));
             }
 
             //2.校验1分钟内是否已经存在有已发送短信
             var minuteLimitRes = tencentService.GetTencentSms(phone, dt.AddMinutes(-1));
             if (minuteLimitRes)
             {
-                return Ok(ApiResult.Fail($"1分钟内已经存在已发送短信"));
+                return Ok(Fail($"1分钟内已经存在已发送短信"));
             }
 
             //3.获取每个用户每天发送短信数的上限数配置
@@ -75,7 +75,7 @@ namespace Manager.API.Controllers
             var dayLimitRes = tencentService.ExceedUpSmsDayLimitCount(phone, dayLimit);
             if (dayLimitRes)
             {
-                return Ok(ApiResult.Fail($"当前手机号当日发短信数已超上限{dayLimit}条"));
+                return Ok(Fail($"当前手机号当日发短信数已超上限{dayLimit}条"));
             }
 
             //获取sms配置信息
@@ -95,11 +95,11 @@ namespace Manager.API.Controllers
             var res = await tencentService.SendSMS(tencentSendSmsConfig);
             if (res.Item1)
             {
-                return Ok(ApiResult.Success("验证码发送成功"));
+                return Ok(Success("验证码发送成功"));
             }
             else
             {
-                return Ok(ApiResult.Fail(res.Item2, "验证码发送失败"));
+                return Ok(Fail(res.Item2, "验证码发送失败"));
             }
         }
 
@@ -126,14 +126,14 @@ namespace Manager.API.Controllers
 
             if (!validator)
             {
-                return Ok(ApiResult.Fail("不是合法的邮箱"));
+                return Ok(Fail("不是合法的邮箱"));
             }
 
             //2.邮箱对应的账号是否存在
             var res = await accountService.GetAccountBy(x => x.Mail == mail, false);
             if (res == null)
             {
-                return Ok(ApiResult.Fail("账号不存在"));
+                return Ok(Fail("账号不存在"));
             }
 
             //发送邮件Sms配置信息
@@ -146,11 +146,11 @@ namespace Manager.API.Controllers
             //3.发送邮件
             if (await mailService.SendMail(authorizationCode, host, displayName, mailSender, mail, sms))
             {
-                return Ok(ApiResult.Success("验证码发送成功"));
+                return Ok(Success("验证码发送成功"));
             }
             else
             {
-                return Ok(ApiResult.Fail("验证码发送失败"));
+                return Ok(Fail("验证码发送失败"));
             }
         }
     }

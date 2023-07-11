@@ -16,7 +16,7 @@ namespace Manager.API.Controllers
     [Route("v1/api/forwards")]
     [ApiExplorerSettings(GroupName = nameof(ApiVersionInfo.V1))]
     [CustomExceptionFilter]
-    public class ForwardsController : ControllerBase
+    public class ForwardsController : ApiController
     {
         private readonly IBlogForwardService blogForwardService;
         private readonly IAccountInfoService accountInfoService;
@@ -55,9 +55,9 @@ namespace Manager.API.Controllers
                 foreach (var item in result)
                 {
                     //2.转发用户的个人信息
-                    item.UInfo = await accountInfoService.GetAccountInfoAndAvatarAndCoverById(item.UId);
+                    item.UInfo = await accountInfoService.FirstOrDefaultAsync(item.UId);
                     //3.被转发用户的个人信息
-                    item.BuInfo = await accountInfoService.GetAccountInfoAndAvatarAndCoverById(item.BuId);
+                    item.BuInfo = await accountInfoService.FirstOrDefaultAsync(item.BuId);
                     //4.当 scope 不为 null 时关联 blog 查询
                     if (req.Scope != null)
                     {
@@ -84,9 +84,9 @@ namespace Manager.API.Controllers
                     list = result
                 };
 
-                return Ok(ApiResult.Success("获取博客转发列表成功", JsonData));
+                return Ok(Success("获取博客转发列表成功", JsonData));
             }
-            return Ok(ApiResult.Fail("暂无数据"));
+            return Ok(Fail("暂无数据"));
         }
 
         /// <summary>
@@ -104,15 +104,15 @@ namespace Manager.API.Controllers
              */
 
             //0.参数校验
-            bool validator = JsonSchemaHelper.Validator<AddBlogForwardRequest>(req, out IList<string> errorMessages);
-            if (!validator)
-            {
-                return Ok(ApiResult.Fail(errorMessages, "参数错误"));
-            }
+            //bool validator = JsonSchemaHelper.Validator<AddBlogForwardRequest>(req, out IList<string> errorMessages);
+            //if (!validator)
+            //{
+            //    return Ok(ApiResult.Fail(errorMessages, "参数错误"));
+            //}
 
             var id = Guid.NewGuid();
             var dt = DateTime.Now;
-            var status = (sbyte)Status.Enable;
+            var status = (sbyte)Status.ENABLE;
 
             // 1.新增【blog、blogComment、blogForward】事务
             var blog = new Blog()
@@ -141,7 +141,7 @@ namespace Manager.API.Controllers
             };
 
             var res = await blogForwardService.AddBlogForward(blog, blogForward);
-            return res ? Ok(ApiResult.Success("转发博客成功")) : Ok(ApiResult.Fail("转发博客失败"));
+            return res ? Ok(Success("转发博客成功")) : Ok(Fail("转发博客失败"));
         }
 
         /// <summary>
@@ -152,7 +152,7 @@ namespace Manager.API.Controllers
         public async Task<IActionResult> DeleteBlogForward(Guid id)
         {
             var res = await blogForwardService.DeleteBlogForward(id);
-            return res.Item1 ? Ok(ApiResult.Success("删除转发成功")) : Ok(ApiResult.Fail(res.Item2));
+            return res.Item1 ? Ok(Success("删除转发成功")) : Ok(Fail(res.Item2));
         }
 
         /// <summary>
@@ -165,7 +165,7 @@ namespace Manager.API.Controllers
         public async Task<IActionResult> AddBlogForwardLike(Guid fId, Guid uId)
         {
             var res = await blogForwardLikeService.AddBlogForwadLike(fId, uId);
-            return res.Item1 ? Ok(ApiResult.Success("博客转发点赞成功")) : Ok(ApiResult.Fail(res.Item2));
+            return res.Item1 ? Ok(Success("博客转发点赞成功")) : Ok(Fail(res.Item2));
         }
 
         /// <summary>
@@ -179,7 +179,7 @@ namespace Manager.API.Controllers
         {
             var res = await blogForwardLikeService.DelBlogForwardLike(fId, uId);
 
-            return res.Item1 ? Ok(ApiResult.Success("取消博客转发点赞成功")) : Ok(ApiResult.Fail(res.Item2));
+            return res.Item1 ? Ok(Success("取消博客转发点赞成功")) : Ok(Fail(res.Item2));
         }
     }
 }

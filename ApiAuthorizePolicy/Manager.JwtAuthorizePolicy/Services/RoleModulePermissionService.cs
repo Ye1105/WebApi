@@ -25,7 +25,7 @@ namespace Manager.JwtAuthorizePolicy.Services
 
         public async Task<List<AccountRole>> GetAccountRolesAsync(Expression<Func<AccountRole, bool>> express, bool isTrack = true)
         {
-            return await baseService.GetListByAsync(express, isTrack);
+            return await baseService.QueryAsync(express, isTrack);
         }
 
         public async Task<RolePermissionViewModel?> GetRolePermissionAsync()
@@ -56,7 +56,7 @@ namespace Manager.JwtAuthorizePolicy.Services
                     var data = new RolePermissionViewModel
                     {
                         RolePermissions = await baseService.EntitiesNoTrack<RolePermission>().ToListAsync(),
-                        ModuleInfos = await baseService.EntitiesNoTrack<ModuleInfo>().Where(x => x.Status == (sbyte)Status.Enable).ToListAsync()
+                        ModuleInfos = await baseService.EntitiesNoTrack<ModuleInfo>().Where(x => x.Status == (sbyte)Status.ENABLE).ToListAsync()
                     };
 
                     if (data != null)
