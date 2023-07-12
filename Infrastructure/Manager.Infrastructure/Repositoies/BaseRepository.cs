@@ -323,7 +323,7 @@ namespace Manager.Infrastructure.Repositoies
             if (updateRange is not null && updateRange.Any())
             {
                 var list = updateRange.Select(x => x.Key).ToList();
-                db.Update(list);
+                db.UpdateRange(list);
             }
 
             var deleteRange = keyValuePairs.Where(x => x.Value == CrudEnum.DELETE);
@@ -363,7 +363,7 @@ namespace Manager.Infrastructure.Repositoies
             if (updateRange is not null && updateRange.Any())
             {
                 var list = updateRange.Select(x => x.Key).ToList();
-                db.Update(list);
+                db.UpdateRange(list);
             }
 
             var deleteRange = keyValuePairs.Where(x => x.Value == CrudEnum.DELETE);

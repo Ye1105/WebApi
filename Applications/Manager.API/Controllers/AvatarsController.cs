@@ -1,12 +1,16 @@
 ﻿using Manager.API.Utility;
 using Manager.API.Utility.Filters;
+using Manager.API.Utility.Schemas;
 using Manager.Core;
 using Manager.Core.Enums;
 using Manager.Core.Models.Logs;
-using Manager.Core.RequestModels;
+using Manager.Core.Page;
 using Manager.Server.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Schema;
 
 namespace Manager.API.Controllers
 {
@@ -24,39 +28,6 @@ namespace Manager.API.Controllers
             this.logAvatarService = logAvatarService;
         }
 
-        /// <summary>
-        /// 上传头像
-        /// </summary>
-        /// <param name="uId">用户Id</param>
-        /// <param name="avatar">头像地址</param>
-        /// <param name="blurhash">模糊哈希</param>
-        /// <param name="height">高度</param>
-        /// <param name="width">宽度</param>
-        /// <returns></returns>
-        [HttpPost]
-        public async Task<IActionResult> UploadAvatar([FromForm] Guid uId, [FromForm] string avatar, [FromForm] string blurhash, [FromForm] int height, [FromForm] int width)
-        {
-            /*
-             * 1.序列化json参数
-             * 2.上传头像
-             */
-
-            var logAvatar = new LogAvatar()
-            {
-                Id = Guid.NewGuid(),
-                UId = uId,
-                Blurhash = blurhash,
-                Url = avatar,
-                Height = height,
-                Width = width,
-                Created = DateTime.Now,
-                Status = (sbyte)Status.UNDER_REVIEW
-            };
-
-            var res = await logAvatarService.AddLogAvatar(logAvatar);
-
-            return res.Item1 ? Ok(Success("上传头像成功")) : Ok(Fail(res.Item2));
-        }
 
         /// <summary>
         /// 用户头像：分页列表
@@ -64,9 +35,9 @@ namespace Manager.API.Controllers
         /// <param name="req"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> GetLogAvatarList([FromQuery] AvatarRequest req)
+        public async Task<IActionResult> GetLogAvatarList([FromQuery] QueryParameters req)
         {
-            var result = await logAvatarService.GetPagedList(req.UId, req.PageIndex, req.PageSize, req.OffSet, req.OrderBy);
+            var result = await logAvatarService.GetPagedList(UId, req.PageIndex, req.PageSize, req.OffSet, req.OrderBy);
 
             if (result != null && result.Any())
             {
@@ -84,5 +55,58 @@ namespace Manager.API.Controllers
             else
                 return Ok(Fail("查询头像分页列表为空"));
         }
+
+
+        /// <summary>
+        /// 上传头像
+        /// </summary>
+        /// <param name="avatar">头像地址</param>
+        /// <param name="blurhash">模糊哈希</param>
+        /// <param name="height">高度</param>
+        /// <param name="width">宽度</param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> UploadAvatar([FromForm] string avatar, [FromForm] string blurhash, [FromForm] int height, [FromForm] int width)
+        {
+            /*
+             * 1.序列化json参数
+             * 2.上传头像
+             */
+
+            var req = new
+            {
+                avatar,
+                blurhash,
+                height,
+                width
+            };
+
+            var jsonSchema = await JsonSchemas.GetSchema("avatar-add");
+
+            var schema = JSchema.Parse(jsonSchema);
+
+            var validate = JObject.Parse(JsonConvert.SerializeObject(req)).IsValid(schema, out IList<string> errorMessages);
+            if (!validate)
+            {
+                return Ok(Fail(errorMessages, "参数错误"));
+            }
+
+            var logAvatar = new LogAvatar()
+            {
+                Id = Guid.NewGuid(),
+                UId = UId,
+                Blurhash = blurhash,
+                Url = avatar,
+                Height = height,
+                Width = width,
+                Created = DateTime.Now,
+                Status = (sbyte)Status.UNDER_REVIEW
+            };
+
+            var res = await logAvatarService.AddLogAvatar(logAvatar);
+
+            return res.Item1 ? Ok(Success("上传头像成功")) : Ok(Fail(res.Item2));
+        }
+
     }
 }

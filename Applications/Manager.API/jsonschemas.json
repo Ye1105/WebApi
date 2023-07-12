@@ -151,5 +151,29 @@
         "title": "账号名"
       }
     }
+  },
+  "avatar-add": {
+    "type": "object",
+    "description": "添加头像",
+    "properties": {
+      "avatar": {
+        "type": "string",
+        "title": "头像url"
+      },
+      "blurhash": {
+        "type": "string",
+        "title": "模糊哈希图像占位符"
+      },
+      "height": {
+        "type": "number",
+        "minimum": 0,
+        "exclusiveMinimum": true
+      },
+      "width": {
+        "type": "number",
+        "minimum": 0,
+        "exclusiveMinimum": true
+      }
+    }
   }
 }

@@ -21,5 +21,10 @@
         /// 视频 【每个视频博客对应的视频】
         /// </summary>
         public static readonly string PREFIX_VIDEO = "blog_videos:";
+
+        /// <summary>
+        /// 头像分页列表
+        /// </summary>
+        public static readonly string PREFIX_AVATAR_PAGED = "avatar_paged:";
     }
 }

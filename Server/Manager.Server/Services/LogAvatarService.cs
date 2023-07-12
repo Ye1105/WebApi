@@ -17,8 +17,6 @@ namespace Manager.Server.Services
     {
         private readonly IBase baseService;
 
-        private readonly string Prefix_AvatarPagedList = "Avatar:PagedList:";
-
         public LogAvatarService(IBase baseService)
         {
             this.baseService = baseService;
@@ -48,11 +46,11 @@ namespace Manager.Server.Services
                 {
                     using var cli = Instance(RedisBaseEnum.Zeroth);
 
-                    var keyName = $"{RedisConstants.PREFIX_ACCOUNT_INFO}{logAvatar.UId}";
+                    var keyNameAccountInfo = $"{RedisConstants.PREFIX_ACCOUNT_INFO}{logAvatar.UId}";
 
-                    var keyNamePagedList = $"{Prefix_AvatarPagedList}{logAvatar.UId}";
+                    var keyNamePaged = $"{RedisConstants.PREFIX_AVATAR_PAGED}{logAvatar.UId}";
 
-                    await cli.DelAsync(keyName, keyNamePagedList);
+                    await cli.DelAsync(keyNameAccountInfo, keyNamePaged);
                 }
 
                 return Tuple.Create(res, "");
@@ -78,7 +76,7 @@ namespace Manager.Server.Services
                  * 4. 递归循环一次当前方法
                  */
 
-                var keyName = $"{Prefix_AvatarPagedList}{uId}";
+                var keyName = $"{RedisConstants.PREFIX_AVATAR_PAGED}{uId}";
 
                 using var cli = Instance(RedisBaseEnum.Zeroth);
 
@@ -134,7 +132,7 @@ namespace Manager.Server.Services
                         {
                             pipe.ZAdd(keyName, DateHelper.ConvertDateTimeToLong(item.Created), item.SerObj());
                         }
-                        pipe.Expire(keyName, 300);
+                        pipe.Expire(keyName, 300); //5分钟过期
 
                         object[] ret = pipe.EndPipe();
 
