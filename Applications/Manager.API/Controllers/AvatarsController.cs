@@ -28,7 +28,6 @@ namespace Manager.API.Controllers
             this.logAvatarService = logAvatarService;
         }
 
-
         /// <summary>
         /// 用户头像：分页列表
         /// </summary>
@@ -55,7 +54,6 @@ namespace Manager.API.Controllers
             else
                 return Ok(Fail("查询头像分页列表为空"));
         }
-
 
         /// <summary>
         /// 上传头像
@@ -107,6 +105,5 @@ namespace Manager.API.Controllers
 
             return res.Item1 ? Ok(Success("上传头像成功")) : Ok(Fail(res.Item2));
         }
-
     }
 }
