@@ -1,7 +1,6 @@
 ﻿using Manager.API.Utility;
 using Manager.API.Utility.Filters;
 using Manager.Core;
-using Manager.Core.AuthorizationModels;
 using Manager.Core.Enums;
 using Manager.Server.IServices;
 using Microsoft.AspNetCore.Authorization;

@@ -4,7 +4,6 @@ using Manager.Core;
 using Manager.Core.Enums;
 using Manager.Core.Models.Logs;
 using Manager.Core.Page;
-using Manager.Core.RequestModels;
 using Manager.Server.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,41 +22,6 @@ namespace Manager.API.Controllers
         public CoversController(ILogCoverService logCoverService)
         {
             this.logCoverService = logCoverService;
-        }
-
-        /// <summary>
-        /// 上传封面
-        /// </summary>
-        /// <param name="uId">用户Id</param>
-        /// <param name="cover"></param>
-        /// <param name="avatar">头像地址</param>
-        /// <param name="blurhash">模糊哈希</param>
-        /// <param name="height">高度</param>
-        /// <param name="width">宽度</param>
-        /// <returns></returns>
-        [HttpPost]
-        public async Task<IActionResult> UploadCover([FromForm] Guid uId, [FromForm] string cover, [FromForm] string blurhash, [FromForm] int height, [FromForm] int width)
-        {
-            /*
-             * 1.序列化json参数
-             * 2.上传封面
-             */
-
-            var logCover = new LogCover()
-            {
-                Id = Guid.NewGuid(),
-                UId = uId,
-                Blurhash = blurhash,
-                Url = cover,
-                Height = height,
-                Width = width,
-                Created = DateTime.Now,
-                Status = (sbyte)Status.UNDER_REVIEW
-            };
-
-            var res = await logCoverService.AddLogCover(logCover);
-
-            return res.Item1 ? Ok(Success("上传封面成功")) : Ok(Fail(res.Item2));
         }
 
         /// <summary>
@@ -85,6 +49,41 @@ namespace Manager.API.Controllers
             }
             else
                 return Ok(Fail("查询封面分页列表为空"));
+        }
+
+        /// <summary>
+        /// 上传封面
+        /// </summary>
+        /// <param name="uId">用户Id</param>
+        /// <param name="cover"></param>
+        /// <param name="avatar">头像地址</param>
+        /// <param name="blurhash">模糊哈希</param>
+        /// <param name="height">高度</param>
+        /// <param name="width">宽度</param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> UploadCover([FromForm] string cover, [FromForm] string blurhash, [FromForm] int height, [FromForm] int width)
+        {
+            /*
+             * 1.序列化json参数
+             * 2.上传封面
+             */
+
+            var logCover = new LogCover()
+            {
+                Id = Guid.NewGuid(),
+                UId = UId,
+                Blurhash = blurhash,
+                Url = cover,
+                Height = height,
+                Width = width,
+                Created = DateTime.Now,
+                Status = (sbyte)Status.UNDER_REVIEW
+            };
+
+            var res = await logCoverService.AddLogCover(logCover);
+
+            return res.Item1 ? Ok(Success("上传封面成功")) : Ok(Fail(res.Item2));
         }
     }
 }

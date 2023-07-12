@@ -7,7 +7,6 @@ namespace Manager.Core
 {
     public class ApiController : ControllerBase
     {
-
         protected Dictionary<string, string>? UserClaims
         {
             get
