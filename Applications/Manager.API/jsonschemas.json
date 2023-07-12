@@ -18,5 +18,162 @@
       "phone",
       "pwd"
     ]
+  },
+  "accountinfo-edit": {
+    "type": "object",
+    "description": "修改accountinfo",
+    "properties:": {
+      "nickName": {
+        "type": "string",
+        "title": "用户昵称"
+      },
+      "sex": {
+        "type": "number",
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "title": "性别"
+      },
+      "location": {
+        "type": "object",
+        "properties": {
+          "city": {
+            "type": "string",
+            "title": "市区"
+          },
+          "province": {
+            "type": "string",
+            "title": "省份"
+          }
+        },
+        "title": "地址",
+        "required": [
+          "city",
+          "province"
+        ]
+      },
+      "hometown": {
+        "type": "object",
+        "properties": {
+          "city": {
+            "type": "string",
+            "title": "市区"
+          },
+          "province": {
+            "type": "string",
+            "title": "省份"
+          }
+        },
+        "title": "家乡",
+        "required": [
+          "city",
+          "province"
+        ]
+      },
+      "company": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "title": "公司集合"
+      },
+      "school": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "title": "学校集合"
+      },
+      "emotion": {
+        "title": "情感状态",
+        "type": "number",
+        "enum": [
+          -1,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ]
+      },
+      "describe": {
+        "title": "描述",
+        "type": "string"
+      },
+      "tag": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "title": "标签"
+      },
+      "birthday": {
+        "type": "string",
+        "title": "生日"
+      }
+    },
+    "required": [
+      "nickName",
+      "sex",
+      "location",
+      "hometown",
+      "company",
+      "school",
+      "emotion",
+      "describe",
+      "tag",
+      "birthday"
+    ]
+  },
+  "account-edit": {
+    "type": "object",
+    "description": "修改账号信息",
+    "properties": {
+      "mail": {
+        "type": "string",
+        "title": "邮件",
+        "pattern": "(@)(.+)$"
+      },
+      "phone": {
+        "type": "string",
+        "title": "手机",
+        "pattern": "^1[3456789]\\d{9}$"
+      },
+      "name": {
+        "type": "string",
+        "title": "账号名"
+      }
+    }
+  },
+  "avatar-add": {
+    "type": "object",
+    "description": "添加头像",
+    "properties": {
+      "avatar": {
+        "type": "string",
+        "title": "头像url"
+      },
+      "blurhash": {
+        "type": "string",
+        "title": "模糊哈希图像占位符"
+      },
+      "height": {
+        "type": "number",
+        "minimum": 0,
+        "exclusiveMinimum": true
+      },
+      "width": {
+        "type": "number",
+        "minimum": 0,
+        "exclusiveMinimum": true
+      }
+    }
   }
 }

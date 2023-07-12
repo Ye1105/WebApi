@@ -7,13 +7,6 @@ namespace Manager.Core.RequestModels
     public class EditAccountInfoRequest
     {
         /// <summary>
-        /// 用户id
-        /// </summary>
-        [JsonProperty("uId")]
-        [Required]
-        public Guid UId { get; set; }
-
-        /// <summary>
         /// 昵称
         /// </summary>
         [JsonProperty("nickName")]

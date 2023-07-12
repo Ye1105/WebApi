@@ -1,6 +1,7 @@
 ﻿using Manager.Core.Models.Logs;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Manager.Core.Models.Accounts
 {
@@ -96,12 +97,6 @@ namespace Manager.Core.Models.Accounts
         public Guid? AvatarId { get; set; }
 
         /// <summary>
-        /// 当前头像
-        /// </summary>
-        [JsonProperty("avatar")]
-        public LogAvatar? Avatar { get; set; }
-
-        /// <summary>
         /// 当前封面Id
         /// </summary>
         [JsonIgnore]
@@ -109,8 +104,16 @@ namespace Manager.Core.Models.Accounts
         public Guid? CoverId { get; set; }
 
         /// <summary>
+        /// 当前头像
+        /// </summary>
+        [NotMapped]
+        [JsonProperty("avatar")]
+        public LogAvatar? Avatar { get; set; }
+
+        /// <summary>
         /// 当前封面
         /// </summary>
+        [NotMapped]
         [JsonProperty("cover")]
         public LogCover? Cover { get; set; }
     }

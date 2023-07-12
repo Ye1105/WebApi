@@ -3,6 +3,7 @@ using Manager.API.Utility.Filters;
 using Manager.Core;
 using Manager.Core.Enums;
 using Manager.Core.Models.Logs;
+using Manager.Core.Page;
 using Manager.Core.RequestModels;
 using Manager.Server.IServices;
 using Microsoft.AspNetCore.Authorization;
@@ -65,9 +66,9 @@ namespace Manager.API.Controllers
         /// <param name="req"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> GetLogCoverList([FromQuery] AvatarRequest req)
+        public async Task<IActionResult> GetLogCoverList([FromQuery] QueryParameters req)
         {
-            var result = await logCoverService.GetPagedList(req.UId, req.PageIndex, req.PageSize, req.OffSet, req.OrderBy);
+            var result = await logCoverService.GetPagedList(UId, req.PageIndex, req.PageSize, req.OffSet, req.OrderBy);
 
             if (result != null && result.Any())
             {

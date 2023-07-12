@@ -9,12 +9,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Manager.API.Controllers
 {
-    //[Authorize(Policy = Policys.VIP)]
     [Authorize]
     [ApiController]
     [Route("v1/api/users")]
     [ApiExplorerSettings(GroupName = nameof(ApiVersionInfo.V1))]
-    //[TypeFilter(typeof(CustomLogAsyncActionFilterAttribute))]
     [CustomExceptionFilter]
     public class UsersController : ApiController
     {
@@ -36,15 +34,15 @@ namespace Manager.API.Controllers
         /// <param name="wId"></param>
         /// <param name="params"></param>
         /// <returns></returns>
-        [HttpGet("{uId}/{wId?}")]
-        public async Task<IActionResult> GetUser(Guid uId, Guid? wId)
+        [HttpGet("{uId}")]
+        public async Task<IActionResult> GetUser(Guid uId)
         {
-            var uid = UId;
             /*
              * 1.Account AccountInf
              * 2.博客数 关注数 粉丝数
              * 3.关注关系
              */
+            var wId = UId;
 
             //1.Account AccountInfo
             //var account = await accountService.GetAccountBy(x => x.UId == uId, false);
@@ -61,9 +59,9 @@ namespace Manager.API.Controllers
             var fanCount = await userFocusService.GetUserFocusCountBy(x => x.BuId == uId);
 
             //3.关注关系
-            var relation = wId != null && wId != Guid.Empty ? await userFocusService.GetUserFocusBy(x => x.BuId == uId && x.UId == wId) : null;
+            var relation = await userFocusService.GetUserFocusBy(x => x.BuId == uId && x.UId == wId);
 
-            return Ok(ApiController.Success("账号和用户信息获取成功", new { accountInfo, blogCount, focusCount, fanCount, relation }));
+            return Ok(Success("用户信息获取成功", new { accountInfo, blogCount, focusCount, fanCount, relation }));
         }
     }
 }
