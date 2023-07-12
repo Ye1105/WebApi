@@ -6,8 +6,8 @@ using Manager.Core.RequestModels;
 using Manager.Core.Settings;
 using Manager.Extensions;
 using Manager.JwtAuthorizePolicy;
-using Manager.JwtAuthorizePolicy.IServices;
 using Manager.Server.IServices;
+using Manager.Server.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 

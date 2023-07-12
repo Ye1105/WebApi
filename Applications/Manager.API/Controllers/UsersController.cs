@@ -9,13 +9,14 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Manager.API.Controllers
 {
-    [Authorize(Policy = Policys.API)]
-    //[Authorize]
+    //[Authorize(Policy = Policys.VIP)]
+    [Authorize]
     [ApiController]
     [Route("v1/api/users")]
     [ApiExplorerSettings(GroupName = nameof(ApiVersionInfo.V1))]
+    //[TypeFilter(typeof(CustomLogAsyncActionFilterAttribute))]
     [CustomExceptionFilter]
-    public class UsersController : Controller
+    public class UsersController : ApiController
     {
         private readonly IAccountInfoService accountInfoService;
         private readonly IUserFocusService userFocusService;
@@ -38,6 +39,7 @@ namespace Manager.API.Controllers
         [HttpGet("{uId}/{wId?}")]
         public async Task<IActionResult> GetUser(Guid uId, Guid? wId)
         {
+            var uid = UId;
             /*
              * 1.Account AccountInf
              * 2.博客数 关注数 粉丝数

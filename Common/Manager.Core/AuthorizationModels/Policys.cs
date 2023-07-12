@@ -5,7 +5,7 @@
         /// <summary>
         /// 权限策略 => 后端
         /// </summary>
-        public const string API = "ApiPermission";
+        public const string VIP = "vip";
 
         /// <summary>
         /// Id

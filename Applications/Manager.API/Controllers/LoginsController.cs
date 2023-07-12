@@ -6,15 +6,13 @@ using Manager.Core.Enums;
 using Manager.Core.RequestModels;
 using Manager.Core.Settings;
 using Manager.Extensions;
-using Manager.JwtAuthorizePolicy.IServices;
 using Manager.Server.IServices;
-using Microsoft.AspNetCore.Hosting;
+using Manager.Server.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
-using Newtonsoft.Json;
-using Org.BouncyCastle.Ocsp;
 using System.Text.RegularExpressions;
 
 namespace Manager.API.Controllers

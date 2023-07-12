@@ -14,8 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Manager.Core\Manager.Core.csproj" />
-    <ProjectReference Include="..\..\Infrastructure\Manager.Infrastructure\Manager.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\Infrastructure\Manager.Redis.Infrastructure\Manager.Redis.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Server\Manager.Server\Manager.Server.csproj" />
   </ItemGroup>
 
 </Project>

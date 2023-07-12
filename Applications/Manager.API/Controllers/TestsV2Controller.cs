@@ -18,7 +18,7 @@ namespace Manager.API.Controllers
         //public IAccountInfoService accountInfoServiceProp { get; set; }
 
         [HttpPost("test")]
-        [Authorize(Policy = Policys.API)]
+        [Authorize(Policy = Policys.VIP)]
         public IActionResult TestPermisson()
         {
             //var ac = accountInfoServiceProp;

@@ -2,7 +2,6 @@
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 
-
 namespace Manager.SearchEngine.Tokenizers
 {
     /// <summary>
@@ -36,7 +35,7 @@ namespace Manager.SearchEngine.Tokenizers
         /// <param name="input">文本</param>
         /// <param name="model">TokenizerMode:0 default 1 search</param>
         /// <param name="userDictFile">附加用户自定义字典txt的文件路径</param>
-        public JieBaTokenizer(TextReader input, TokenizerMode Mode, string userDictFile="")
+        public JieBaTokenizer(TextReader input, TokenizerMode Mode, string userDictFile = "")
             : base(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, input)
         {
             segmenter = new JiebaSegmenter();
@@ -59,7 +58,7 @@ namespace Manager.SearchEngine.Tokenizers
             return input.ReadToEnd();
         }
 
-        public sealed override bool IncrementToken()
+        public override sealed bool IncrementToken()
         {
             ClearAttributes();
 
