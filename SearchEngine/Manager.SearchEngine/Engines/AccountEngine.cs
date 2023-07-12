@@ -1,6 +1,5 @@
 ﻿using JiebaNet.Segmenter;
 using Lucene.Net.Analysis;
-using Lucene.Net.Analysis.JieBa;
 using Lucene.Net.Documents;
 using Lucene.Net.Documents.Extensions;
 using Lucene.Net.Index;
@@ -22,8 +21,8 @@ namespace Manager.SearchEngine.Engines
 
         private AccountEngine() : base()
         {
-
         }
+
         /// <summary>
         /// 单例模式
         /// </summary>
@@ -89,7 +88,6 @@ namespace Manager.SearchEngine.Engines
                                {
                                    stringBuilder.Append($"Name:{req.Name}");
                                }
-
 
                                Query query = parser.Parse(stringBuilder.ToString());//+(title:lucene content:lucene)+time:[20060101 TO 20060130]
 

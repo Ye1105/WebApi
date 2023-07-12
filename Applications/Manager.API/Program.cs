@@ -20,6 +20,7 @@ using Serilog;
 using Serilog.Events;
 using System.Reflection;
 using System.Text;
+using System.Web;
 using X.PagedList;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -65,8 +66,9 @@ builder.Services
     // 配置授权服务，也就是具体的规则，已经对应的权限策略，比如公司不同权限的门禁卡
     .AddAuthorization(options =>
     {
-        // 自定义基于策略的授权权限   [Authorize(Policy= Policys.Permission)]
-        options.AddPolicy(Policys.API, policy => policy.Requirements.Add(new PermissionRequirement()));
+        // 自定义基于策略的授权权限   
+        // 用户 VIP 权限策略
+        options.AddPolicy(Policys.VIP, policy => policy.Requirements.Add(new PermissionRequirement()));
     })
     // 配置认证服务
     .AddAuthentication(options =>
@@ -77,20 +79,20 @@ builder.Services
     // 配置JWT
     .AddJwtBearer(options =>
     {
-        options.Events = new JwtBearerEvents()
-        {
-            OnMessageReceived = context =>
-            {
-                var res = context;
-                //var authorization = context.Request.Headers.Authorization.ToString();
-                //if (!string.IsNullOrWhiteSpace(authorization) && authorization.Contains("Bearer "))
-                //{
-                //    context.Token = authorization.Split(' ')[1];
-                //}
-                context.Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjBmOGZhZDViLWQ5Y2ItNDY5Zi1hMTY1LTcwODY3NzI4OTUxZSIsInVJZCI6IjBmOGZhZDViLWQ5Y2ItNDY5Zi1hMTY1LTcwODY3NzI4OTUwZSIsImV4cCI6MTY4OTE0OTUwMSwiaXNzIjoiWWUgSmlhbmNvbmciLCJhdWQiOiJhcGkubHVvcWl1In0.l3H1Ft_OwZ7ZPla9sf7_r-ZweibbtF6LqrLsAvZ8dZI";
-                return Task.CompletedTask;
-            }
-        };
+        //自定义设置获取 context.Token 的值，可支持多方式获取
+        //options.Events = new JwtBearerEvents()
+        //{
+        //    OnMessageReceived = context =>
+        //    {
+        //        var res = context;
+        //        var authorization = context.Request.Headers.Authorization.ToString();
+        //        if (!string.IsNullOrWhiteSpace(authorization) && authorization.Contains("Bearer "))
+        //        {
+        //            context.Token = authorization.Split("Bearer ")[1];
+        //        }
+        //        return Task.CompletedTask;
+        //    }
+        //};
 
         options.RequireHttpsMetadata = false;
         options.SaveToken = true;
@@ -181,9 +183,9 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
 
     //containerBuilder.RegisterGeneric(typeof(IList<>)).As(typeof(IList<>));
 
-    /* 权限配置注入 */
+    /* 权限配置注入 */ // t.IsClass && (t.Name.EndsWith("Service") || 
     var authorizeAssembly = Assembly.Load("Manager.JwtAuthorizePolicy");
-    containerBuilder.RegisterAssemblyTypes(authorizeAssembly).Where(t => t.IsClass && (t.Name.EndsWith("Service") || t.Name.EndsWith("Handler"))).AsImplementedInterfaces().InstancePerLifetimeScope();
+    containerBuilder.RegisterAssemblyTypes(authorizeAssembly).Where(t => t.Name.EndsWith("Handler")).AsImplementedInterfaces().InstancePerLifetimeScope();
 
     /* 业务逻辑注入 */
     var serverAssembly = Assembly.Load("Manager.Server");

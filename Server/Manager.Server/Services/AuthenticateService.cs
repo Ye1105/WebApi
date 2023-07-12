@@ -2,7 +2,6 @@
 using Manager.Core.RequestModels;
 using Manager.Core.Settings;
 using Manager.Extensions;
-using Manager.JwtAuthorizePolicy.IServices;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
@@ -10,7 +9,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace Manager.JwtAuthorizePolicy.Services
+namespace Manager.Server.Services
 {
     public class AuthenticateService : IAuthenticateService
     {

@@ -1,9 +1,8 @@
 ﻿using Manager.Core.Settings;
 using Manager.Extensions;
-using Manager.JwtAuthorizePolicy.IServices;
 using static Manager.Redis.Infrastructure.RedisClient;
 
-namespace Manager.JwtAuthorizePolicy.Services
+namespace Manager.Server.Services
 {
     public class JwtService : IJwtService
     {

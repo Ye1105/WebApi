@@ -20,7 +20,7 @@ namespace Manager.SearchEngine.Analyzers
         /// </summary>
         /// <param name="model">TokenizerMode:0 default 1 search</param>
         /// <param name="userDictFile">用户字典文件路径</param>
-        public JieBaAnalyzer(TokenizerMode model,string userDictFile)
+        public JieBaAnalyzer(TokenizerMode model, string userDictFile)
         {
             this.model = model;
             this.userDictFile = userDictFile;

@@ -287,7 +287,7 @@ namespace Manager.API.Controllers
         /// <param name="sort"></param>
         /// <param name="req"></param>
         /// <returns></returns>
-        [Authorize(Policy = Policys.API)]
+        [Authorize(Policy = Policys.VIP)]
         [HttpPatch("{id}/sort/{sort}")]
         public async Task<IActionResult> EditBlogSort(Guid id, BlogSort sort)
         {
@@ -403,7 +403,7 @@ namespace Manager.API.Controllers
         /// <param name="uId"></param>
         /// <param name="req"></param>
         /// <returns></returns>
-        [Authorize(Policy = Policys.API)]
+        [Authorize(Policy = Policys.VIP)]
         [HttpPost("{bId}/likes/{uId}")]
         public async Task<IActionResult> AddBlogLike(Guid bId, Guid uId)
         {

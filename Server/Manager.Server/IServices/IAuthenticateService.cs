@@ -1,6 +1,6 @@
 ﻿using Manager.Core.RequestModels;
 
-namespace Manager.JwtAuthorizePolicy.IServices
+namespace Manager.Server.Services
 {
     public interface IAuthenticateService
     {

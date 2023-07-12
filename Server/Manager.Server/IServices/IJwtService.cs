@@ -1,4 +1,4 @@
-﻿namespace Manager.JwtAuthorizePolicy.IServices
+﻿namespace Manager.Server.Services
 {
     public interface IJwtService
     {

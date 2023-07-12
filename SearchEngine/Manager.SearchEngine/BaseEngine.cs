@@ -10,16 +10,16 @@ using System.Configuration;
 
 namespace Manager.SearchEngine
 {
-
     #region description
+
     /*
      * StringField:创建索引 但不分词
      * TextField:创建索引 也会分词
      * StoreField:一定会被存储，不创建索引，多用于创建各种数据类型的字段
-     * 
+     *
      * 多列
-        MultiFieldQueryParser parse = new MultiFieldQueryParser(Lucene.Net.Util.LuceneVersion.LUCENE_48, new string[] { "id","name" }, new JieBaAnalyzerExtend(TokenizerMode.Search)); 
-        Query query= parse.Parse("***"); 
+        MultiFieldQueryParser parse = new MultiFieldQueryParser(Lucene.Net.Util.LuceneVersion.LUCENE_48, new string[] { "id","name" }, new JieBaAnalyzerExtend(TokenizerMode.Search));
+        Query query= parse.Parse("***");
         booleanQuery.Add(query, Occur.MUST);
 
         TermQuery可以用“field:key”方式，例如“content:lucene”。
@@ -39,10 +39,10 @@ namespace Manager.SearchEngine
         QueryParser parser = new QueryParser("content", newStandardAnalyzer());
 
         Query query = parser.parse("+(title:lucene content:lucene)+time:[20060101 TO 20060130]";
-     * 
+     *
      */
-    #endregion
 
+    #endregion description
 
     public abstract class BaseEngine
     {
@@ -54,7 +54,6 @@ namespace Manager.SearchEngine
             jiebaConfigFileDir = ConfigurationManager.AppSettings["JiebaConfigFileDir"]?.ToString() ?? throw new ArgumentNullException("jiebaConfigFileDir is null");
             jiebaConfigCustomDictDir = ConfigurationManager.AppSettings["JiebaConfigCustomDictDir"]?.ToString() ?? throw new ArgumentNullException("jiebaConfigCustomDictDir is null"); ;
         }
-
 
         /// <summary>
         /// 新增 Document
@@ -122,7 +121,6 @@ namespace Manager.SearchEngine
             }
         }
 
-
         /// <summary>
         /// 删除 Document
         /// </summary>
@@ -153,7 +151,6 @@ namespace Manager.SearchEngine
             }
         }
 
-
         /// <summary>
         /// 删除所有所有 document
         /// </summary>
@@ -177,7 +174,6 @@ namespace Manager.SearchEngine
                 Serilog.Log.Error("SearchEngine Delete 异常【{0}】", ex.ToString());
             }
         }
-
 
         /// <summary>
         /// Search Order By Score
@@ -238,7 +234,6 @@ namespace Manager.SearchEngine
             }
         }
 
-
         /// <summary>
         /// Search
         /// </summary>
@@ -280,7 +275,7 @@ namespace Manager.SearchEngine
                         res.Add(document);
                     }
 
-                    return PagedList<Document>.Create(res, docs.Length, pageIndex,pageSize,offSet);
+                    return PagedList<Document>.Create(res, docs.Length, pageIndex, pageSize, offSet);
                 }
                 return null;
             }
