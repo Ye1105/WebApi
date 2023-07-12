@@ -55,10 +55,25 @@ namespace Manager.Core.Models.Blogs
         [JsonProperty("url")]
         public string? Url { get; set; }
 
+        private string _FullUrl { get; set; }
         [NotMapped]
         [JsonProperty("fullUrl")]
         public string FullUrl
-        { get { return $"{Configurations.AppSettings["TencentCos"].DesObj<TencentCosTwoConfig>().BucketURL}{Url}"; } }
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(_FullUrl))
+                {
+                    return $"{Configurations.AppSettings["TencentCos"].DesObj<TencentCosTwoConfig>().BucketURL}{Url}";
+                }
+                return _FullUrl;
+            }
+            set
+            {
+                _FullUrl = value;
+            }
+        }
+
 
         /// <summary>
         /// 时长

@@ -126,11 +126,7 @@ namespace Manager.API.Controllers
              */
 
             //1.1校验参数 phone 是否为手机号
-            var validator = phone.Validator(
-                RegexHelper.PhonePattern,
-                (phone, pattern) => Regex.IsMatch(phone, pattern)
-            );
-            if (!validator)
+            if (!Regex.IsMatch(phone, RegexHelper.PhonePattern))
             {
                 return Ok(Fail("不是合法的手机号"));
             }
@@ -138,10 +134,7 @@ namespace Manager.API.Controllers
             //1.2校验参数 phone 是否为验证码
             if (appSettings.Value.ServerStatus == (sbyte)ServerType.F0RMAL)
             {
-                if (!sms.Validator
-                    (RegexHelper.SmsPattern,
-                    (sms, pattern) => Regex.IsMatch(sms, pattern))
-                )
+                if (!Regex.IsMatch(sms, RegexHelper.SmsPattern))
                 {
                     return Ok(Fail("验证码格式不正确"));
                 }
@@ -186,7 +179,7 @@ namespace Manager.API.Controllers
                 /* AccountInfo */
                 var accountInfo = await accountInfoService.FirstOrDefaultAsync(account.UId, true);
 
-                return Ok(Success("账号认证成功", new { account, accountInfo, AccessToken, RefreshToken }));
+                return Ok(Success("账号登陆成功", new { account, accountInfo, AccessToken, RefreshToken }));
             }
         }
     }
