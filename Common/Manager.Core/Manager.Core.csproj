@@ -32,4 +32,8 @@
     <ProjectReference Include="..\Manager.Extensions\Manager.Extensions.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ResponseModels\" />
+  </ItemGroup>
+
 </Project>
