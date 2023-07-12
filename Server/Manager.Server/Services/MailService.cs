@@ -19,7 +19,7 @@ namespace Manager.Server.Services
 
         public async Task<LogMailSMS?> GetLogMailSmsBy(Expression<Func<LogMailSMS, bool>> expression, bool isTrack = true)
         {
-            var res = await baseService.GetListByAsync(expression, 1, 1, 0, false, "created desc");
+            var res = await baseService.QueryAsync(expression, 1, 1, 0, false, "created desc");
             return res.FirstOrDefault();
         }
 

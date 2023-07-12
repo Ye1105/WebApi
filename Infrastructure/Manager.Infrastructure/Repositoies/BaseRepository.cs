@@ -3,7 +3,6 @@ using Manager.Core.Page;
 using Manager.Infrastructure.Database;
 using Manager.Infrastructure.IRepositoies;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using MySqlConnector;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -48,20 +47,20 @@ namespace Manager.Infrastructure.Repositoies
             return db.SaveChanges();
         }
 
-        public int DelBy<T>(Expression<Func<T, bool>> delWhere) where T : class
+        public int Del<T>(Expression<Func<T, bool>> delWhere) where T : class
         {
             List<T> listDels = db.Set<T>().Where(delWhere).ToList();
             db.RemoveRange(listDels);
             return db.SaveChanges();
         }
 
-        public int Modify<T>(T model) where T : class
+        public int Update<T>(T model) where T : class
         {
             db.Entry(model).State = EntityState.Modified;
             return db.SaveChanges();
         }
 
-        public int ModifyBy<T>(T model, Expression<Func<T, bool>> whereLambda, params string[] proNames) where T : class
+        public int Update<T>(T model, Expression<Func<T, bool>> whereLambda, params string[] proNames) where T : class
         {
             List<T> listModifies = db.Set<T>().Where(whereLambda).ToList();
             Type t = typeof(T);
@@ -96,14 +95,14 @@ namespace Manager.Infrastructure.Repositoies
             return isTrack ? query.FirstOrDefault() : query.AsNoTracking().FirstOrDefault();
         }
 
-        public List<T> GetListBy<T>(Expression<Func<T, bool>> whereLambda, bool isTrack = true) where T : class
+        public List<T> Query<T>(Expression<Func<T, bool>> whereLambda, bool isTrack = true) where T : class
         {
             var query = db.Set<T>().Where(whereLambda);
 
             return isTrack ? query.ToList() : query.AsNoTracking().ToList();
         }
 
-        public List<T> GetListBy<T>(Expression<Func<T, bool>> whereLambda, bool isAsc = true, bool isTrack = true, string orderBy = "") where T : class
+        public List<T> Query<T>(Expression<Func<T, bool>> whereLambda, bool isAsc = true, bool isTrack = true, string orderBy = "") where T : class
         {
             var query = db.Set<T>().Where(whereLambda);
 
@@ -177,26 +176,26 @@ namespace Manager.Infrastructure.Repositoies
             return await db.SaveChangesAsync();
         }
 
-        public async Task<int> DelByAsync<T>(Expression<Func<T, bool>> delWhere) where T : class
+        public async Task<int> DelAsync<T>(Expression<Func<T, bool>> delWhere) where T : class
         {
             List<T> listDels = await db.Set<T>().Where(delWhere).ToListAsync();
             db.RemoveRange(listDels);
             return await db.SaveChangesAsync();
         }
 
-        public async Task<int> ModifyAsync<T>(T model) where T : class
+        public async Task<int> UpdateAsync<T>(T model) where T : class
         {
             db.Entry(model).State = EntityState.Modified;
             return await db.SaveChangesAsync();
         }
 
-        public async Task<int> ModifyRangeAsync<T>(IEnumerable<T> collection) where T : class
+        public async Task<int> UpdateRangeAsync<T>(IEnumerable<T> collection) where T : class
         {
             db.UpdateRange(collection);
             return await db.SaveChangesAsync();
         }
 
-        public async Task<int> ModifyByAsync<T>(T model, Expression<Func<T, bool>> whereLambda, params string[] proNames) where T : class
+        public async Task<int> UpdateAsync<T>(T model, Expression<Func<T, bool>> whereLambda, params string[] proNames) where T : class
         {
             List<T> listModifes = await db.Set<T>().Where(whereLambda).ToListAsync();
             Type t = typeof(T);
@@ -250,21 +249,9 @@ namespace Manager.Infrastructure.Repositoies
             return await query.FirstOrDefaultAsync();
         }
 
-        public async Task<List<T>> GetListByAsync<T>(Expression<Func<T, bool>> whereLambda, bool isTrack = true) where T : class
+        public async Task<List<T>> QueryAsync<T>(Expression<Func<T, bool>> whereLambda, bool isTrack = true, string? orderBy = null) where T : class
         {
-            if (isTrack)
-            {
-                return await db.Set<T>().Where(whereLambda).ToListAsync<T>();
-            }
-            else
-            {
-                return await db.Set<T>().Where(whereLambda).AsNoTracking().ToListAsync<T>();
-            }
-        }
-
-        public async Task<List<T>> GetListByAsync<T>(Expression<Func<T, bool>> whereLambda, bool isTrack = true, string orderBy = "") where T : class
-        {
-            var query = db.Set<T>().Where(whereLambda);
+            var query = Entities<T>().Where(whereLambda);
 
             if (!isTrack)
             {
@@ -276,7 +263,7 @@ namespace Manager.Infrastructure.Repositoies
             return await query.ToListAsync();
         }
 
-        public async Task<List<T>> GetListByAsync<T>(Expression<Func<T, bool>> whereLambda, int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "") where T : class
+        public async Task<List<T>> QueryAsync<T>(Expression<Func<T, bool>> whereLambda, int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "") where T : class
         {
             var query = db.Set<T>().Where(whereLambda);
 
@@ -294,7 +281,7 @@ namespace Manager.Infrastructure.Repositoies
             return await query.ToListAsync();
         }
 
-        public async Task<PagedList<T>> GetPagedListByAsync<T>(Expression<Func<T, bool>> whereLambda, int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "") where T : class
+        public async Task<PagedList<T>> QueryPagedAsync<T>(Expression<Func<T, bool>> whereLambda, int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "") where T : class
         {
             var query = db.Set<T>().Where(whereLambda);
 
@@ -313,18 +300,6 @@ namespace Manager.Infrastructure.Repositoies
             return await db.SaveChangesAsync();
         }
 
-        public async Task<EntityEntry<T>> AddNoAsync<T>(T model) where T : class
-        {
-            return await db.AddAsync(model);
-        }
-
-        public async Task<int> DelByNoAsync<T>(Expression<Func<T, bool>> delWhere) where T : class
-        {
-            List<T> listDels = await db.Set<T>().Where(delWhere).ToListAsync();
-            db.Remove(listDels);
-            return await db.SaveChangesAsync();
-        }
-
         public async Task<int> ExecuteSqlAsync(string sql, params MySqlParameter[] pars)
         {
             return await db.Database.ExecuteSqlRawAsync(sql, pars);
@@ -337,26 +312,21 @@ namespace Manager.Infrastructure.Repositoies
 
             using var transaction = db.Database.BeginTransaction();
 
-            var createRange = keyValuePairs.Where(x => x.Value == CrudEnum.Create);
+            var createRange = keyValuePairs.Where(x => x.Value == CrudEnum.CREATE);
             if (createRange is not null && createRange.Any())
             {
                 var list = createRange.Select(x => x.Key).ToList();
                 db.AddRange(list);
             }
 
-            //var readRange = keyValuePairs.Where(x => x.Value == CrudEnum.Read).ToList();
-            //if (readRange is not null && readRange.Any())
-            //{
-            //}
-
-            var updateRange = keyValuePairs.Where(x => x.Value == CrudEnum.Update);
+            var updateRange = keyValuePairs.Where(x => x.Value == CrudEnum.UPDATE);
             if (updateRange is not null && updateRange.Any())
             {
                 var list = updateRange.Select(x => x.Key).ToList();
                 db.Update(list);
             }
 
-            var deleteRange = keyValuePairs.Where(x => x.Value == CrudEnum.Delete);
+            var deleteRange = keyValuePairs.Where(x => x.Value == CrudEnum.DELETE);
             if (deleteRange is not null && deleteRange.Any())
             {
                 var list = deleteRange.Select(x => x.Key).ToList();
@@ -382,26 +352,21 @@ namespace Manager.Infrastructure.Repositoies
 
             using var transaction = db.Database.BeginTransaction();
 
-            var createRange = keyValuePairs.Where(x => x.Value == CrudEnum.Create);
+            var createRange = keyValuePairs.Where(x => x.Value == CrudEnum.CREATE);
             if (createRange is not null && createRange.Any())
             {
                 var list = createRange.Select(x => x.Key).ToList();
                 db.AddRange(list);
             }
 
-            //var readRange = keyValuePairs.Where(x => x.Value == CrudEnum.Read).ToList();
-            //if (readRange is not null && readRange.Any())
-            //{
-            //}
-
-            var updateRange = keyValuePairs.Where(x => x.Value == CrudEnum.Update);
+            var updateRange = keyValuePairs.Where(x => x.Value == CrudEnum.UPDATE);
             if (updateRange is not null && updateRange.Any())
             {
                 var list = updateRange.Select(x => x.Key).ToList();
                 db.Update(list);
             }
 
-            var deleteRange = keyValuePairs.Where(x => x.Value == CrudEnum.Delete);
+            var deleteRange = keyValuePairs.Where(x => x.Value == CrudEnum.DELETE);
             if (deleteRange is not null && deleteRange.Any())
             {
                 var list = deleteRange.Select(x => x.Key).ToList();

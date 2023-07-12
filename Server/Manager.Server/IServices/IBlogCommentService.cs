@@ -29,7 +29,7 @@ namespace Manager.Server.IServices
         /// <param name="grp">分组</param>
         /// <param name="id">评论id</param>
         /// <returns></returns>
-        Task<Tuple<bool, string>> DeleteBlogComment(CommentTypeEnum type, Guid grp, Guid id);
+        Task<Tuple<bool, string>> DeleteBlogComment(CommentType type, Guid grp, Guid id);
 
         /// <summary>
         /// 查询博客评论分页列表
@@ -60,6 +60,6 @@ namespace Manager.Server.IServices
         /// <param name="startTime">开始时间 null：不筛选</param>
         /// <param name="endTime">结束时间 null：不筛选</param>
         /// <returns></returns>
-        Task<PagedList<BlogComment>?> GetPagedList(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "", Guid? id = null, Guid? bId = null, Guid? uId = null, CommentTypeEnum[]? type = null, Guid? pId = null, Guid? grp = null, DateTime? startTime = null, DateTime? endTime = null, Status? status = null);
+        Task<PagedList<BlogComment>?> GetPagedList(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "", Guid? id = null, Guid? bId = null, Guid? uId = null, CommentType[]? type = null, Guid? pId = null, Guid? grp = null, DateTime? startTime = null, DateTime? endTime = null, Status? status = null);
     }
 }

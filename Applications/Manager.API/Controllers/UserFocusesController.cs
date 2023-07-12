@@ -16,7 +16,7 @@ namespace Manager.API.Controllers
     [Route("v1/api/userfocuses")]
     [ApiExplorerSettings(GroupName = nameof(ApiVersionInfo.V1))]
     [CustomExceptionFilter]
-    public class UserFocusesController : ControllerBase
+    public class UserFocusesController : ApiController
     {
         private readonly IUserFocusService userFocusService;
         private readonly IAccountInfoService accountInfoService;
@@ -37,7 +37,7 @@ namespace Manager.API.Controllers
         public async Task<IActionResult> GetUserFocus(Guid buId, Guid uId)
         {
             var res = await userFocusService.GetUserFocusBy(x => x.BuId == buId && x.UId == uId);
-            return res != null ? Ok(ApiResult.Success(res)) : Ok(ApiResult.Fail("关注关系不存在"));
+            return res != null ? Ok(Success(res)) : Ok(Fail("关注关系不存在"));
         }
 
         /// <summary>
@@ -62,22 +62,22 @@ namespace Manager.API.Controllers
                         if (req.WId != item.BuId)
                         {
                             var userFous = await userFocusService.GetUserFocusBy(x => x.UId == req.WId && x.BuId == item.BuId);
-                            item.SelfRelation = userFous != null ? userFous.Relation : (sbyte)FocusRelationEnum.UnFocus;
+                            item.SelfRelation = userFous != null ? userFous.Relation : (sbyte)FocusRelation.UNFOCUS;
                         }
                         else
                         {
-                            item.SelfRelation = (sbyte)FocusRelationEnum.Self;
+                            item.SelfRelation = (sbyte)FocusRelation.SELF;
                         }
                     }
 
                     if (req.IsUInfo != null && req.IsUInfo.Value)
                     {
-                        item.UInfo = await accountInfoService.GetAccountInfoAndAvatarAndCoverById(item.UId);
+                        item.UInfo = await accountInfoService.FirstOrDefaultAsync(item.UId);
                     }
 
                     if (req.IsBuInfo != null && req.IsBuInfo.Value)
                     {
-                        item.BuInfo = await accountInfoService.GetAccountInfoAndAvatarAndCoverById(item.UId);
+                        item.BuInfo = await accountInfoService.FirstOrDefaultAsync(item.UId);
                     }
                 }
 
@@ -90,9 +90,9 @@ namespace Manager.API.Controllers
                     list = result
                 };
 
-                return Ok(ApiResult.Success("获取关注关系列表成功", JsonData));
+                return Ok(Success("获取关注关系列表成功", JsonData));
             }
-            return Ok(ApiResult.Fail("暂无数据"));
+            return Ok(Fail("暂无数据"));
         }
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace Manager.API.Controllers
         /// <param name="channel"></param>
         /// <returns></returns>
         [HttpPost("{buId}/{uId}/{channel}")]
-        public async Task<IActionResult> AddUserFocus(Guid buId, Guid uId, FocusChannelEnum channel)
+        public async Task<IActionResult> AddUserFocus(Guid buId, Guid uId, FocusChannel channel)
         {
             var userFocus = new UserFocus()
             {
@@ -114,11 +114,11 @@ namespace Manager.API.Controllers
                 Grp = "[]",
                 Channel = (sbyte)channel,
                 Created = DateTime.Now,
-                Relation = (sbyte)FocusRelationEnum.Focus
+                Relation = (sbyte)FocusRelation.FOCUS
             };
 
             var res = await userFocusService.AddUserFocus(userFocus);
-            return res ? Ok(ApiResult.Success("添加关注关系成功")) : Ok(ApiResult.Fail("添加关注关系失败"));
+            return res ? Ok(Success("添加关注关系成功")) : Ok(Fail("添加关注关系失败"));
         }
 
         /// <summary>
@@ -145,16 +145,16 @@ namespace Manager.API.Controllers
                 var count = await userFocusService.GetUserFocusCountBy(x => x.UId == uId && x.RemarkName == remarkName);
                 if (count > 0)
                 {
-                    return Ok(ApiResult.Fail("备注名已存在"));
+                    return Ok(Fail("备注名已存在"));
                 }
                 //3.编辑操作
                 userFocus.RemarkName = remarkName;
                 var res = await userFocusService.ModifyUserFocus(userFocus);
-                return res ? Ok(ApiResult.Success("修改备注名成功")) : Ok(ApiResult.Fail("修改备注名失败"));
+                return res ? Ok(Success("修改备注名成功")) : Ok(Fail("修改备注名失败"));
             }
             else
             {
-                return Ok(ApiResult.Fail("关注关系不存在"));
+                return Ok(Fail("关注关系不存在"));
             }
         }
 
@@ -165,7 +165,7 @@ namespace Manager.API.Controllers
         /// <param name="relation"></param>
         /// <returns></returns>
         [HttpPatch("{id}/relations/{relation}")]
-        public async Task<IActionResult> EditUserFocusRelation(Guid id, RelationEnum relation)
+        public async Task<IActionResult> EditUserFocusRelation(Guid id, FocusRelation relation)
         {
             /*
              * 参数校验 RelationEnum
@@ -180,11 +180,11 @@ namespace Manager.API.Controllers
                 //2.编辑操作
                 userFocus.Relation = (sbyte)relation;
                 var res = await userFocusService.ModifyUserFocus(userFocus);
-                return res ? Ok(ApiResult.Success("修改关注关系成功")) : Ok(ApiResult.Fail("修改关注关系失败"));
+                return res ? Ok(Success("修改关注关系成功")) : Ok(Fail("修改关注关系失败"));
             }
             else
             {
-                return Ok(ApiResult.Fail("关注关系不存在"));
+                return Ok(Fail("关注关系不存在"));
             }
         }
 
@@ -199,7 +199,7 @@ namespace Manager.API.Controllers
         {
             if (string.IsNullOrWhiteSpace(grp))
             {
-                return Ok(ApiResult.Fail("分组为空"));
+                return Ok(Fail("分组为空"));
             }
 
             var userFocus = await userFocusService.GetUserFocusBy(x => x.Id == id, true);
@@ -210,18 +210,18 @@ namespace Manager.API.Controllers
                 foreach (var item in groupArray)
                 {
                     if (item == grp)
-                        return Ok(ApiResult.Fail("分组已经存在"));
+                        return Ok(Fail("分组已经存在"));
                 }
                 //3.序列化
                 groupArray.Add(grp);
                 userFocus.Grp = JsonHelper.SerJArray(groupArray);
                 //4.新增用户分组
                 var res = await userFocusService.ModifyUserFocus(userFocus);
-                return res ? Ok(ApiResult.Success()) : Ok(ApiResult.Fail("新增用户分组失败"));
+                return res ? Ok(Success()) : Ok(Fail("新增用户分组失败"));
             }
             else
             {
-                return Ok(ApiResult.Fail("用户分组不存在"));
+                return Ok(Fail("用户分组不存在"));
             }
         }
 
@@ -251,11 +251,11 @@ namespace Manager.API.Controllers
                     :
                     req.Grp.SerObj();
                 var res = await userFocusService.ModifyUserFocus(userFocus);
-                return res ? Ok(ApiResult.Success()) : Ok(ApiResult.Fail("编辑用户关系分组失败"));
+                return res ? Ok(Success()) : Ok(Fail("编辑用户关系分组失败"));
             }
             else
             {
-                return Ok(ApiResult.Fail("用户关系分组不存在"));
+                return Ok(Fail("用户关系分组不存在"));
             }
         }
 
@@ -271,11 +271,11 @@ namespace Manager.API.Controllers
             if (userFocus != null)
             {
                 var res = await userFocusService.DelUserFocus(userFocus);
-                return res ? Ok(ApiResult.Success("")) : Ok(ApiResult.Fail("删除用户关系失败"));
+                return res ? Ok(Success("")) : Ok(Fail("删除用户关系失败"));
             }
             else
             {
-                return Ok(ApiResult.Fail("用户关系不存在"));
+                return Ok(Fail("用户关系不存在"));
             }
         }
 
@@ -289,7 +289,7 @@ namespace Manager.API.Controllers
         public async Task<IActionResult> BatchDeleteUserFocus([FromBody] BatchDeleteUserFocusRequest req)
         {
             var res = await userFocusService.BatchDeleteUserFocus(x => req.Ids.Contains(x.Id) && x.UId == req.UId) > 0;
-            return res ? Ok(ApiResult.Success("")) : Ok(ApiResult.Fail("删除用户关系失败或无需删除"));
+            return res ? Ok(Success("")) : Ok(Fail("删除用户关系失败或无需删除"));
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Manager.API.Controllers
     [ApiExplorerSettings(GroupName = nameof(ApiVersionInfo.V1))]
     [CustomExceptionFilter]
     [TypeFilter(typeof(CustomLogAsyncActionFilterAttribute))]
-    public class RegistersController : ControllerBase
+    public class RegistersController : ApiController
     {
         private readonly ITencentService tencentService;
         private readonly IAccountService accountService;
@@ -50,20 +50,20 @@ namespace Manager.API.Controllers
             var dt = DateTime.Now;
 
             //正式服环境
-            if (appSettings.Value.ServerStatus == (sbyte)ServerStatusEnum.Formal)
+            if (appSettings.Value.ServerStatus == (sbyte)ServerType.F0RMAL)
             {
                 //1.通过手机号 和 Sms 查询是否存在腾讯 Sms 信息
                 var curSms = tencentService.GetTencentSms(req.Phone, req.Sms);
                 if (curSms == null)
                 {
-                    return Ok(ApiResult.Fail("验证码不存在"));
+                    return Ok(Fail("验证码不存在"));
                 }
 
                 //2.如果存在，与当前时间比较判定是否超时
                 var timeSpan = DateHelper.SecondDiff(curSms.Created.Value, dt);
                 if (timeSpan > 300)  //5分钟内有效
                 {
-                    return Ok(ApiResult.Fail("验证码的存储时间和用户发送的注册时间间隔大于5分钟", "验证码过期"));
+                    return Ok(Fail("验证码的存储时间和用户发送的注册时间间隔大于5分钟", "验证码过期"));
                 }
             }
 
@@ -71,27 +71,27 @@ namespace Manager.API.Controllers
             var curAccName = await accountService.GetAccountBy(x => x.Name == req.Name, false);
             if (curAccName != null)
             {
-                return Ok(ApiResult.Fail("账号名称已存在"));
+                return Ok(Fail("账号名称已存在"));
             }
 
             //3.1 判定 手机号  是否存在
             var curAccPhone = await accountService.GetAccountBy(x => x.Phone == req.Phone, false);
             if (curAccPhone != null)
             {
-                return Ok(ApiResult.Fail("手机号已存在"));
+                return Ok(Fail("手机号已存在"));
             }
 
             //3.3 判定 昵称 是否存在
-            var curAccInfo = await accountInfoService.GetAccountInfoBy(x => x.NickName == req.NickName, false);
+            var curAccInfo = await accountInfoService.FirstOrDefaultAsync(x => x.NickName == req.NickName, false);
             if (curAccInfo != null)
             {
-                return Ok(ApiResult.Fail("账号昵称已存在"));
+                return Ok(Fail("账号昵称已存在"));
             }
 
             //4.创建账号信息【Account,AccountInfo】
             var res = await accountService.CreateAccount(req.Name, req.Pssword, req.Phone, req.NickName);
 
-            return res ? Ok(ApiResult.Success("注册成功")) : Ok(ApiResult.Fail("注册失败"));
+            return res ? Ok(Success("注册成功")) : Ok(Fail("注册失败"));
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Manager.Core.Enums;
 using Manager.Core.Page;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using MySqlConnector;
 using System.Linq.Expressions;
 
@@ -50,7 +49,7 @@ namespace Manager.Infrastructure.IRepositoies
         /// <typeparam name="T"></typeparam>
         /// <param name="delWhere"></param>
         /// <returns></returns>
-        public int DelBy<T>(Expression<Func<T, bool>> delWhere) where T : class;
+        public int Del<T>(Expression<Func<T, bool>> delWhere) where T : class;
 
         /// <summary>
         /// 单实体修改
@@ -58,7 +57,7 @@ namespace Manager.Infrastructure.IRepositoies
         /// <typeparam name="T"></typeparam>
         /// <param name="model"></param>
         /// <returns></returns>
-        public int Modify<T>(T model) where T : class;
+        public int Update<T>(T model) where T : class;
 
         /// <summary>
         /// 批量修改（非lambda）
@@ -68,7 +67,7 @@ namespace Manager.Infrastructure.IRepositoies
         /// <param name="whereLamda">查询实体的条件</param>
         /// <param name="proNames">lambda的形式表示要修改的实体属性名</param>
         /// <returns></returns>
-        public int ModifyBy<T>(T model, Expression<Func<T, bool>> whereLamda, params string[] proNames) where T : class;
+        public int Update<T>(T model, Expression<Func<T, bool>> whereLamda, params string[] proNames) where T : class;
 
         /// <summary>
         ///查询单个
@@ -86,7 +85,7 @@ namespace Manager.Infrastructure.IRepositoies
         /// <param name="whereLamda">查询条件(lambda表达式的形式生成表达式目录树)</param>
         /// <param name="isTrack">是否跟踪状态，默认是跟踪的</param>
         /// <returns></returns>
-        public List<T> GetListBy<T>(Expression<Func<T, bool>> whereLambda, bool isTrack = true) where T : class;
+        public List<T> Query<T>(Expression<Func<T, bool>> whereLambda, bool isTrack = true) where T : class;
 
         /// <summary>
         ///  根据条件排序和查询
@@ -97,7 +96,7 @@ namespace Manager.Infrastructure.IRepositoies
         /// <param name="isTrack"></param>
         /// <param name="orderBy"></param>
         /// <returns></returns>
-        public List<T> GetListBy<T>(Expression<Func<T, bool>> whereLambda, bool isAsc = true, bool isTrack = true, string orderBy = "") where T : class;
+        public List<T> Query<T>(Expression<Func<T, bool>> whereLambda, bool isAsc = true, bool isTrack = true, string orderBy = "") where T : class;
 
         /// <summary>
         /// 事务批量处理
@@ -180,14 +179,14 @@ namespace Manager.Infrastructure.IRepositoies
         /// </summary>
         /// <param name="delWhere">传入Lambda表达式(生成表达式目录树)</param>
         /// <returns></returns>
-        public Task<int> DelByAsync<T>(Expression<Func<T, bool>> delWhere) where T : class;
+        public Task<int> DelAsync<T>(Expression<Func<T, bool>> delWhere) where T : class;
 
         /// <summary>
         /// 修改
         /// </summary>
         /// <param name="model">修改后的实体</param>
         /// <returns></returns>
-        public Task<int> ModifyAsync<T>(T model) where T : class;
+        public Task<int> UpdateAsync<T>(T model) where T : class;
 
         /// <summary>
         /// 修改集合
@@ -195,7 +194,7 @@ namespace Manager.Infrastructure.IRepositoies
         /// <typeparam name="T"></typeparam>
         /// <param name="collection"></param>
         /// <returns></returns>
-        public Task<int> ModifyRangeAsync<T>(IEnumerable<T> collection) where T : class;
+        public Task<int> UpdateRangeAsync<T>(IEnumerable<T> collection) where T : class;
 
         /// <summary>
         /// 批量修改（非lambda）
@@ -204,7 +203,7 @@ namespace Manager.Infrastructure.IRepositoies
         /// <param name="whereLambda">查询实体的条件</param>
         /// <param name="proNames">lambda的形式表示要修改的实体属性名</param>
         /// <returns></returns>
-        public Task<int> ModifyByAsync<T>(T model, Expression<Func<T, bool>> whereLambda, params string[] proNames) where T : class;
+        public Task<int> UpdateAsync<T>(T model, Expression<Func<T, bool>> whereLambda, params string[] proNames) where T : class;
 
         /// <summary>
         /// 查询单个是否存在
@@ -233,7 +232,7 @@ namespace Manager.Infrastructure.IRepositoies
         /// <param name="whereLambda">查询条件(lambda表达式的形式生成表达式目录树)</param>
         /// <param name="isTrack">是否跟踪状态，默认是跟踪的</param>
         /// <returns></returns>
-        public Task<List<T>> GetListByAsync<T>(Expression<Func<T, bool>> whereLambda, bool isTrack = true) where T : class;
+        public Task<List<T>> QueryAsync<T>(Expression<Func<T, bool>> whereLambda, bool isTrack = true, string? orderBy = null) where T : class;
 
         /// <summary>
         /// 根据条件排序和查询
@@ -246,7 +245,7 @@ namespace Manager.Infrastructure.IRepositoies
         /// <param name="isTrack">跟踪</param>
         /// <param name="orderBy">排序</param>
         /// <returns></returns>
-        public Task<List<T>> GetListByAsync<T>(Expression<Func<T, bool>> whereLambda, int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "") where T : class;
+        public Task<List<T>> QueryAsync<T>(Expression<Func<T, bool>> whereLambda, int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "") where T : class;
 
         /// <summary>
         /// 根据条件分页排序和查询
@@ -259,36 +258,13 @@ namespace Manager.Infrastructure.IRepositoies
         /// <param name="isTrack">跟踪</param>
         /// <param name="orderBy">排序</param>
         /// <returns></returns>
-        public Task<PagedList<T>> GetPagedListByAsync<T>(Expression<Func<T, bool>> whereLambda, int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "") where T : class;
-
-        /// <summary>
-        /// 根据条件排序和查询
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="whereLambda"></param>
-        /// <param name="isTrack"></param>
-        /// <param name="orderBy"></param>
-        /// <returns></returns>
-
-        public Task<List<T>> GetListByAsync<T>(Expression<Func<T, bool>> whereLambda, bool isTrack = true, string orderBy = "") where T : class;
+        public Task<PagedList<T>> QueryPagedAsync<T>(Expression<Func<T, bool>> whereLambda, int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "") where T : class;
 
         /// <summary>
         /// 事务批量处理
         /// </summary>
         /// <returns></returns>
         public Task<int> SaveChangeAsync();
-
-        /// <summary>
-        /// 新增
-        /// </summary>
-        /// <param name="model">需要新增的实体</param>
-        public Task<EntityEntry<T>> AddNoAsync<T>(T model) where T : class;
-
-        /// <summary>
-        /// 条件删除
-        /// </summary>
-        /// <param name="delWhere">需要删除的条件</param>
-        public Task<int> DelByNoAsync<T>(Expression<Func<T, bool>> delWhere) where T : class;
 
         /// <summary>
         /// 执行增加,删除,修改操作(或调用存储过程)

@@ -27,7 +27,7 @@ namespace Manager.Server.Services
 
         public async Task<List<BlogVideo>> GetBlogVideoListBy(Expression<Func<BlogVideo, bool>> expression, bool isTrack = true)
         {
-            return await baseService.GetListByAsync(expression, isTrack);
+            return await baseService.QueryAsync(expression, isTrack);
         }
 
         public async Task<BlogVideo?> GetBlogVideoById(Guid id)
@@ -39,7 +39,7 @@ namespace Manager.Server.Services
                * 2.命中则直接获取缓存值
                * 3.未命中则从mysql获取值，然后更新缓存值，并返回值
                */
-                var keyName = $"{RedisConstants.Prefix_VideoBelongToEachBlog}{id}";
+                var keyName = $"{RedisConstants.PREFIX_VIDEO}{id}";
 
                 using var cli = Instance(RedisBaseEnum.Zeroth);
 
@@ -53,7 +53,7 @@ namespace Manager.Server.Services
                 }
                 else
                 {
-                    var video = await baseService.FirstOrDefaultAsync<BlogVideo>(x => x.BId == id && x.Status == (sbyte)Status.Enable, false);
+                    var video = await baseService.FirstOrDefaultAsync<BlogVideo>(x => x.BId == id && x.Status == (sbyte)Status.ENABLE, false);
 
                     //expire 10 minutes
                     await cli.SetExAsync(keyName, 600, video.SerObj());
@@ -112,7 +112,7 @@ namespace Manager.Server.Services
                 query = query.Where(x => x.Created < endTime);
             }
 
-            query = query.Where(x => x.Status == (int)Status.Enable);
+            query = query.Where(x => x.Status == (int)Status.ENABLE);
 
             query = query.ApplySort(orderBy);
 

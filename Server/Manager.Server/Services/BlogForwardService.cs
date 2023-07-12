@@ -23,8 +23,8 @@ namespace Manager.Server.Services
         {
             var dic = new Dictionary<object, CrudEnum>
             {
-                { blog, CrudEnum.Create },
-                { blogForward, CrudEnum.Create }
+                { blog, CrudEnum.CREATE },
+                { blogForward, CrudEnum.CREATE }
             };
             return await baseService.BatchTransactionAsync(dic);
         }
@@ -48,13 +48,13 @@ namespace Manager.Server.Services
                 return Tuple.Create(false, "转发不存在");
             }
 
-            blog.Status = (sbyte)Status.Disable;
-            blogForward.Status = (sbyte)Status.Disable;
+            blog.Status = (sbyte)Status.DISABLE;
+            blogForward.Status = (sbyte)Status.DISABLE;
 
             var dic = new Dictionary<object, CrudEnum>
             {
-                { blog, CrudEnum.Update },
-                { blogForward, CrudEnum.Update }
+                { blog, CrudEnum.UPDATE },
+                { blogForward, CrudEnum.UPDATE }
             };
 
             var res = await baseService.BatchTransactionAsync(dic);
@@ -76,11 +76,11 @@ namespace Manager.Server.Services
                 switch (scope)
                 {
                     //【@我的】动态 => blog_forward 中的 BuId 是当前登录网站的用户 id
-                    case ForwardScope.At:
+                    case ForwardScope.AT:
                         query = query.Where(x => x.BuId == wId);
                         break;
                     //【@我的】【关注人】的动态 =>  我关注的人转发了我的评论或者博客
-                    case ForwardScope.Focus:
+                    case ForwardScope.FOCUS:
                         query = from b in baseService.Entities<UserFocus>()
                                 join p in baseService.Entities<BlogForward>()
                                 on b.BuId equals p.UId
@@ -88,7 +88,7 @@ namespace Manager.Server.Services
                                 select p;
                         break;
                     // 【@我的】【原创】动态 => 转发我的原创blog
-                    case ForwardScope.Orgion:
+                    case ForwardScope.ORIGION:
                         query = query.Where(x => x.BuId == wId && x.PrevBId == x.BaseBId);
                         break;
 

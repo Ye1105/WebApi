@@ -13,7 +13,7 @@ namespace Manager.API.Controllers
     [Route("v1/api/favours")]
     [ApiExplorerSettings(GroupName = nameof(ApiVersionInfo.V1))]
     [CustomExceptionFilter]
-    public class FavoursController : ControllerBase
+    public class FavoursController : ApiController
     {
         private readonly IBlogFavoriteService blogFavoriteService;
         private readonly IBlogService blogService;
@@ -49,9 +49,9 @@ namespace Manager.API.Controllers
                     totalCount = result.TotalCount,
                     list = result
                 };
-                return Ok(ApiResult.Success("获取收藏的博客列表成功", JsonData));
+                return Ok(Success("获取收藏的博客列表成功", JsonData));
             }
-            return Ok(ApiResult.Fail("暂无数据"));
+            return Ok(Fail("暂无数据"));
         }
     }
 }

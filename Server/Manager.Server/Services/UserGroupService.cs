@@ -27,7 +27,7 @@ namespace Manager.Server.Services
 
         public async Task<bool> ModifyUserGroup(UserGroup userGroup)
         {
-            var res = await baseService.ModifyAsync(userGroup) > 0;
+            var res = await baseService.UpdateAsync(userGroup) > 0;
 
             if (res)
             {

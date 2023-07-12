@@ -68,7 +68,7 @@ namespace Manager.Server.Services
 
         public async Task<bool> ModifyUserFocus(UserFocus userFocus)
         {
-            return await baseService.ModifyAsync(userFocus) > 0;
+            return await baseService.UpdateAsync(userFocus) > 0;
         }
 
         public async Task<int> GetUserFocusCountBy(Expression<Func<UserFocus, bool>> expression)
@@ -83,7 +83,7 @@ namespace Manager.Server.Services
 
         public async Task<int> BatchDeleteUserFocus(Expression<Func<UserFocus, bool>> expression)
         {
-            return await baseService.DelByAsync(expression);
+            return await baseService.DelAsync(expression);
         }
     }
 }

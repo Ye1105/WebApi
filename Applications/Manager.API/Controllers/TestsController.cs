@@ -13,7 +13,7 @@ namespace Manager.API.Controllers
     [ApiExplorerSettings(GroupName = nameof(ApiVersionInfo.V1))]
     [CustomExceptionFilter]
     [TypeFilter(typeof(CustomLogAsyncActionFilterAttribute))]
-    public class TestsController : ControllerBase
+    public class TestsController : ApiController
     {
         //[CustomSelect]
         //public IAccountInfoService accountInfoServiceProp { get; set; }
@@ -24,7 +24,7 @@ namespace Manager.API.Controllers
         {
             //var ac = accountInfoServiceProp;
 
-            return Ok(ApiResult.Success("v1test"));
+            return Ok(Success("v1test"));
             //throw new Exception("test error");
         }
     }

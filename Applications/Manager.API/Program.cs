@@ -2,6 +2,7 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Manager.API.Utility;
 using Manager.API.Utility.AutofaExt;
+using Manager.Core;
 using Manager.Core.AuthorizationModels;
 using Manager.Core.Settings;
 using Manager.Infrastructure.Database;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -18,6 +20,7 @@ using Serilog;
 using Serilog.Events;
 using System.Reflection;
 using System.Text;
+using X.PagedList;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,12 +37,12 @@ Log.Logger = new LoggerConfiguration()
 // add services to the container.
 builder.Services
     .AddControllers(
-    setup =>
-    {
-        //如果请求的类型和服务器请求的类型不一致就返回406
-        setup.ReturnHttpNotAcceptable = true;
-    }
-)
+        setup =>
+        {
+            //如果请求的类型和服务器请求的类型不一致就返回406
+            setup.ReturnHttpNotAcceptable = true;
+        }
+    )
     .AddNewtonsoftJson(
     options =>
     {
@@ -74,6 +77,21 @@ builder.Services
     // 配置JWT
     .AddJwtBearer(options =>
     {
+        options.Events = new JwtBearerEvents()
+        {
+            OnMessageReceived = context =>
+            {
+                var res = context;
+                //var authorization = context.Request.Headers.Authorization.ToString();
+                //if (!string.IsNullOrWhiteSpace(authorization) && authorization.Contains("Bearer "))
+                //{
+                //    context.Token = authorization.Split(' ')[1];
+                //}
+                context.Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjBmOGZhZDViLWQ5Y2ItNDY5Zi1hMTY1LTcwODY3NzI4OTUxZSIsInVJZCI6IjBmOGZhZDViLWQ5Y2ItNDY5Zi1hMTY1LTcwODY3NzI4OTUwZSIsImV4cCI6MTY4OTE0OTUwMSwiaXNzIjoiWWUgSmlhbmNvbmciLCJhdWQiOiJhcGkubHVvcWl1In0.l3H1Ft_OwZ7ZPla9sf7_r-ZweibbtF6LqrLsAvZ8dZI";
+                return Task.CompletedTask;
+            }
+        };
+
         options.RequireHttpsMetadata = false;
         options.SaveToken = true;
         //Token Validation Parameters
@@ -144,49 +162,6 @@ builder.Services.AddCors(policy =>
 });
 
 #endregion Cors
-
-#region 弃用
-
-/* ServiceCollection
- * 瞬时生命周期 -- Transient  每一次创建都是全新的实例
- * 单例生命周期 -- SingleTon  同一个类型，创建是来的是同一个实例
- * 作用域生命周期 -- Scoped   同一个serviceProvide获取到的是同一个实例
- */
-
-/* authorization policy */
-//builder.Services.AddTransient<IAuthorizationHandler, PermissionAuthorizationHandler>();
-//builder.Services.AddScoped<IRoleModulePermissionService, RoleModulePermissionService>();
-
-/* service 依赖注入 */
-//builder.Services.AddScoped<IAccountService, AccountService>();
-//builder.Services.AddScoped<IAccountInfoService, AccountInfoService>();
-//builder.Services.AddScoped<IAuthenticateService, AuthenticateService>();
-//builder.Services.AddScoped<IJwtService, JwtService>();
-//builder.Services.AddScoped<ITencentService, TencentService>();
-//builder.Services.AddScoped<IMailService, MailService>();
-//builder.Services.AddScoped<ILogAvatarService, LogAvatarService>();
-//builder.Services.AddScoped<ILogCoverService, LogCoverService>();
-//builder.Services.AddScoped<IBlogService, BlogService>();
-//builder.Services.AddScoped<IBlogTopicService, BlogTopicService>();
-//builder.Services.AddScoped<IBlogImageService, BlogImageService>();
-//builder.Services.AddScoped<IBlogVideoService, BlogVideoService>();
-//builder.Services.AddScoped<IBlogLikeService, BlogLikeService>();
-//builder.Services.AddScoped<IBlogCommentService, BlogCommentService>();
-//builder.Services.AddScoped<IBlogForwardService, BlogForwardService>();
-//builder.Services.AddScoped<IUserFocusService, UserFocusService>();
-//builder.Services.AddScoped<IBlogCommentLikeService, BlogCommentLikeService>();
-//builder.Services.AddScoped<IUserGroupService, UserGroupService>();
-//builder.Services.AddScoped<IBlogForwardLikeService, BlogForwardLikeService>();
-//builder.Services.AddScoped<IBlogImageLikeService, BlogImageLikeService>();
-//builder.Services.AddScoped<IBlogFavoriteService, BlogFavoriteService>();
-//builder.Services.AddScoped<IBlogVideoLikeService, BlogVideoLikeService>();
-//builder.Services.AddScoped<IRankService, RankService>();
-
-/* repository  依赖注入*/
-//builder.Services.AddScoped<IBase, BaseRepository>();
-//builder.Services.AddScoped<IProcedure, ProcedureRepository>();
-
-#endregion 弃用
 
 #region Autofac IOC 容器
 

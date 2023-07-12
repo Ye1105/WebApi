@@ -16,7 +16,7 @@ namespace Manager.API.Controllers
     [Route("v1/api/usergroups")]
     [ApiExplorerSettings(GroupName = nameof(ApiVersionInfo.V1))]
     [CustomExceptionFilter]
-    public class UserGroupsController : ControllerBase
+    public class UserGroupsController : ApiController
     {
         private readonly IOptions<AppSettings> appSettings;
         private readonly IUserGroupService userGroupService;
@@ -36,7 +36,7 @@ namespace Manager.API.Controllers
         public async Task<IActionResult> GetUserGroup(Guid uId)
         {
             var res = await userGroupService.GetUserGroupByUId(uId);
-            return res != null ? Ok(ApiResult.Success(res)) : Ok(ApiResult.Fail("获取用户分组失败"));
+            return res != null ? Ok(Success(res)) : Ok(Fail("获取用户分组失败"));
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace Manager.API.Controllers
 
             if (string.IsNullOrEmpty(grp))
             {
-                return Ok(ApiResult.Fail("分组为空"));
+                return Ok(Fail("分组为空"));
             }
             // 1.获取当前用户的Grp【是否存在】
             var userGroup = await userGroupService.GetUserGroupBy(x => x.UId == uId, true);
@@ -67,18 +67,18 @@ namespace Manager.API.Controllers
                 foreach (var item in groupArray)
                 {
                     if (item == grp)
-                        return Ok(ApiResult.Fail("用户分组已经存在"));
+                        return Ok(Fail("用户分组已经存在"));
                 }
                 //3.序列化
                 groupArray.Add(grp);
                 userGroup.Grp = JsonHelper.SerJArray(groupArray);
                 //4.新增博客用户分组
                 var res = await userGroupService.ModifyUserGroup(userGroup);
-                return res ? Ok(ApiResult.Success()) : Ok(ApiResult.Fail("新增用户分组失败"));
+                return res ? Ok(Success()) : Ok(Fail("新增用户分组失败"));
             }
             else
             {
-                return Ok(ApiResult.Fail("博客用户分组不存在"));
+                return Ok(Fail("博客用户分组不存在"));
             }
         }
 
@@ -99,7 +99,7 @@ namespace Manager.API.Controllers
 
             if (string.IsNullOrEmpty(grp))
             {
-                return Ok(ApiResult.Fail("分组为空"));
+                return Ok(Fail("分组为空"));
             }
 
             var curGrp = $"\"{grp}\"";
@@ -124,17 +124,17 @@ namespace Manager.API.Controllers
                 }
                 if (!delRes)
                 {
-                    return Ok(ApiResult.Fail("用户分组不存在"));
+                    return Ok(Fail("用户分组不存在"));
                 }
                 var Group = '[' + string.Join(',', gArray) + ']';
                 userGroup.Grp = Group;
                 //3.删除博客用户分组
                 var res = await userGroupService.ModifyUserGroup(userGroup);
-                return res ? Ok(ApiResult.Success()) : Ok(ApiResult.Fail("删除用户分组失败"));
+                return res ? Ok(Success()) : Ok(Fail("删除用户分组失败"));
             }
             else
             {
-                return Ok(ApiResult.Fail("用户分组不存在"));
+                return Ok(Fail("用户分组不存在"));
             }
         }
     }

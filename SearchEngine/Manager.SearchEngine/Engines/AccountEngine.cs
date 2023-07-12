@@ -48,7 +48,7 @@ namespace Manager.SearchEngine.Engines
                 doc.AddTextField("Mail", t.Mail, Store.YES);
                 doc.AddStringField("Created", t.Created?.ToString("yyyyMMddHHmmss"), Store.NO);
                 doc.AddStringField("Status", t.Status.ToString(), Store.NO);
-                doc.AddStringField("DocType", DocTypeEnum.account.ToString(), Store.NO);
+                doc.AddStringField("DocType", DocType.ACCOUNT.ToString(), Store.NO);
                 return doc;
             });
         }
@@ -65,7 +65,7 @@ namespace Manager.SearchEngine.Engines
                 doc.AddTextField("Mail", t.Mail, Store.YES);
                 doc.AddStringField("Created", t.Created?.ToString("yyyyMMddHHmmss"), Store.NO);
                 doc.AddStringField("Status", t.Status.ToString(), Store.NO);
-                doc.AddStringField("DocType", DocTypeEnum.account.ToString(), Store.NO);
+                doc.AddStringField("DocType", DocType.ACCOUNT.ToString(), Store.NO);
                 return doc;
             });
         }

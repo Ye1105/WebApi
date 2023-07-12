@@ -49,6 +49,6 @@ namespace Manager.Core.Models.Blogs
         /// 0 启用  1 禁用 2 审核中 3 审核失败
         /// </summary>
         [JsonProperty("status")]
-        public sbyte? Status { get; set; } = (sbyte)Enums.Status.Enable;
+        public sbyte? Status { get; set; } = (sbyte)Enums.Status.ENABLE;
     }
 }

@@ -23,7 +23,7 @@ namespace Manager.Server.Services
             return await baseService.Entities<BlogComment>().Where(expression).CountAsync();
         }
 
-        public async Task<PagedList<BlogComment>?> GetPagedList(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "", Guid? id = null, Guid? bId = null, Guid? uId = null, CommentTypeEnum[]? types = null, Guid? pId = null, Guid? grp = null, DateTime? startTime = null, DateTime? endTime = null, Status? status = null)
+        public async Task<PagedList<BlogComment>?> GetPagedList(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "", Guid? id = null, Guid? bId = null, Guid? uId = null, CommentType[]? types = null, Guid? pId = null, Guid? grp = null, DateTime? startTime = null, DateTime? endTime = null, Status? status = null)
         {
             var query = baseService.Entities<BlogComment>();
 
@@ -44,7 +44,7 @@ namespace Manager.Server.Services
             //0.评论   1.【回复】来评论【评论】  2.【回复】来评论【回复】
             if (types != null && types.Any())
             {
-                query = query.Where(x => types.Contains((CommentTypeEnum)x.Type));
+                query = query.Where(x => types.Contains((CommentType)x.Type));
             }
             //分支
             if (pId != null)
@@ -82,7 +82,7 @@ namespace Manager.Server.Services
 
         public Task<PagedList<BlogComment>> GetPagedList(Expression<Func<BlogComment, bool>> whereLambda, int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "")
         {
-            return baseService.GetPagedListByAsync(whereLambda, pageIndex, pageSize, offset, isTrack, orderBy);
+            return baseService.QueryPagedAsync(whereLambda, pageIndex, pageSize, offset, isTrack, orderBy);
         }
 
         public async Task<bool> AddBlogComment(BlogComment blogComment)
@@ -90,18 +90,18 @@ namespace Manager.Server.Services
             return await baseService.AddAsync(blogComment) > 0;
         }
 
-        public async Task<Tuple<bool, string>> DeleteBlogComment(CommentTypeEnum type, Guid grp, Guid id)
+        public async Task<Tuple<bool, string>> DeleteBlogComment(CommentType type, Guid grp, Guid id)
         {
-            if (type == CommentTypeEnum.Comment)
+            if (type == CommentType.COMMENT)
             {
                 var collection = await baseService.Entities<BlogComment>().Where(x => x.Grp == grp).ToListAsync();
                 if (collection != null && collection.Any())
                 {
                     foreach (var item in collection)
                     {
-                        item.Status = (sbyte)Status.Disable;
+                        item.Status = (sbyte)Status.DISABLE;
                     }
-                    var res = await baseService.ModifyRangeAsync(collection) > 0;
+                    var res = await baseService.UpdateRangeAsync(collection) > 0;
                     return res ? Tuple.Create(true, "删除评论成功") : Tuple.Create(false, "删除评论分组失败");
                 }
                 else
@@ -124,9 +124,9 @@ namespace Manager.Server.Services
                     }
                     foreach (var item in collection)
                     {
-                        item.Status = (sbyte)Status.Disable;
+                        item.Status = (sbyte)Status.DISABLE;
                     }
-                    var res = await baseService.ModifyRangeAsync(collection) > 0;
+                    var res = await baseService.UpdateRangeAsync(collection) > 0;
                     return res ? Tuple.Create(true, "删除评论成功") : Tuple.Create(false, "删除评论分组失败");
                 }
                 else

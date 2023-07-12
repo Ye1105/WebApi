@@ -13,7 +13,7 @@ namespace Manager.API.Controllers
     [Route("v1/api/likes")]
     [ApiExplorerSettings(GroupName = nameof(ApiVersionInfo.V1))]
     [CustomExceptionFilter]
-    public class LikesController : ControllerBase
+    public class LikesController : ApiController
     {
         private readonly IBlogLikeService blogLikeService;
         private readonly IBlogService blogService;
@@ -50,9 +50,9 @@ namespace Manager.API.Controllers
                     totalCount = result.TotalCount,
                     list = result
                 };
-                return Ok(ApiResult.Success("获取点赞的博客列表成功", JsonData));
+                return Ok(Success("获取点赞的博客列表成功", JsonData));
             }
-            return Ok(ApiResult.Fail("暂无数据"));
+            return Ok(Fail("暂无数据"));
         }
     }
 }

@@ -22,7 +22,7 @@ namespace Manager.API.Utility.Filters
 
                 //断路器 --  只要对Result赋值，就不继续往后
                 Log.Error("[CustomExceptionFilter]-[{0}]-[{1}] => {2}", controllerName, actionName, context.Exception);
-                context.Result = new JsonResult(ApiResult.Fail(context.Exception, $"[{controllerName}] - [{actionName}] - 异常", "数据异常"));
+                context.Result = new JsonResult(ApiController.Fail(context.Exception, $"[{controllerName}] - [{actionName}] - 异常", "数据异常"));
 
                 //表示当前异常被处理过
                 context.ExceptionHandled = true;

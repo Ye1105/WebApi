@@ -14,7 +14,7 @@ namespace Manager.API.Controllers
     [ApiExplorerSettings(GroupName = nameof(ApiVersionInfo.V1))]
     [CustomExceptionFilter]
     [TypeFilter(typeof(CustomLogAsyncActionFilterAttribute))]
-    public class RetrievesController : ControllerBase
+    public class RetrievesController : ApiController
     {
         private readonly ITencentService tencentService;
         private readonly IAccountService accountService;
@@ -48,7 +48,7 @@ namespace Manager.API.Controllers
             );
             if (!validator)
             {
-                return Ok(ApiResult.Fail("不是合法的手机号"));
+                return Ok(Fail("不是合法的手机号"));
             }
 
             //2.验证码是否过期
@@ -56,16 +56,16 @@ namespace Manager.API.Controllers
             var res = tencentService.GetTencentSms(req.Phone, req.Sms, dt.AddMinutes(-5), dt);
             if (!res)
             {
-                return Ok(ApiResult.Fail("验证码不存在或已过期"));
+                return Ok(Fail("验证码不存在或已过期"));
             }
 
             //3.更新账号密码
             if (await accountService.ModifyAccountPassword(x => x.Phone == req.Phone, req.Password))
             {
-                return Ok(ApiResult.Success("密码重置成功"));
+                return Ok(Success("密码重置成功"));
             }
 
-            return Ok(ApiResult.Fail("密码重置失败"));
+            return Ok(Fail("密码重置失败"));
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace Manager.API.Controllers
             );
             if (!validator)
             {
-                return Ok(ApiResult.Fail("不是合法的邮箱"));
+                return Ok(Fail("不是合法的邮箱"));
             }
 
             //2.验证码是否过期
@@ -98,16 +98,16 @@ namespace Manager.API.Controllers
             var res = await mailService.GetLogMailSmsBy(x => x.Mail.ToLower() == req.Mail.ToLower() && x.Sms == req.Sms && x.Created >= dt.AddMinutes(-5) && x.Created < dt, false);
             if (res == null)
             {
-                return Ok(ApiResult.Fail("验证码过期"));
+                return Ok(Fail("验证码过期"));
             }
 
             //3.更新账号密码
             if (await accountService.ModifyAccountPassword(x => x.Mail == req.Mail, req.Password))
             {
-                return Ok(ApiResult.Success("密码重置成功"));
+                return Ok(Success("密码重置成功"));
             }
 
-            return Ok(ApiResult.Fail("密码重置失败"));
+            return Ok(Fail("密码重置失败"));
         }
     }
 }

@@ -1,10 +1,53 @@
 ﻿using Manager.Core.Enums;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace Manager.Core
 {
-    public class ApiResult
+    public class ApiController : ControllerBase
     {
+
+        protected Dictionary<string, string>? UserClaims
+        {
+            get
+            {
+                var dicClaims = new Dictionary<string, string>();
+                var claims = HttpContext.User?.Claims.AsEnumerable();
+                if (claims is not null && claims.Any())
+                {
+                    foreach (var item in claims?.AsEnumerable() ?? new List<Claim>())
+                    {
+                        var k = item.Type;
+                        var v = item.Value;
+                        dicClaims[k] = v;
+                    }
+                }
+                return dicClaims;
+            }
+        }
+
+        protected Guid UId
+        {
+            get
+            {
+                var claims = HttpContext.User?.Claims.AsEnumerable();
+                if (claims is not null && claims.Any())
+                {
+                    foreach (var item in claims?.AsEnumerable() ?? new List<Claim>())
+                    {
+                        if (item.Type == "uId")
+                        {
+                            return Guid.Parse(item.Value);
+                        }
+                    }
+                    return Guid.Empty;
+                }
+                else
+                    return Guid.Empty;
+            }
+        }
+
         public static ApiResultModel Res(ApiResultStatus status, string msg = "", string uimsg = "", object? data = null)
         {
             var res = new ApiResultModel()
@@ -21,7 +64,7 @@ namespace Manager.Core
         {
             var res = new ApiResultModel()
             {
-                Status = ApiResultStatus.Success,
+                Status = ApiResultStatus.OK,
                 Msg = msg,
                 Uimsg = uimsg,
                 Data = data
@@ -34,7 +77,7 @@ namespace Manager.Core
         {
             var res = new ApiResultModel()
             {
-                Status = ApiResultStatus.Success,
+                Status = ApiResultStatus.OK,
                 Msg = detail,
                 Uimsg = detail,
                 Data = data
@@ -47,7 +90,7 @@ namespace Manager.Core
         {
             var res = new ApiResultModel()
             {
-                Status = ApiResultStatus.Success,
+                Status = ApiResultStatus.OK,
                 Msg = "操作成功",
                 Uimsg = "操作成功",
                 Data = data
@@ -60,7 +103,7 @@ namespace Manager.Core
         {
             var res = new ApiResultModel()
             {
-                Status = ApiResultStatus.Fail,
+                Status = ApiResultStatus.BAD_REQUEST,
                 Msg = msg,
                 Uimsg = uimsg,
                 Errors = errors
@@ -73,7 +116,7 @@ namespace Manager.Core
         {
             var res = new ApiResultModel()
             {
-                Status = ApiResultStatus.Fail,
+                Status = ApiResultStatus.BAD_REQUEST,
                 Msg = detail,
                 Uimsg = detail,
                 Errors = errors
@@ -86,7 +129,7 @@ namespace Manager.Core
         {
             var res = new ApiResultModel()
             {
-                Status = ApiResultStatus.Fail,
+                Status = ApiResultStatus.BAD_REQUEST,
                 Msg = msg,
                 Uimsg = uimsg,
             };
@@ -98,7 +141,7 @@ namespace Manager.Core
         {
             var res = new ApiResultModel()
             {
-                Status = ApiResultStatus.Fail,
+                Status = ApiResultStatus.BAD_REQUEST,
                 Msg = detail,
                 Uimsg = detail,
             };
@@ -109,7 +152,7 @@ namespace Manager.Core
         {
             var res = new ApiResultModel()
             {
-                Status = ApiResultStatus.Fail,
+                Status = ApiResultStatus.FAILED_DEPENDENCY,
                 Msg = "操作失败",
                 Uimsg = "操作失败",
             };
@@ -120,7 +163,7 @@ namespace Manager.Core
         {
             var res = new ApiResultModel()
             {
-                Status = ApiResultStatus.UnAuthorized,
+                Status = ApiResultStatus.FORBIDDEN,
                 Msg = detail,
                 Uimsg = detail,
             };
@@ -131,7 +174,7 @@ namespace Manager.Core
         {
             var res = new ApiResultModel()
             {
-                Status = ApiResultStatus.UnAuthorized,
+                Status = ApiResultStatus.FORBIDDEN,
                 Msg = msg,
                 Uimsg = uimsg,
                 Errors = errors

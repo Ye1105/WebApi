@@ -12,8 +12,6 @@ namespace Manager.Server.Services
     {
         private readonly IBase baseService;
 
-        private static readonly string privateKey = "-----BEGIN RSA PRIVATE KEY-----MIICXQIBAAKBgQDOW9ZsU93Ue4zzOVh8DWWnRO/+RfCOs1q8JvmKZqOvFdgY07SYqswGL9XpNlS3BUP/Ep7QanEMcqMgPimpplQWpgPDyq3M1hvmUUXCkfIAF1lyMNKx3w1vJ9NsCnIeNliOlv/WXkfOZeJ5R5LhIxYjNfKiczJ4AfbTiCqe1YWIMQIDAQABAoGBAJ8hfuamfcffRsBBFpUDF8K3jIJ+mJTShkPVolUx9UONCsmKaBfajd6vgLuIpCdGrjrCtyltC6RXuqegiCxFEU3JkcUUXvL2X8QpgnqNq7GrYgnzX87EzM2UXK58yp2dtijznIIjhcRy9zl6DIwepXci0hzG2dD6jYsDAAN1eFIJAkEA/gAiHWuYeCrqoXn5NFDUP6c1gAcxftqmTFlKUAd0y0t8+M4uJAdoL+9HGwQ4YtQf64mbydd6TfXE5hKsKSLawwJBAM/7shkxrJWwQOfBopAzxSEOZFYNiNeaugUId8X7C+4lrwtopkB481ob8MrVZy1cUGLUaqOwb8lOlOqtSVtUGfsCQEQyTPaROPKqsyx/z0UYnqQohNjHFab1lcjSAH3UQquCrR8wXHsX8gVMvU6np2wBgECBRe6/h/r+jcsoIEk7LnkCQQCZe/lWtl3SqZt8bF13ZX0Yg/JvvtU5pymYBUO+iyGmwZCILtZhxeBwoyXzycC2rOV1yaRY4B/ew2sKNI9qIop5AkB39hWm/Yj+tA+EobWOomrDEqOTB5g+pbYw/jqWHKClMo6W4lfRNExmEEyZfzF+XCKU1ufSLSyBzlgr2Schf2lm-----END RSA PRIVATE KEY-----";
-
         public AccountService(IBase baseService)
         {
             this.baseService = baseService;
@@ -38,10 +36,10 @@ namespace Manager.Server.Services
                 Phone = phone,
                 Mail = "",
                 Password = Md5Helper.MD5(password),
-                Status = (sbyte)Status.Enable,
+                Status = (sbyte)Status.ENABLE,
                 Created = dt
             };
-            dic.Add(account, CrudEnum.Create);
+            dic.Add(account, CrudEnum.CREATE);
 
             AccountInfo accountInfo = new()
             {
@@ -53,21 +51,21 @@ namespace Manager.Server.Services
                 Hometown = "{}",
                 Company = "[]",
                 School = "[]",
-                Emotion = (sbyte)EmotionEnum.Unkown,
+                Emotion = (sbyte)EmotionEnum.UNKNOWN,
                 Describe = "",
                 Tag = "[]",
                 OfficialCert = "[]",
                 AvatarId = Guid.Empty,
                 CoverId = Guid.Empty
             };
-            dic.Add(accountInfo, CrudEnum.Create);
+            dic.Add(accountInfo, CrudEnum.CREATE);
 
             UserGroup userGroup = new()
             {
                 UId = UId,
                 Grp = "[]"
             };
-            dic.Add(userGroup, CrudEnum.Create);
+            dic.Add(userGroup, CrudEnum.CREATE);
 
             var res = await baseService.BatchTransactionAsync(dic);
 
@@ -82,9 +80,7 @@ namespace Manager.Server.Services
 
         public async Task<Account> GetAccountBy(string phone, string password, bool isTrack = true)
         {
-            var pwd = CryptoHelper.RSADecrypt(password, privateKey, "PEM");
-
-            password = Md5Helper.MD5(pwd);
+            password = Md5Helper.MD5(password);
 
             var account = await baseService.FirstOrDefaultAsync<Account>((x => x.Password == password && x.Phone == phone), isTrack);
 
@@ -93,7 +89,7 @@ namespace Manager.Server.Services
 
         public async Task<bool> ModifyAccount(Account account)
         {
-            return await baseService.ModifyAsync(account) > 0;
+            return await baseService.UpdateAsync(account) > 0;
         }
 
         public async Task<bool> ModifyAccountPassword(Expression<Func<Account, bool>> expression, string password)
@@ -101,11 +97,10 @@ namespace Manager.Server.Services
             var account = await baseService.FirstOrDefaultAsync(expression, true);
             if (account == null)
                 return false;
-            var DesPwd = CryptoHelper.RSADecrypt(password, privateKey, "PEM");
             //修改账号密码
-            var psd = Md5Helper.MD5(DesPwd);
+            var psd = Md5Helper.MD5(password);
             account.Password = psd;
-            return await baseService.ModifyAsync(account) > 0;
+            return await baseService.UpdateAsync(account) > 0;
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Manager.Core.RequestModels
         /// </summary>
         [JsonProperty("sex")]
         [Required]
-        public SexEnum Sex { get; set; }
+        public Sex Sex { get; set; }
 
         /// <summary>
         /// 地址

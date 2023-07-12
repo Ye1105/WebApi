@@ -14,7 +14,7 @@ namespace Manager.API.Controllers
     [Route("v1/api/images")]
     [ApiExplorerSettings(GroupName = nameof(ApiVersionInfo.V1))]
     [CustomExceptionFilter]
-    public class ImagesController : ControllerBase
+    public class ImagesController : ApiController
     {
         private readonly IBlogImageService blogImageService;
         private readonly IBlogImageLikeService blogImageLikeService;
@@ -57,9 +57,9 @@ namespace Manager.API.Controllers
                     list = result
                 };
 
-                return Ok(ApiResult.Success("获取博客图片列表成功", JsonData));
+                return Ok(Success("获取博客图片列表成功", JsonData));
             }
-            return Ok(ApiResult.Fail("暂无数据"));
+            return Ok(Fail("暂无数据"));
         }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace Manager.API.Controllers
         public async Task<IActionResult> AddBlogImageLike(Guid iId, Guid uId)
         {
             var res = await blogImageLikeService.AddBlogImageLike(iId, uId);
-            return res.Item1 ? Ok(ApiResult.Success()) : Ok(ApiResult.Fail(res.Item2));
+            return res.Item1 ? Ok(Success()) : Ok(Fail(res.Item2));
         }
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace Manager.API.Controllers
         public async Task<IActionResult> DeleteBlogImageLike(Guid iId, Guid uId)
         {
             var res = await blogImageLikeService.DelBlogImageLike(iId, uId);
-            return res.Item1 ? Ok(ApiResult.Success()) : Ok(ApiResult.Fail(res.Item2));
+            return res.Item1 ? Ok(Success()) : Ok(Fail(res.Item2));
         }
     }
 }

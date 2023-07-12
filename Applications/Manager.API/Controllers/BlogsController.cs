@@ -21,7 +21,7 @@ namespace Manager.API.Controllers
     [ApiExplorerSettings(GroupName = nameof(ApiVersionInfo.V1))]
     [TypeFilter(typeof(CustomLogAsyncActionFilterAttribute))]
     [CustomExceptionFilter]
-    public class BlogsController : ControllerBase
+    public class BlogsController : ApiController
     {
         private readonly IBlogService blogService;
         private readonly IBlogTopicService blogTopicService;
@@ -64,11 +64,11 @@ namespace Manager.API.Controllers
                      */
 
                     //0.Json Schema 参数校验
-                    bool validator = JsonSchemaHelper.Validator<CreateBlogRequest>(req, out IList<string> errorMessages);
-                    if (!validator)
-                    {
-                        return Ok(ApiResult.Fail(errorMessages, "参数错误"));
-                    }
+                    //bool validator = JsonSchemaHelper.Validator<CreateBlogRequest>(req, out IList<string> errorMessages);
+                    //if (!validator)
+                    //{
+                    //    return Ok(ApiResult.Fail(errorMessages, "参数错误"));
+                    //}
 
                     //1.敏感词校验
 
@@ -80,14 +80,14 @@ namespace Manager.API.Controllers
                     var filterCount = blogService.GetBlogCountBySync(x => x.UId == req.UId && x.Created > dt.AddMinutes(-1), false);
                     if (filterCount > 10)
                     {
-                        return Ok(ApiResult.Fail("1分钟内发布超过10条博客", "您发布博客的频率过高，请稍后重试"));
+                        return Ok(Fail("1分钟内发布超过10条博客", "您发布博客的频率过高，请稍后重试"));
                     }
 
                     //3.2 重复性校验：10分钟内是否存在相同的博客
                     var filterBody = blogService.GetBlogCountBySync(x => x.UId == req.UId && x.Created > dt.AddMinutes(-10) && x.Body == req.Body, false);
                     if (filterCount > 0)
                     {
-                        return Ok(ApiResult.Fail("10分钟内有已有重复博客", "文本内容相同，请隔10分钟后发布"));
+                        return Ok(Fail("10分钟内有已有重复博客", "文本内容相同，请隔10分钟后发布"));
                     }
 
                     //4.1创建blog
@@ -100,12 +100,12 @@ namespace Manager.API.Controllers
                         Body = req.Body,
                         FId = Guid.Empty,
                         Created = dt,
-                        Top = (sbyte)TopEnum.no,
-                        Status = req.Type == BlogType.Text ? (sbyte)Status.Enable : (sbyte)Status.UnderReview
+                        Top = (sbyte)BoolType.NO,
+                        Status = req.Type == BlogType.TEXT ? (sbyte)Status.ENABLE : (sbyte)Status.UNDER_REVIEW
                     };
 
                     //4.2 如果发布的是图片blog，创建图片实例
-                    if (req.Type == (int)BlogType.Image)
+                    if (req.Type == (int)BlogType.IMAGE)
                     {
                         if (req.Images != null && req.Images.Any())
                         {
@@ -122,18 +122,18 @@ namespace Manager.API.Controllers
                                     Width = item.Width,
                                     Height = item.Height,
                                     Created = dt,
-                                    Status = (sbyte)Status.UnderReview,
+                                    Status = (sbyte)Status.UNDER_REVIEW,
                                 });
                             };
                         }
                         else
                         {
-                            return Ok(ApiResult.Fail("图片列表为空"));
+                            return Ok(Fail("图片列表为空"));
                         }
                     }
 
                     //4.3 如果发布的是视频blog，创建视频实例
-                    if ((sbyte)req.Type == (sbyte)BlogType.Video)
+                    if ((sbyte)req.Type == (sbyte)BlogType.VIDEO)
                     {
                         if (req.Video != null)
                         {
@@ -151,7 +151,7 @@ namespace Manager.API.Controllers
                                 Url = v.Url,
                                 Duration = v.Duration,
                                 Created = dt,
-                                Status = (sbyte)Status.UnderReview,
+                                Status = (sbyte)Status.UNDER_REVIEW,
                                 CUrl = v.CUrl,
                                 CWidth = v.CWidth,
                                 CHeight = v.CHeight,
@@ -160,7 +160,7 @@ namespace Manager.API.Controllers
                         }
                         else
                         {
-                            return Ok(ApiResult.Fail("视频为空"));
+                            return Ok(Fail("视频为空"));
                         }
                     }
 
@@ -201,7 +201,7 @@ namespace Manager.API.Controllers
                                         ReadCount = 0,
                                         SearchCount = 0,
                                         Type = 0,
-                                        Status = (sbyte)Status.Enable,
+                                        Status = (sbyte)Status.ENABLE,
                                         Created = dt,
                                     }
                                 );
@@ -233,21 +233,21 @@ namespace Manager.API.Controllers
                         var newBlog = blogService.GetBlogBySync(x => x.Id == bId);
                         if (newBlog == null)
                         {
-                            return Ok(ApiResult.Success("发布博客失败", new { }));
+                            return Ok(Success("发布博客失败", new { }));
                         }
                         else
                         {
                             blogService.GetBlogRelation(newBlog, req.UId).Wait();
-                            return Ok(ApiResult.Success("发布博客成功", newBlog));
+                            return Ok(Success("发布博客成功", newBlog));
                         }
                     }
-                    return Ok(ApiResult.Fail("发布博客失败"));
+                    return Ok(Fail("发布博客失败"));
                 }
             }
             catch (Exception ex)
             {
                 Log.Error($"CreateBlog 【{0} 】【{1}】", "发布博客异常", ex.ToString());
-                return Ok(ApiResult.Fail(ex.ToString(), "发布博客异常"));
+                return Ok(Fail(ex.ToString(), "发布博客异常"));
             }
         }
 
@@ -275,9 +275,9 @@ namespace Manager.API.Controllers
                     totalCount = result.TotalCount,
                     list = result
                 };
-                return Ok(ApiResult.Success("获取博客列表成功", JsonData));
+                return Ok(Success("获取博客列表成功", JsonData));
             }
-            return Ok(ApiResult.Fail("暂无数据"));
+            return Ok(Fail("暂无数据"));
         }
 
         /// <summary>
@@ -291,21 +291,21 @@ namespace Manager.API.Controllers
         [HttpPatch("{id}/sort/{sort}")]
         public async Task<IActionResult> EditBlogSort(Guid id, BlogSort sort)
         {
-            var blog = await blogService.GetBlogBy(x => x.Id == id && x.Status == (sbyte)Status.Enable && x.Sort != (sbyte)sort);
+            var blog = await blogService.GetBlogBy(x => x.Id == id && x.Status == (sbyte)Status.ENABLE && x.Sort != (sbyte)sort);
             if (blog == null)
             {
-                return Ok(ApiResult.Fail(""));
+                return Ok(Fail(""));
             }
 
             blog.Sort = (sbyte)sort;
 
             if (await blogService.ModifyBlog(blog))
             {
-                return Ok(ApiResult.Success("修改成功"));
+                return Ok(Success("修改成功"));
             }
             else
             {
-                return Ok(ApiResult.Fail("修改失败"));
+                return Ok(Fail("修改失败"));
             }
         }
 
@@ -323,24 +323,24 @@ namespace Manager.API.Controllers
              * 1.没有则置顶
              */
 
-            var count = await blogService.GetBlogCountBy(x => x.UId == uId && x.Top == (sbyte)TopEnum.yes && x.Status == (sbyte)Status.Enable);
+            var count = await blogService.GetBlogCountBy(x => x.UId == uId && x.Top == (sbyte)BoolType.YES && x.Status == (sbyte)Status.ENABLE);
             if (count > 0)
             {
-                return Ok(ApiResult.Fail("已存在置顶博客", "已存在置顶博客，请先取消置顶"));
+                return Ok(Fail("已存在置顶博客", "已存在置顶博客，请先取消置顶"));
             }
 
-            var blog = await blogService.GetBlogBy(x => x.Id == id && x.FId == Guid.Empty && x.Top == (sbyte)TopEnum.no && x.Status == (sbyte)Status.Enable);
+            var blog = await blogService.GetBlogBy(x => x.Id == id && x.FId == Guid.Empty && x.Top == (sbyte)BoolType.NO && x.Status == (sbyte)Status.ENABLE);
             if (blog != null)
             {
-                blog.Top = (sbyte)TopEnum.yes;
+                blog.Top = (sbyte)BoolType.YES;
 
                 var res = await blogService.ModifyBlog(blog);
 
-                return res ? Ok(ApiResult.Success("博客置顶成功")) : Ok(ApiResult.Fail("博客置顶失败"));
+                return res ? Ok(Success("博客置顶成功")) : Ok(Fail("博客置顶失败"));
             }
             else
             {
-                return Ok(ApiResult.Fail(""));
+                return Ok(Fail(""));
             }
         }
 
@@ -352,18 +352,18 @@ namespace Manager.API.Controllers
         [HttpPatch("{id}/untop")]
         public async Task<IActionResult> DeleteBlogTop(Guid id)
         {
-            var blog = await blogService.GetBlogBy(x => x.Id == id && x.FId == Guid.Empty && x.Status == (sbyte)Status.Enable && x.Top == (sbyte)TopEnum.yes);
+            var blog = await blogService.GetBlogBy(x => x.Id == id && x.FId == Guid.Empty && x.Status == (sbyte)Status.ENABLE && x.Top == (sbyte)BoolType.YES);
             if (blog != null)
             {
-                blog.Top = (sbyte)TopEnum.no;
+                blog.Top = (sbyte)BoolType.NO;
 
                 var res = await blogService.ModifyBlog(blog);
 
-                return res ? Ok(ApiResult.Success("取消置顶成功")) : Ok(ApiResult.Fail("取消置顶失败"));
+                return res ? Ok(Success("取消置顶成功")) : Ok(Fail("取消置顶失败"));
             }
             else
             {
-                return Ok(ApiResult.Fail("博客不存在"));
+                return Ok(Fail("博客不存在"));
             }
         }
 
@@ -385,15 +385,15 @@ namespace Manager.API.Controllers
              * 1.2  事务删除转发
              */
 
-            var blog = await blogService.GetBlogBy(x => x.Id == id && x.UId == uId && x.Status == (sbyte)Status.Enable);
+            var blog = await blogService.GetBlogBy(x => x.Id == id && x.UId == uId && x.Status == (sbyte)Status.ENABLE);
             if (blog == null)
             {
-                return Ok(ApiResult.Fail("博客不存在"));
+                return Ok(Fail("博客不存在"));
             }
 
             var res = await blogService.DelBlog(blog);
 
-            return res.Item1 ? Ok(ApiResult.Success("删除成功")) : Ok(ApiResult.Fail(res.Item2));
+            return res.Item1 ? Ok(Success("删除成功")) : Ok(Fail(res.Item2));
         }
 
         /// <summary>
@@ -408,7 +408,7 @@ namespace Manager.API.Controllers
         public async Task<IActionResult> AddBlogLike(Guid bId, Guid uId)
         {
             var res = await blogLikeService.AddBlogLike(bId, uId);
-            return res.Item1 ? Ok(ApiResult.Success()) : Ok(ApiResult.Fail(res.Item2));
+            return res.Item1 ? Ok(Success()) : Ok(Fail(res.Item2));
         }
 
         /// <summary>
@@ -421,7 +421,7 @@ namespace Manager.API.Controllers
         public async Task<IActionResult> DeleteBlogLike(Guid bId, Guid uId)
         {
             var res = await blogLikeService.DelBlogLike(bId, uId);
-            return res.Item1 ? Ok(ApiResult.Success()) : Ok(ApiResult.Fail(res.Item2));
+            return res.Item1 ? Ok(Success()) : Ok(Fail(res.Item2));
         }
 
         /// <summary>
@@ -448,7 +448,7 @@ namespace Manager.API.Controllers
 
             //2.增加博客收藏
             var res = await blogFavoriteService.AddBlogFavorite(bId, uId);
-            return res.Item1 ? Ok(ApiResult.Success()) : Ok(ApiResult.Fail(res.Item2));
+            return res.Item1 ? Ok(Success()) : Ok(Fail(res.Item2));
         }
 
         /// <summary>
@@ -461,7 +461,7 @@ namespace Manager.API.Controllers
         public async Task<IActionResult> DeleteBlogFavorite(Guid bId, Guid uId)
         {
             var res = await blogFavoriteService.DelBlogFavorite(bId, uId);
-            return res.Item1 ? Ok(ApiResult.Success()) : Ok(ApiResult.Fail(res.Item2));
+            return res.Item1 ? Ok(Success()) : Ok(Fail(res.Item2));
         }
 
         /// <summary>
@@ -474,7 +474,7 @@ namespace Manager.API.Controllers
         public async Task<IActionResult> GetBlogGroupCount(Guid uId, int year)
         {
             var res = await blogService.GetBlogCountGroupbyMonth(uId, year);
-            return Ok(ApiResult.Success(res));
+            return Ok(Success(res));
         }
     }
 }

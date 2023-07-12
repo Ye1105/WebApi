@@ -19,17 +19,17 @@ namespace Manager.Server.Services
             this.baseService = baseService;
         }
 
-        public async Task<AccountInfo?> GetAccountInfoBy(Expression<Func<AccountInfo, bool>> expression, bool isTrack = true)
+        public async Task<AccountInfo?> FirstOrDefaultAsync(Expression<Func<AccountInfo, bool>> expression, bool isTrack = true)
         {
             var accountInfo = await baseService.FirstOrDefaultAsync(expression, isTrack);
             return accountInfo;
         }
 
-        public async Task<AccountInfo?> GetAccountInfoAndAvatarAndCoverById(Guid? uId, bool isCache = false)
+        public async Task<AccountInfo?> FirstOrDefaultAsync(Guid? uId, bool isCache = false)
         {
             try
             {
-                var keyName = $"{RedisConstants.Prefix_AccountInfoAndAvatarAndCover}{uId}";
+                var keyName = $"{RedisConstants.PREFIX_ACCOUNT_INFO}{uId}";
 
                 using var cli = Instance(RedisBaseEnum.Zeroth);
 
@@ -69,7 +69,7 @@ namespace Manager.Server.Services
                             //expire 5 minutes
                             await cli.SetExAsync(keyName, 300, "");
                         }
-                        return await GetAccountInfoAndAvatarAndCoverById(uId, isCache);
+                        return await FirstOrDefaultAsync(uId, isCache);
                     }
                     else
                     {
@@ -85,25 +85,25 @@ namespace Manager.Server.Services
             }
             catch (Exception ex)
             {
-                Log.Error("GetAccountInfoAndAvatarAndCoverById:{0}", ex.ToString());
+                Log.Error("GetAccount:{0}", ex.ToString());
                 return null;
             }
         }
 
-        public async Task<bool> ModifyAccountInfo(AccountInfo accountInfo)
+        public async Task<bool> UpdateAsync(AccountInfo accountInfo)
         {
             /*
              * 更新用户信息表
              * 删除redis缓存
              */
 
-            var res = await baseService.ModifyAsync(accountInfo) > 0;
+            var res = await baseService.UpdateAsync(accountInfo) > 0;
 
             if (res)
             {
                 using var cli = Instance(RedisBaseEnum.Zeroth);
 
-                var keyName = $"{RedisConstants.Prefix_AccountInfoAndAvatarAndCover}{accountInfo.UId}";
+                var keyName = $"{RedisConstants.PREFIX_ACCOUNT_INFO}{accountInfo.UId}";
 
                 await cli.DelAsync(keyName);
             }

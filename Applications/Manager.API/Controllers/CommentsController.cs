@@ -16,7 +16,7 @@ namespace Manager.API.Controllers
     [Route("v1/api/comments")]
     [ApiExplorerSettings(GroupName = nameof(ApiVersionInfo.V1))]
     [CustomExceptionFilter]
-    public class CommentsController : ControllerBase
+    public class CommentsController : ApiController
     {
         private readonly IBlogCommentService blogCommentService;
         private readonly IAccountInfoService accountInfoService;
@@ -58,16 +58,16 @@ namespace Manager.API.Controllers
                     await BlogCommentRelation(item, req.WId);
 
                     //5.0 通过 type=(sbyte)CommentTypeEnum.Comment 则获取评论的回复数 和 点赞第一高的回复数据
-                    if (item.Type == (sbyte)CommentTypeEnum.Comment)
+                    if (item.Type == (sbyte)CommentType.COMMENT)
                     {
                         //5.1 评论回复数
-                        item.ReplyCount = await blogCommentService.GetBlogCommentCountBy(x => x.Grp == item.Grp && (x.Type == (sbyte)CommentTypeEnum.ReplyFir || x.Type == (sbyte)CommentTypeEnum.ReplySec) && x.Status == (sbyte)Status.Enable);
+                        item.ReplyCount = await blogCommentService.GetBlogCommentCountBy(x => x.Grp == item.Grp && (x.Type == (sbyte)CommentType.REPLY_FIRST_LEVEL || x.Type == (sbyte)CommentType.REPLY_SECOND_LEVEL) && x.Status == (sbyte)Status.ENABLE);
 
                         //5.2 评论最新回复的用户数据
                         if (item.ReplyCount > 0)
                         {
                             // 置顶 | 按时间降序 的三条数据
-                            var replys = await blogCommentService.GetPagedList(b => b.Grp == item.Grp && (b.Type == (sbyte)CommentTypeEnum.ReplyFir || b.Type == (sbyte)CommentTypeEnum.ReplySec) && b.Status == (sbyte)Status.Enable, 1, 3, 0, false, "Top desc,Created desc");
+                            var replys = await blogCommentService.GetPagedList(b => b.Grp == item.Grp && (b.Type == (sbyte)CommentType.REPLY_FIRST_LEVEL || b.Type == (sbyte)CommentType.REPLY_SECOND_LEVEL) && b.Status == (sbyte)Status.ENABLE, 1, 3, 0, false, "Top desc,Created desc");
 
                             foreach (var reply in replys)
                             {
@@ -87,18 +87,18 @@ namespace Manager.API.Controllers
                     list = result
                 };
 
-                return Ok(ApiResult.Success("获取博客评论列表成功", JsonData));
+                return Ok(Success("获取博客评论列表成功", JsonData));
             }
-            return Ok(ApiResult.Fail("暂无数据"));
+            return Ok(Fail("暂无数据"));
         }
 
         private async Task<BlogComment> BlogCommentRelation(BlogComment item, Guid? wId)
         {
             //2.评论用户的个人信息
-            item.UInfo = await accountInfoService.GetAccountInfoAndAvatarAndCoverById(item.UId);
+            item.UInfo = await accountInfoService.FirstOrDefaultAsync(item.UId);
 
             //3.被评论用户的个人信息
-            item.BuInfo = await accountInfoService.GetAccountInfoAndAvatarAndCoverById(item.BuId);
+            item.BuInfo = await accountInfoService.FirstOrDefaultAsync(item.BuId);
 
             //4.1点赞数
             item.Like = (await blogCommentLikeService.GetBlogCommentLikeCountBy(item.Id)).Int();
@@ -128,11 +128,11 @@ namespace Manager.API.Controllers
              */
 
             //0.参数校验 JSON SCHEMA
-            bool validator = JsonSchemaHelper.Validator<AddBlogCommentRequest>(req, out IList<string> errorMessages);
-            if (!validator)
-            {
-                return Ok(ApiResult.Fail(errorMessages, "参数错误"));
-            }
+            //bool validator = JsonSchemaHelper.Validator<AddBlogCommentRequest>(req, out IList<string> errorMessages);
+            //if (!validator)
+            //{
+            //    return Ok(ApiResult.Fail(errorMessages, "参数错误"));
+            //}
             //1.参数组合
             var blogComment = new BlogComment()
             {
@@ -146,12 +146,12 @@ namespace Manager.API.Controllers
                 PId = req.PId,
                 Grp = req.Grp,
                 Created = DateTime.Now,
-                Top = (sbyte)TopEnum.no,
-                Status = (sbyte)Status.Enable
+                Top = (sbyte)BoolType.NO,
+                Status = (sbyte)Status.ENABLE
             };
             //2.增加评论
             var res = await blogCommentService.AddBlogComment(blogComment);
-            return res ? Ok(ApiResult.Success("评论成功")) : Ok(ApiResult.Fail("评论失败"));
+            return res ? Ok(Success("评论成功")) : Ok(Fail("评论失败"));
         }
 
         /// <summary>
@@ -162,10 +162,10 @@ namespace Manager.API.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{type}/{grp}/{id}")]
-        public async Task<IActionResult> DeleteBlogComment(CommentTypeEnum type, Guid grp, Guid id)
+        public async Task<IActionResult> DeleteBlogComment(CommentType type, Guid grp, Guid id)
         {
             var res = await blogCommentService.DeleteBlogComment(type, grp, id);
-            return Ok(res.Item1 ? ApiResult.Success(res.Item2) : ApiResult.Fail(res.Item2));
+            return Ok(res.Item1 ? Success(res.Item2) : Fail(res.Item2));
         }
 
         /// <summary>
@@ -178,7 +178,7 @@ namespace Manager.API.Controllers
         public async Task<IActionResult> AddBlogCommentLike(Guid id, Guid uId)
         {
             var res = await blogCommentLikeService.AddBlogCommentLike(id, uId);
-            return res.Item1 ? Ok(ApiResult.Success()) : Ok(ApiResult.Fail(res.Item2));
+            return res.Item1 ? Ok(Success()) : Ok(Fail(res.Item2));
         }
 
         /// <summary>
@@ -191,7 +191,7 @@ namespace Manager.API.Controllers
         public async Task<IActionResult> DeleteBlogCommentLike(Guid id, Guid uId)
         {
             var res = await blogCommentLikeService.DeleteBlogCommentLike(id, uId);
-            return res.Item1 ? Ok(ApiResult.Success()) : Ok(ApiResult.Fail(res.Item2));
+            return res.Item1 ? Ok(Success()) : Ok(Fail(res.Item2));
         }
     }
 }
