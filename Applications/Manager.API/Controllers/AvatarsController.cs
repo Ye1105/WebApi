@@ -34,25 +34,20 @@ namespace Manager.API.Controllers
         /// <param name="req"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> GetLogAvatarList([FromQuery] QueryParameters req)
+        public async Task<IActionResult> AvatarPaged([FromQuery] QueryParameters req)
         {
             var result = await logAvatarService.GetPagedList(UId, req.PageIndex, req.PageSize, req.OffSet, req.OrderBy);
 
-            if (result != null && result.Any())
+            var JsonData = new
             {
-                var JsonData = new
-                {
-                    pageCount = result.TotalPages,
-                    currentPage = result.CurrentPage,
-                    pageSize = result.PageSize,
-                    totalCount = result.TotalCount,
-                    list = result
-                };
+                pageCount = result.TotalPages,
+                currentPage = result.CurrentPage,
+                pageSize = result.PageSize,
+                totalCount = result.TotalCount,
+                list = result
+            };
 
-                return Ok(Success(JsonData));
-            }
-            else
-                return Ok(Fail("查询头像分页列表为空"));
+            return Ok(Success(JsonData));
         }
 
         /// <summary>

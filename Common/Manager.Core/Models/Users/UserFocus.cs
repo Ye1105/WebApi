@@ -53,19 +53,8 @@ namespace Manager.Core.Models.Users
         [JsonProperty("created")]
         public DateTime? Created { get; set; }
 
-        /// <summary>
-        /// 当存在wId时，如果需要关联网站当前登录用户和buId的关系时，需要这个字段
-        /// </summary>
         [NotMapped]
-        [JsonProperty("selfRelation")]
-        public sbyte? SelfRelation { get; set; }//= (sbyte)FocusRelationEnum.UnFocus
-
-        [NotMapped]
-        [JsonProperty("uInfo")]
-        public AccountInfo? UInfo { get; set; }
-
-        [NotMapped]
-        [JsonProperty("buInfo")]
-        public AccountInfo? BuInfo { get; set; }
+        [JsonProperty("accountInfo")]
+        public AccountInfo? AccountInfo { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Manager.API.Utility;
 using Manager.API.Utility.Filters;
+using Manager.API.Utility.Schemas;
 using Manager.Core;
 using Manager.Core.Enums;
 using Manager.Core.RequestModels;
@@ -8,6 +9,9 @@ using Manager.Extensions;
 using Manager.Server.IServices;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Schema;
 
 namespace Manager.API.Controllers
 {
@@ -37,7 +41,7 @@ namespace Manager.API.Controllers
         /// <param name="req"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> GetRegister([FromBody] RegisterRequest req)
+        public async Task<IActionResult> Register([FromBody] RegisterRequest req)
         {
             /*
              * 1.通过手机号 和 Sms 查询是否存在腾讯 Sms 信息
@@ -47,7 +51,15 @@ namespace Manager.API.Controllers
              * 4.创建账号信息【Account,AccountInfo】
              */
 
-            var dt = DateTime.Now;
+            var jsonSchema = await JsonSchemas.GetSchema("register");
+
+            var schema = JSchema.Parse(jsonSchema);
+
+            var validate = JObject.Parse(JsonConvert.SerializeObject(req)).IsValid(schema, out IList<string> errorMessages);
+            if (!validate)
+            {
+                return Ok(Fail(errorMessages, "参数错误"));
+            }
 
             //正式服环境
             if (appSettings.Value.ServerStatus == (sbyte)ServerType.F0RMAL)
@@ -60,7 +72,7 @@ namespace Manager.API.Controllers
                 }
 
                 //2.如果存在，与当前时间比较判定是否超时
-                var timeSpan = DateHelper.SecondDiff(curSms.Created.Value, dt);
+                var timeSpan = DateHelper.SecondDiff(curSms.Created.Value, DateTime.Now);
                 if (timeSpan > 300)  //5分钟内有效
                 {
                     return Ok(Fail("验证码的存储时间和用户发送的注册时间间隔大于5分钟", "验证码过期"));
@@ -89,7 +101,7 @@ namespace Manager.API.Controllers
             }
 
             //4.创建账号信息【Account,AccountInfo】
-            var res = await accountService.CreateAccount(req.Name, req.Pssword, req.Phone, req.NickName);
+            var res = await accountService.CreateAccount(req.Name, req.Pwd, req.Phone, req.NickName);
 
             return res ? Ok(Success("注册成功")) : Ok(Fail("注册失败"));
         }

@@ -50,19 +50,14 @@ namespace Manager.API.Controllers
              * 5.调用sms第三方接口
              */
 
-            var dt = DateTime.Now;
-
             //1.校验参数 phone 是否为手机号
-            if (!phone.Validator(
-                RegexHelper.PhonePattern,
-                (phone, pattern) => Regex.IsMatch(phone, pattern)
-            ))
+            if (!Regex.IsMatch(RegexHelper.PhonePattern, RegexHelper.PhonePattern))
             {
                 return Ok(Fail("不是合法的手机号"));
             }
 
             //2.校验1分钟内是否已经存在有已发送短信
-            var minuteLimitRes = tencentService.GetTencentSms(phone, dt.AddMinutes(-1));
+            var minuteLimitRes = tencentService.GetTencentSms(phone, DateTime.Now.AddMinutes(-1));
             if (minuteLimitRes)
             {
                 return Ok(Fail($"1分钟内已经存在已发送短信"));
@@ -119,12 +114,7 @@ namespace Manager.API.Controllers
              */
 
             //1.邮箱参数校验
-            var validator = mail.Validator(
-                RegexHelper.MailPattern,
-                (mail, pattern) => Regex.IsMatch(mail, pattern)
-             );
-
-            if (!validator)
+            if (!Regex.IsMatch(mail, RegexHelper.MailPattern))
             {
                 return Ok(Fail("不是合法的邮箱"));
             }

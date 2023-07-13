@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace Manager.Core.RequestModels
 {
-    public class CreateBlogRequest
+    public class AddBlogRequest
     {
         /// <summary>
         /// 用户Id

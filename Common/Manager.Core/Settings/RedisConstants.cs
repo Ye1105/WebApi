@@ -26,5 +26,15 @@
         /// 头像分页列表
         /// </summary>
         public static readonly string PREFIX_AVATAR_PAGED = "avatar_paged:";
+
+        /// <summary>
+        /// 封面分页列表
+        /// </summary>
+        public static readonly string PREFIX_COVER_PAGED = "cover_paged:";
+
+        /// <summary>
+        /// 用户分组
+        /// </summary>
+        public static readonly string PREFIX_USER_GROUP= "usergroup:";
     }
 }

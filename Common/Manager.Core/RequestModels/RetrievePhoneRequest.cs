@@ -9,14 +9,13 @@ namespace Manager.Core.RequestModels
         /// 手机号
         /// </summary>
         [JsonProperty("phone")]
-        [Phone]
         public string Phone { get; set; }
 
         /// <summary>
         /// 新的密码
         /// </summary>
-        [JsonProperty("password")]
-        public string Password { get; set; }
+        [JsonProperty("pwd")]
+        public string Pwd { get; set; }
 
         /// <summary>
         /// sms

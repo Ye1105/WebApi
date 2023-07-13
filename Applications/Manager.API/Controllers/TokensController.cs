@@ -42,7 +42,8 @@ namespace Manager.API.Controllers
         /// <param name="refreshToken"></param>
         /// <returns></returns>
         [HttpPut]
-        public async Task<IActionResult> UpdateAccessToken([FromBody] TokenRequest req)
+        [Obsolete]
+        public async Task<IActionResult> TokenRefresh([FromBody] TokenRequest req)
         {
             /*
              * 1.先通过纯代码校验 refreshToken 的物理合法性

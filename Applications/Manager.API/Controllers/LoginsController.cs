@@ -47,7 +47,7 @@ namespace Manager.API.Controllers
         /// <param name="pwd"></param>
         /// <returns></returns>
         [HttpGet("logins")]
-        public async Task<IActionResult> GetLoginPwd([FromForm] string phone, [FromForm] string pwd)
+        public async Task<IActionResult> LoginPwd([FromForm] string phone, [FromForm] string pwd)
         {
             /*
              * 1.jsonschema 校验
@@ -116,7 +116,7 @@ namespace Manager.API.Controllers
         /// <param name="sms"></param>
         /// <returns></returns>
         [HttpGet("logins/sms")]
-        public async Task<IActionResult> GetLoginSms([FromForm] string phone, [FromForm] string sms)
+        public async Task<IActionResult> LoginSms([FromForm] string phone, [FromForm] string sms)
         {
             /*
              * 1.校验参数 ： phone sms

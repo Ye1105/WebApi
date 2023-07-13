@@ -1,4 +1,5 @@
-﻿using Manager.Core.Models.Users;
+﻿using Manager.Core.Enums;
+using Manager.Core.Models.Users;
 using Manager.Core.Page;
 using System.Linq.Expressions;
 
@@ -36,15 +37,15 @@ namespace Manager.Server.IServices
         /// <param name="offset">索引偏移</param>
         /// <param name="isTrack">是否追踪</param>
         /// <param name="orderBy">排序</param>
-        /// <param name="uId">关注id</param>
-        /// <param name="buId">被关注id</param>
+        /// <param name="relationType">关系类型</param>
+        /// <param name="uId">用户id</param>
         /// <param name="grp">分组成员</param>
         /// <param name="relation">关系 0:关注  1:特别关注</param>
         /// <param name="channel">渠道 0:web  1: mobile</param>
         /// <param name="startTime">开始时间 null:不筛选</param>
         /// <param name="endTime">结束时间 null:不筛选</param>
         /// <returns></returns>
-        Task<PagedList<UserFocus>?> GetPagedList(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "", Guid? uId = null, Guid? buId = null, string? grp = null, sbyte? relation = null, sbyte? channel = null, DateTime? startTime = null, DateTime? endTime = null);
+        Task<PagedList<UserFocus>?> GetPagedList(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "", RelationType relationType = RelationType.FOCUS, Guid? uId = null, string? grp = null, sbyte? relation = null, sbyte? channel = null, DateTime? startTime = null, DateTime? endTime = null);
 
         /// <summary>
         /// 修改关注关系
