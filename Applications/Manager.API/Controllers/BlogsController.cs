@@ -1,5 +1,6 @@
 ﻿using Manager.API.Utility;
 using Manager.API.Utility.Filters;
+using Manager.API.Utility.Schemas;
 using Manager.Core;
 using Manager.Core.AuthorizationModels;
 using Manager.Core.Enums;
@@ -10,6 +11,9 @@ using Manager.Extensions;
 using Manager.Server.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Schema;
+using Newtonsoft.Json;
 using Serilog;
 using System.Text.RegularExpressions;
 
@@ -43,206 +47,211 @@ namespace Manager.API.Controllers
         /// <param name="req"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult CreateBlog([FromBody] AddBlogRequest req)
+        public async Task<IActionResult> Add([FromBody] AddBlogRequest req)
         {
             try
             {
-                lock (CreateLock)
+
+                /*
+                 * 0. Json Schema 参数校验
+                 * 1. 敏感词校验
+                 * 2. blog 参数赋值
+                 * 3.1 重复性校验：1分钟内是否发布超过10条博客
+                 * 3.2 重复性校验：10分钟内是否存在相同的博客
+                 * 4.1 创建blog
+                 * 4.2 如果发表的是图片blog，创建图片实例
+                 * 4.3 如果发布的是视频blog，创建视频实例
+                 * 5. 正则:是否有新话题产生
+                 * 6. 写入数据
+                 * 7. 返回数据
+                 */
+
+                //0.Json Schema 参数校验
+
+                var jsonSchema = await JsonSchemas.GetSchema("blog-add");
+
+                var schema = JSchema.Parse(jsonSchema);
+
+                var validate = JObject.Parse(JsonConvert.SerializeObject(req)).IsValid(schema, out IList<string> errorMessages);
+                if (!validate)
                 {
-                    /*
-                     * 0. Json Schema 参数校验
-                     * 1. 敏感词校验
-                     * 2. blog 参数赋值
-                     * 3.1 重复性校验：1分钟内是否发布超过10条博客
-                     * 3.2 重复性校验：10分钟内是否存在相同的博客
-                     * 4.1 创建blog
-                     * 4.2 如果发表的是图片blog，创建图片实例
-                     * 4.3 如果发布的是视频blog，创建视频实例
-                     * 5. 正则:是否有新话题产生
-                     * 6. 写入数据
-                     * 7. 返回数据
-                     */
+                    return Ok(Fail(errorMessages, "参数错误"));
+                }
 
-                    //0.Json Schema 参数校验
-                    //bool validator = JsonSchemaHelper.Validator<CreateBlogRequest>(req, out IList<string> errorMessages);
-                    //if (!validator)
-                    //{
-                    //    return Ok(ApiResult.Fail(errorMessages, "参数错误"));
-                    //}
 
-                    //1.敏感词校验
+                //1.敏感词校验
 
-                    //2.blog 参数赋值
-                    var dt = DateTime.Now;
-                    var bId = Guid.NewGuid();
+                //2.blog 参数赋值
+                var dt = DateTime.Now;
+                var bId = Guid.NewGuid();
 
-                    //3.1 重复性校验：1分钟内是否发布超过10条博客
-                    var filterCount = blogService.GetBlogCountBySync(x => x.UId == req.UId && x.Created > dt.AddMinutes(-1), false);
-                    if (filterCount > 10)
+                //3.1 重复性校验：1分钟内是否发布超过10条博客
+                var filterCount = blogService.GetBlogCountBySync(x => x.UId == UId && x.Created > dt.AddMinutes(-1), false);
+                if (filterCount > 10)
+                {
+                    return Ok(Fail("1分钟内发布超过10条博客", "您发布博客的频率过高，请稍后重试"));
+                }
+
+                //3.2 重复性校验：10分钟内是否存在相同的博客
+                var filterBody = blogService.GetBlogCountBySync(x => x.UId == UId && x.Created > dt.AddMinutes(-10) && x.Body == req.Body, false);
+                if (filterCount > 0)
+                {
+                    return Ok(Fail("10分钟内有已有重复博客", "文本内容相同，请隔10分钟后发布"));
+                }
+
+                //4.1创建blog
+                var blog = new Blog()
+                {
+                    Id = bId,
+                    UId = UId,
+                    Sort = (sbyte)req.Sort,
+                    Type = (sbyte)req.Type,
+                    Body = req.Body,
+                    FId = Guid.Empty,
+                    Created = dt,
+                    Top = (sbyte)BoolType.NO,
+                    Status = req.Type == BlogType.TEXT ? (sbyte)Status.ENABLE : (sbyte)Status.UNDER_REVIEW
+                };
+
+                //4.2 如果发布的是图片blog，创建图片实例
+                if (req.Type == (int)BlogType.IMAGE)
+                {
+                    if (req.Images != null && req.Images.Any())
                     {
-                        return Ok(Fail("1分钟内发布超过10条博客", "您发布博客的频率过高，请稍后重试"));
-                    }
-
-                    //3.2 重复性校验：10分钟内是否存在相同的博客
-                    var filterBody = blogService.GetBlogCountBySync(x => x.UId == req.UId && x.Created > dt.AddMinutes(-10) && x.Body == req.Body, false);
-                    if (filterCount > 0)
-                    {
-                        return Ok(Fail("10分钟内有已有重复博客", "文本内容相同，请隔10分钟后发布"));
-                    }
-
-                    //4.1创建blog
-                    var blog = new Blog()
-                    {
-                        Id = bId,
-                        UId = req.UId,
-                        Sort = (sbyte)req.Sort,
-                        Type = (sbyte)req.Type,
-                        Body = req.Body,
-                        FId = Guid.Empty,
-                        Created = dt,
-                        Top = (sbyte)BoolType.NO,
-                        Status = req.Type == BlogType.TEXT ? (sbyte)Status.ENABLE : (sbyte)Status.UNDER_REVIEW
-                    };
-
-                    //4.2 如果发布的是图片blog，创建图片实例
-                    if (req.Type == (int)BlogType.IMAGE)
-                    {
-                        if (req.Images != null && req.Images.Any())
+                        blog.Images = new List<BlogImage>();
+                        foreach (var item in req.Images)
                         {
-                            blog.Images = new List<BlogImage>();
-                            foreach (var item in req.Images)
-                            {
-                                blog.Images.Add(new BlogImage()
-                                {
-                                    Id = Guid.NewGuid(),
-                                    UId = req.UId,
-                                    BId = bId,
-                                    Url = item.Url,
-                                    Blurhash = item.Blurhash,
-                                    Width = item.Width,
-                                    Height = item.Height,
-                                    Created = dt,
-                                    Status = (sbyte)Status.UNDER_REVIEW,
-                                });
-                            };
-                        }
-                        else
-                        {
-                            return Ok(Fail("图片列表为空"));
-                        }
-                    }
-
-                    //4.3 如果发布的是视频blog，创建视频实例
-                    if ((sbyte)req.Type == (sbyte)BlogType.VIDEO)
-                    {
-                        if (req.Video != null)
-                        {
-                            var v = req.Video;
-
-                            blog.Video = new BlogVideo()
+                            blog.Images.Add(new BlogImage()
                             {
                                 Id = Guid.NewGuid(),
-                                UId = req.UId,
+                                UId = UId,
                                 BId = bId,
-                                Title = v.Title,
-                                Channel = v.Channel.SerObj(),
-                                Collection = v.Collection.SerObj(),
-                                Type = v.Type.SerObj(),
-                                Url = v.Url,
-                                Duration = v.Duration,
+                                Url = item.Url,
+                                Blurhash = item.Blurhash,
+                                Width = item.Width,
+                                Height = item.Height,
                                 Created = dt,
                                 Status = (sbyte)Status.UNDER_REVIEW,
-                                CUrl = v.CUrl,
-                                CWidth = v.CWidth,
-                                CHeight = v.CHeight,
-                                CHashblur = v.CHashblur
+                            });
+                        };
+                    }
+                    else
+                    {
+                        return Ok(Fail("图片列表为空"));
+                    }
+                }
+
+                //4.3 如果发布的是视频blog，创建视频实例
+                if ((sbyte)req.Type == (sbyte)BlogType.VIDEO)
+                {
+                    if (req.Video != null)
+                    {
+                        var v = req.Video;
+
+                        blog.Video = new BlogVideo()
+                        {
+                            Id = Guid.NewGuid(),
+                            UId = UId,
+                            BId = bId,
+                            Title = v.Title,
+                            Channel = v.Channel.SerObj(),
+                            Collection = v.Collection.SerObj(),
+                            Type = v.Type.SerObj(),
+                            Url = v.Url,
+                            Duration = v.Duration,
+                            Created = dt,
+                            Status = (sbyte)Status.UNDER_REVIEW,
+                            CUrl = v.CUrl,
+                            CWidth = v.CWidth,
+                            CHeight = v.CHeight,
+                            CHashblur = v.CHashblur
+                        };
+                    }
+                    else
+                    {
+                        return Ok(Fail("视频为空"));
+                    }
+                }
+
+                List<BlogTopic> blogTopics = new();
+                UserTopic? userTopic = null;
+                //5. 正则:是否有新话题产生
+                if (RegexHelper.RegexList(
+                        req.Body,
+                        RegexHelper.TopicPattern,
+                        (context, pattern) =>
+                        {
+                            List<string> list = new();
+                            foreach (Match match in Regex.Matches(context, pattern, RegexOptions.Multiline).Cast<Match>()) //MatchCollection
+                            {
+                                if (match != null)
+                                {
+                                    list.Add(match.Value);
+                                }
+                            }
+                            return list;
+                        },
+                        out List<string> tags)
+                    )
+                {
+                    tags.ForEach(t =>
+                    {
+                        //判定是否已经存在话题 blog_topic user_topic
+                        var topic = blogTopicService.GetBlogTopicBySync(x => x.Title == t, false);
+                        if (topic == null)
+                        {
+                            var Id = Guid.NewGuid();
+                            blogTopics.Add(
+                                new BlogTopic()
+                                {
+                                    Id = Id,
+                                    Title = t,
+                                    DiscussCount = 0,
+                                    ReadCount = 0,
+                                    SearchCount = 0,
+                                    Type = 0,
+                                    Status = (sbyte)Status.ENABLE,
+                                    Created = dt,
+                                }
+                            );
+                            userTopic = new UserTopic()
+                            {
+                                Id = Guid.NewGuid(),
+                                TopicId = Id,
+                                UId = UId,
+                                Created = dt
                             };
                         }
                         else
                         {
-                            return Ok(Fail("视频为空"));
-                        }
-                    }
-
-                    List<BlogTopic> blogTopics = new();
-                    UserTopic? userTopic = null;
-                    //5. 正则:是否有新话题产生
-                    if (RegexHelper.RegexList(
-                            req.Body,
-                            RegexHelper.TopicPattern,
-                            (context, pattern) =>
+                            userTopic = new UserTopic()
                             {
-                                List<string> list = new();
-                                foreach (Match match in Regex.Matches(context, pattern, RegexOptions.Multiline).Cast<Match>()) //MatchCollection
-                                {
-                                    if (match != null)
-                                    {
-                                        list.Add(match.Value);
-                                    }
-                                }
-                                return list;
-                            },
-                            out List<string> tags)
-                        )
-                    {
-                        tags.ForEach(t =>
-                        {
-                            //判定是否已经存在话题 blog_topic user_topic
-                            var topic = blogTopicService.GetBlogTopicBySync(x => x.Title == t, false);
-                            if (topic == null)
-                            {
-                                var Id = Guid.NewGuid();
-                                blogTopics.Add(
-                                    new BlogTopic()
-                                    {
-                                        Id = Id,
-                                        Title = t,
-                                        DiscussCount = 0,
-                                        ReadCount = 0,
-                                        SearchCount = 0,
-                                        Type = 0,
-                                        Status = (sbyte)Status.ENABLE,
-                                        Created = dt,
-                                    }
-                                );
-                                userTopic = new UserTopic()
-                                {
-                                    Id = Guid.NewGuid(),
-                                    TopicId = Id,
-                                    UId = req.UId,
-                                    Created = dt
-                                };
-                            }
-                            else
-                            {
-                                userTopic = new UserTopic()
-                                {
-                                    Id = Guid.NewGuid(),
-                                    TopicId = topic.Id,
-                                    UId = req.UId,
-                                    Created = dt
-                                };
-                            }
-                        });
-                    }
-
-                    //6.写入数据
-                    if (blogService.CreateBlogSync(blog, blogTopics, userTopic))
-                    {
-                        // 6. 返回数据
-                        var newBlog = blogService.GetBlogBySync(x => x.Id == bId);
-                        if (newBlog == null)
-                        {
-                            return Ok(Success("发布博客失败", new { }));
+                                Id = Guid.NewGuid(),
+                                TopicId = topic.Id,
+                                UId = UId,
+                                Created = dt
+                            };
                         }
-                        else
-                        {
-                            blogService.GetBlogRelation(newBlog, req.UId).Wait();
-                            return Ok(Success("发布博客成功", newBlog));
-                        }
-                    }
-                    return Ok(Fail("发布博客失败"));
+                    });
                 }
+
+                //6.写入数据
+                if (blogService.CreateBlogSync(blog, blogTopics, userTopic))
+                {
+                    // 6. 返回数据
+                    var newBlog = blogService.GetBlogBySync(x => x.Id == bId);
+                    if (newBlog == null)
+                    {
+                        return Ok(Success("发布博客失败", new { }));
+                    }
+                    else
+                    {
+                        blogService.GetBlogRelation(newBlog, UId).Wait();
+                        return Ok(Success("发布博客成功", newBlog));
+                    }
+                }
+                return Ok(Fail("发布博客失败"));
+
             }
             catch (Exception ex)
             {

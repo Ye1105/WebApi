@@ -13,7 +13,7 @@ namespace Manager.API.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("v1/api/usergroups")]
+    [Route("v1/api/groups")]
     [ApiExplorerSettings(GroupName = nameof(ApiVersionInfo.V1))]
     [CustomExceptionFilter]
     public class UserGroupsController : ApiController
@@ -33,7 +33,7 @@ namespace Manager.API.Controllers
         /// <param name="uId"></param>
         /// <returns></returns>
         [HttpGet("{uId}")]
-        public async Task<IActionResult> GetUserGroup(Guid uId)
+        public async Task<IActionResult> Group(Guid uId)
         {
             var res = await userGroupService.GetUserGroupByUId(uId);
             return res != null ? Ok(Success(res)) : Ok(Fail("获取用户分组失败"));
@@ -42,11 +42,10 @@ namespace Manager.API.Controllers
         /// <summary>
         /// 用户分组：新增grp中的成员
         /// </summary>
-        /// <param name="uId"></param>
         /// <param name="grp"></param>
         /// <returns></returns>
         [HttpPut]
-        public async Task<IActionResult> Add([FromQuery] Guid uId, [FromQuery] string grp)
+        public async Task<IActionResult> Add([FromQuery] string grp)
         {
             /* 1.获取当前用户的Grp【是否存在】
              * 2.判定新增的分组是否已经存在
@@ -59,7 +58,7 @@ namespace Manager.API.Controllers
                 return Ok(Fail("分组为空"));
             }
             // 1.获取当前用户的Grp【是否存在】
-            var userGroup = await userGroupService.GetUserGroupBy(x => x.UId == uId, true);
+            var userGroup = await userGroupService.GetUserGroupBy(x => x.UId == UId, true);
             if (userGroup != null)
             {
                 dynamic groupArray = userGroup.Grp.DesObj();
@@ -89,7 +88,7 @@ namespace Manager.API.Controllers
         /// <param name="grp"></param>
         /// <returns></returns>
         [HttpDelete]
-        public async Task<IActionResult> Del([FromQuery] Guid uId, [FromQuery] string grp)
+        public async Task<IActionResult> Del([FromQuery] string grp)
         {
             /* 1.获取当前用户的Grp【是否存在】
              * 2.判定删除的分组是否已经存在
@@ -104,7 +103,7 @@ namespace Manager.API.Controllers
 
             var curGrp = $"\"{grp}\"";
             // 1.获取当前用户的Grp【是否存在】
-            var userGroup = await userGroupService.GetUserGroupBy(x => x.UId == uId, true);
+            var userGroup = await userGroupService.GetUserGroupBy(x => x.UId == UId, true);
             if (userGroup != null)
             {
                 //2.转变为 ArrayList

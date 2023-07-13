@@ -28,7 +28,7 @@
         "title": "用户昵称"
       },
       "sex": {
-        "type": "number",
+        "type": "integer",
         "enum": [
           0,
           1,
@@ -88,7 +88,7 @@
       },
       "emotion": {
         "title": "情感状态",
-        "type": "number",
+        "type": "integer",
         "enum": [
           -1,
           0,
@@ -228,7 +228,7 @@
         "pattern": "^[\\S]{6,12}$"
       }
     },
-    "require": [
+    "required": [
       "phone",
       "sms",
       "name",
@@ -256,7 +256,7 @@
         "pattern": "^[\\S]{6,12}$"
       }
     },
-    "require": [
+    "required": [
       "phone",
       "sms",
       "pwd"
@@ -282,7 +282,7 @@
         "pattern": "^[\\S]{6,12}$"
       }
     },
-    "require": [
+    "required": [
       "mail",
       "sms",
       "pwd"
@@ -294,7 +294,7 @@
       "relation": {
         "oneOf": [
           {
-            "type": "number",
+            "type": "integer",
             "enum": [
               0,
               1
@@ -309,7 +309,7 @@
       "channel": {
         "oneOf": [
           {
-            "type": "number",
+            "type": "integer",
             "enum": [
               0,
               1
@@ -329,7 +329,7 @@
       "relation": {
         "oneOf": [
           {
-            "type": "number",
+            "type": "integer",
             "enum": [
               0,
               1
@@ -344,7 +344,7 @@
       "channel": {
         "oneOf": [
           {
-            "type": "number",
+            "type": "integer",
             "enum": [
               0,
               1
@@ -372,6 +372,153 @@
     },
     "required": [
       "grps"
+    ]
+  },
+  "blog-add": {
+    "type": "object",
+    "properties": {
+      "sort": {
+        "type": "integer",
+        "title": "分类",
+        "description": "0.公开  1.仅自己可见  2.好友圈  3.粉丝  4.热推  5.广告",
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "default": 0
+      },
+      "type": {
+        "type": "integer",
+        "enum": [
+          -1,
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "default": 4,
+        "title": "类型",
+        "description": " -1.全部  0.图片  1.视频   2.头条文章  3.音乐  4.普通文字(表情)"
+      },
+      "body": {
+        "type": "string",
+        "title": "内容"
+      },
+      "images": {
+        "title": "图片列表",
+        "type": [
+          "array",
+          "null"
+        ],
+        "items": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string",
+              "title": "相对地址"
+            },
+            "blurhash": {
+              "type": "string",
+              "title": "占位符"
+            },
+            "width": {
+              "title": "宽度",
+              "type": "number"
+            },
+            "height": {
+              "title": "高度",
+              "type": "number"
+            }
+          },
+          "required": [
+            "url",
+            "blurhash",
+            "width",
+            "height"
+          ]
+        },
+        "description": "图片对象"
+      },
+      "video": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "标题"
+          },
+          "channel": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "频道"
+          },
+          "collection": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "集合"
+          },
+          "type": {
+            "title": "类型",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "url": {
+            "type": "string",
+            "title": "视频地址"
+          },
+          "duration": {
+            "title": "视频时长",
+            "type": "integer"
+          },
+          "cUrl": {
+            "type": "string",
+            "title": "封面地址"
+          },
+          "cWidth": {
+            "title": "封面宽度",
+            "type": "integer"
+          },
+          "cHeight": {
+            "title": "封面高度",
+            "type": "integer"
+          },
+          "CHashblur": {
+            "type": "string",
+            "title": "封面占位符"
+          }
+        },
+        "required": [
+          "title",
+          "channel",
+          "collection",
+          "type",
+          "url",
+          "duration",
+          "cUrl",
+          "cWidth",
+          "cHeight",
+          "CHashblur"
+        ],
+        "title": "视频对象"
+      }
+    },
+    "required": [
+      "sort",
+      "type",
+      "body"
     ]
   }
 }

@@ -5,11 +5,6 @@ namespace Manager.Core.RequestModels
 {
     public class AddBlogRequest
     {
-        /// <summary>
-        /// 用户Id
-        /// </summary>
-        [JsonProperty("uId")]
-        public Guid UId { get; set; }
 
         /// <summary>
         /// 种类： 0.公开  1.仅自己可见  2.好友圈  3.粉丝  4.热推  5.广告
@@ -29,11 +24,6 @@ namespace Manager.Core.RequestModels
         [JsonProperty("body")]
         public string Body { get; set; }
 
-        /// <summary>
-        /// 0 启用  1 禁用
-        /// </summary>
-        [JsonProperty("status")]
-        public Status? Status { get; set; }
 
         /// <summary>
         /// 图片列表
