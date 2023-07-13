@@ -1,4 +1,5 @@
 ﻿using Manager.Core.Models.Users;
+using Manager.Core.Settings;
 using Manager.Extensions;
 using Manager.Infrastructure.IRepositoies;
 using Manager.Server.IServices;
@@ -12,8 +13,6 @@ namespace Manager.Server.Services
     public class UserGroupService : IUserGroupService
     {
         private readonly IBase baseService;
-
-        private readonly string Prefix_UserGroup = "UserGroup:";
 
         public UserGroupService(IBase baseService)
         {
@@ -33,7 +32,7 @@ namespace Manager.Server.Services
             {
                 using var cli = Instance(RedisBaseEnum.Zeroth);
 
-                var keyName = $"{Prefix_UserGroup}{userGroup.UId}";
+                var keyName = $"{RedisConstants.PREFIX_USER_GROUP}{userGroup.UId}";
 
                 await cli.DelAsync(keyName);
             }
@@ -51,7 +50,7 @@ namespace Manager.Server.Services
                  * 3.未命中则从mysql获取值，然后更新缓存值，并返回值
                  *
                  */
-                var keyName = $"{Prefix_UserGroup}{uId}";
+                var keyName = $"{RedisConstants.PREFIX_USER_GROUP}{uId}";
 
                 using var cli = Instance(RedisBaseEnum.Zeroth);
 

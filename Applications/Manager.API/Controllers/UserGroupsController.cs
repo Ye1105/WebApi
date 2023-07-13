@@ -46,7 +46,7 @@ namespace Manager.API.Controllers
         /// <param name="grp"></param>
         /// <returns></returns>
         [HttpPut]
-        public async Task<IActionResult> AddUserGroup([FromQuery] Guid uId, [FromQuery] string grp)
+        public async Task<IActionResult> Add([FromQuery] Guid uId, [FromQuery] string grp)
         {
             /* 1.获取当前用户的Grp【是否存在】
              * 2.判定新增的分组是否已经存在
@@ -89,7 +89,7 @@ namespace Manager.API.Controllers
         /// <param name="grp"></param>
         /// <returns></returns>
         [HttpDelete]
-        public async Task<IActionResult> DelUserGroup([FromQuery] Guid uId, [FromQuery] string grp)
+        public async Task<IActionResult> Del([FromQuery] Guid uId, [FromQuery] string grp)
         {
             /* 1.获取当前用户的Grp【是否存在】
              * 2.判定删除的分组是否已经存在

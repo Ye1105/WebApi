@@ -17,7 +17,7 @@ namespace Manager.Server.Services
     {
         private readonly IBase baseService;
 
-        private readonly string Prefix_CoverPagedList = "Cover:PagedList:";
+
 
         public LogCoverService(IBase baseService)
         {
@@ -48,11 +48,11 @@ namespace Manager.Server.Services
                 {
                     using var cli = Instance(RedisBaseEnum.Zeroth);
 
-                    var keyName = $"{RedisConstants.PREFIX_ACCOUNT_INFO}{logCover.UId}";
+                    var keyNameCover = $"{RedisConstants.PREFIX_ACCOUNT_INFO}{logCover.UId}";
 
-                    var keyNamePagedList = $"{Prefix_CoverPagedList}{logCover.UId}";
+                    var keyNamePagedList = $"{RedisConstants.PREFIX_COVER_PAGED}{logCover.UId}";
 
-                    await cli.DelAsync(keyName, keyNamePagedList);
+                    await cli.DelAsync(keyNameCover, keyNamePagedList);
                 }
 
                 return Tuple.Create(res, "");
@@ -78,7 +78,7 @@ namespace Manager.Server.Services
                  * 4. 递归循环一次当前方法
                  */
 
-                var keyName = $"{Prefix_CoverPagedList}{uId}";
+                var keyName = $"{RedisConstants.PREFIX_COVER_PAGED}{uId}";
 
                 using var cli = Instance(RedisBaseEnum.Zeroth);
 

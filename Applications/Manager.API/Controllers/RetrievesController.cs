@@ -1,11 +1,13 @@
 ﻿using Manager.API.Utility;
 using Manager.API.Utility.Filters;
+using Manager.API.Utility.Schemas;
 using Manager.Core;
 using Manager.Core.RequestModels;
-using Manager.Extensions;
 using Manager.Server.IServices;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.RegularExpressions;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Schema;
 
 namespace Manager.API.Controllers
 {
@@ -33,22 +35,24 @@ namespace Manager.API.Controllers
         /// <param name="req"></param>
         /// <returns></returns>
         [HttpPatch("phones")]
-        public async Task<IActionResult> SetLoginRetrievePhone([FromBody] RetrievePhoneRequest req)
+        public async Task<IActionResult> RetrievePhone([FromBody] RetrievePhoneRequest req)
         {
             /*
-             * 1.手机号校验
+             * 1.jsonschema 校验
              * 2.验证码是否过期
              * 3.更新账号密码
              */
 
-            //1.手机号校验
-            var validator = req.Phone.Validator(
-                RegexHelper.PhonePattern,
-                (phone, pattern) => Regex.IsMatch(phone, pattern)
-            );
-            if (!validator)
+            //1. jsonschema
+
+            var jsonSchema = await JsonSchemas.GetSchema("retrieve-sms");
+
+            var schema = JSchema.Parse(jsonSchema);
+
+            var validate = JObject.Parse(JsonConvert.SerializeObject(req)).IsValid(schema, out IList<string> errorMessages);
+            if (!validate)
             {
-                return Ok(Fail("不是合法的手机号"));
+                return Ok(Fail(errorMessages, "参数错误"));
             }
 
             //2.验证码是否过期
@@ -60,7 +64,7 @@ namespace Manager.API.Controllers
             }
 
             //3.更新账号密码
-            if (await accountService.ModifyAccountPassword(x => x.Phone == req.Phone, req.Password))
+            if (await accountService.ModifyAccountPassword(x => x.Phone == req.Phone, req.Pwd))
             {
                 return Ok(Success("密码重置成功"));
             }
@@ -75,22 +79,21 @@ namespace Manager.API.Controllers
         /// <param name="params"></param>
         /// <returns></returns>
         [HttpPatch("mails")]
-        public async Task<IActionResult> SetLoginRetrieveMail([FromBody] RetrieveMailRequest req)
+        public async Task<IActionResult> RetrieveMail([FromBody] RetrieveMailRequest req)
         {
             /*
-             * 1.邮箱校验
+             * 1.jsonschema 校验
              * 2.验证码是否过期
              * 3.更新账号密码
              */
 
-            //1.邮箱校验
-            var validator = req.Mail.Validator(
-                RegexHelper.MailPattern,
-                (mail, pattern) => Regex.IsMatch(mail, pattern)
-            );
-            if (!validator)
+            //1. jsonschema
+            var jsonSchema = await JsonSchemas.GetSchema("retrieve-mail");
+            var schema = JSchema.Parse(jsonSchema);
+            var validate = JObject.Parse(JsonConvert.SerializeObject(req)).IsValid(schema, out IList<string> errorMessages);
+            if (!validate)
             {
-                return Ok(Fail("不是合法的邮箱"));
+                return Ok(Fail(errorMessages, "参数错误"));
             }
 
             //2.验证码是否过期
@@ -102,7 +105,7 @@ namespace Manager.API.Controllers
             }
 
             //3.更新账号密码
-            if (await accountService.ModifyAccountPassword(x => x.Mail == req.Mail, req.Password))
+            if (await accountService.ModifyAccountPassword(x => x.Mail == req.Mail, req.Pwd))
             {
                 return Ok(Success("密码重置成功"));
             }

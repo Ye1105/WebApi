@@ -43,7 +43,7 @@ namespace Manager.API.Controllers
         /// <param name="req"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult CreateBlog([FromBody] CreateBlogRequest req)
+        public IActionResult CreateBlog([FromBody] AddBlogRequest req)
         {
             try
             {
@@ -289,7 +289,7 @@ namespace Manager.API.Controllers
         /// <returns></returns>
         [Authorize(Policy = Policys.VIP)]
         [HttpPatch("{id}/sort/{sort}")]
-        public async Task<IActionResult> EditBlogSort(Guid id, BlogSort sort)
+        public async Task<IActionResult> UpdateSort(Guid id, BlogSort sort)
         {
             var blog = await blogService.GetBlogBy(x => x.Id == id && x.Status == (sbyte)Status.ENABLE && x.Sort != (sbyte)sort);
             if (blog == null)

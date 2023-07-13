@@ -55,6 +55,16 @@
         AUDIT_FAILURE = 3,
     }
 
+    public enum Relation
+    {
+
+        [EnumDescription("关注")]
+        FOCUS = 0,
+
+        [EnumDescription("特别关注")]
+        SPECIAL_FOCUS = 1,
+    }
+
     /// <summary>
     /// 关注关系
     /// </summary>
@@ -72,6 +82,19 @@
         [EnumDescription("特别关注")]
         SPECIAL_FOCUS = 1,
     }
+
+    /// <summary>
+    /// 关系类型
+    /// </summary>
+    public enum RelationType
+    {
+        [EnumDescription("粉丝")]
+        FAN = 1,
+
+        [EnumDescription("关注")]
+        FOCUS = 2,
+    }
+
 
     /// <summary>
     /// 关注渠道

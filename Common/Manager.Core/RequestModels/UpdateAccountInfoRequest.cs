@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Manager.Core.RequestModels
 {
-    public class EditAccountInfoRequest
+    public class UpdateAccountInfoRequest
     {
         /// <summary>
         /// 昵称

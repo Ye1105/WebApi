@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations;
 
 namespace Manager.Core.RequestModels
 {
@@ -8,15 +7,14 @@ namespace Manager.Core.RequestModels
         /// <summary>
         /// 邮箱地址
         /// </summary>
-        [EmailAddress]
         [JsonProperty("mail")]
         public string Mail { get; set; }
 
         /// <summary>
         /// 新的密码
         /// </summary>
-        [JsonProperty("password")]
-        public string Password { get; set; }
+        [JsonProperty("pwd")]
+        public string Pwd { get; set; }
 
         /// <summary>
         /// sms

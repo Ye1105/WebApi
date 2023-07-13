@@ -19,7 +19,7 @@
       "pwd"
     ]
   },
-  "accountinfo-edit": {
+  "accountinfo-update": {
     "type": "object",
     "description": "修改accountinfo",
     "properties:": {
@@ -132,7 +132,7 @@
       "birthday"
     ]
   },
-  "account-edit": {
+  "account-update": {
     "type": "object",
     "description": "修改账号信息",
     "properties": {
@@ -175,5 +175,203 @@
         "exclusiveMinimum": true
       }
     }
+  },
+  "cover-add": {
+    "type": "object",
+    "description": "添加头像",
+    "properties": {
+      "cover": {
+        "type": "string",
+        "title": "封面url"
+      },
+      "blurhash": {
+        "type": "string",
+        "title": "模糊哈希图像占位符"
+      },
+      "height": {
+        "type": "number",
+        "minimum": 0,
+        "exclusiveMinimum": true
+      },
+      "width": {
+        "type": "number",
+        "minimum": 0,
+        "exclusiveMinimum": true
+      }
+    }
+  },
+  "register": {
+    "type": "object",
+    "description": "注册",
+    "properties": {
+      "phone": {
+        "type": "string",
+        "title": "手机",
+        "pattern": "^1[3456789]\\d{9}$"
+      },
+      "sms": {
+        "type": "string",
+        "title": "腾讯短信",
+        "pattern": "^[0-9]{6}$"
+      },
+      "name": {
+        "type": "string",
+        "title": "账号名"
+      },
+      "nickName": {
+        "type": "string",
+        "title": "昵称"
+      },
+      "pwd": {
+        "type": "string",
+        "title": "密码",
+        "pattern": "^[\\S]{6,12}$"
+      }
+    },
+    "require": [
+      "phone",
+      "sms",
+      "name",
+      "nickName",
+      "pwd"
+    ]
+  },
+  "retrieve-sms": {
+    "type": "object",
+    "description": "短信找回账号",
+    "properties": {
+      "phone": {
+        "type": "string",
+        "title": "手机",
+        "pattern": "^1[3456789]\\d{9}$"
+      },
+      "sms": {
+        "type": "string",
+        "title": "腾讯短信",
+        "pattern": "^[0-9]{6}$"
+      },
+      "pwd": {
+        "type": "string",
+        "title": "密码",
+        "pattern": "^[\\S]{6,12}$"
+      }
+    },
+    "require": [
+      "phone",
+      "sms",
+      "pwd"
+    ]
+  },
+  "retrieve-mail": {
+    "type": "object",
+    "description": "邮箱找回账号",
+    "properties": {
+      "mail": {
+        "type": "string",
+        "title": "邮箱",
+        "pattern": "(@)(.+)$"
+      },
+      "sms": {
+        "type": "string",
+        "title": "短信",
+        "pattern": "^[0-9]{6}$"
+      },
+      "pwd": {
+        "type": "string",
+        "title": "密码",
+        "pattern": "^[\\S]{6,12}$"
+      }
+    },
+    "require": [
+      "mail",
+      "sms",
+      "pwd"
+    ]
+  },
+  "focus-paged": {
+    "type": "object",
+    "properties": {
+      "relation": {
+        "oneOf": [
+          {
+            "type": "number",
+            "enum": [
+              0,
+              1
+            ]
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "title": "0：关注  1：特别关注"
+      },
+      "channel": {
+        "oneOf": [
+          {
+            "type": "number",
+            "enum": [
+              0,
+              1
+            ]
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "title": "0：web  1:mobile"
+      }
+    }
+  },
+  "fans-paged": {
+    "type": "object",
+    "properties": {
+      "relation": {
+        "oneOf": [
+          {
+            "type": "number",
+            "enum": [
+              0,
+              1
+            ]
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "title": "0：关注  1：特别关注"
+      },
+      "channel": {
+        "oneOf": [
+          {
+            "type": "number",
+            "enum": [
+              0,
+              1
+            ]
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "title": "0：web  1:mobile"
+      }
+    }
+  },
+  "focus-group-update": {
+    "type": "object",
+    "properties": {
+      "grps": {
+        "type": "array",
+        "title": "关注分组",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "required": [
+      "grps"
+    ]
   }
 }

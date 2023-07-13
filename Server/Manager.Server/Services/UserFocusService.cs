@@ -1,4 +1,5 @@
-﻿using Manager.Core.Models.Users;
+﻿using Manager.Core.Enums;
+using Manager.Core.Models.Users;
 using Manager.Core.Page;
 using Manager.Infrastructure.IRepositoies;
 using Manager.Server.IServices;
@@ -27,24 +28,11 @@ namespace Manager.Server.Services
             return await baseService.FirstOrDefaultAsync(expression, isTrack);
         }
 
-        public async Task<PagedList<UserFocus>?> GetPagedList(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "", Guid? uId = null, Guid? buId = null, string? grp = null, sbyte? relation = null, sbyte? channel = null, DateTime? startTime = null, DateTime? endTime = null)
+        public async Task<PagedList<UserFocus>?> GetPagedList(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "", RelationType relationType = RelationType.FOCUS, Guid? uId = null, string? grp = null, sbyte? relation = null, sbyte? channel = null, DateTime? startTime = null, DateTime? endTime = null)
         {
             var query = baseService.Entities<UserFocus>();
 
-            if (uId != null)
-            {
-                query = query.Where(x => x.UId == uId);
-            }
-
-            if (buId != null)
-            {
-                query = query.Where(x => x.BuId == buId);
-            }
-
-            if (buId != null)
-            {
-                query = query.Where(x => x.BuId == buId);
-            }
+            query = relationType == RelationType.FOCUS ? query.Where(x => x.UId == uId) : query.Where(x => x.BuId == uId);
 
             if (grp != null)
             {

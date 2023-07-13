@@ -26,6 +26,9 @@ namespace Manager.Core
             }
         }
 
+        /// <summary>
+        /// context 上下文中的用户id
+        /// </summary>
         protected Guid UId
         {
             get

@@ -33,7 +33,7 @@ namespace Manager.API.Controllers
         /// <param name="req"></param>
         /// <returns></returns>
         [HttpPut]
-        public async Task<IActionResult> EditAccountInfo([FromBody] EditAccountInfoRequest req)
+        public async Task<IActionResult> UpdateAccountInfo([FromBody] UpdateAccountInfoRequest req)
         {
             /*
              * 0.Json Schema 参数校验
@@ -42,7 +42,7 @@ namespace Manager.API.Controllers
              */
 
             //0.1 Json Schema 参数校验
-            var jsonSchema = await JsonSchemas.GetSchema("accountinfo-edit");
+            var jsonSchema = await JsonSchemas.GetSchema("accountinfo-update");
 
             var schema = JSchema.Parse(jsonSchema);
 

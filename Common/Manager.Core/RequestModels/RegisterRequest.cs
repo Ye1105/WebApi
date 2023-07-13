@@ -9,14 +9,12 @@ namespace Manager.Core.RequestModels
         /// 手机号
         /// </summary>
         [JsonProperty("phone")]
-        [RegularExpression(@"^1[3456789]\d{9}$")]
         public string Phone { get; set; }
 
         /// <summary>
         /// 腾讯sms
         /// </summary>
         [JsonProperty("sms")]
-        [RegularExpression(@"^[0-9]{6}")]
         public string Sms { get; set; }
 
         /// <summary>
@@ -34,7 +32,7 @@ namespace Manager.Core.RequestModels
         /// <summary>
         /// 密码
         /// </summary>
-        [JsonProperty("password")]
-        public string Pssword { get; set; }
+        [JsonProperty("pwd")]
+        public string Pwd { get; set; }
     }
 }

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Manager.Core.RequestModels
 {
-    public class EditAccountRequest
+    public class UpdateAccountRequest
     {
         /// <summary>
         /// 用户Id

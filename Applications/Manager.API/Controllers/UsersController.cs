@@ -34,7 +34,7 @@ namespace Manager.API.Controllers
         /// <param name="params"></param>
         /// <returns></returns>
         [HttpGet("{uId}")]
-        public async Task<IActionResult> GetUser(Guid uId)
+        public async Task<IActionResult> UserInfo(Guid uId)
         {
             /*
              * 1.Account AccountInf
