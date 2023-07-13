@@ -9,9 +9,9 @@ using Manager.Extensions;
 using Manager.Server.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
-using Newtonsoft.Json;
 
 namespace Manager.API.Controllers
 {
@@ -33,9 +33,8 @@ namespace Manager.API.Controllers
             this.accountService = accountService;
         }
 
-
         ///// <summary>
-        ///// 
+        /////
         ///// </summary>
         ///// <param name="buId"></param>
         ///// <param name="uId"></param>
@@ -142,7 +141,7 @@ namespace Manager.API.Controllers
             return Ok(Success("获取粉丝列表成功", JsonData));
         }
 
-        #endregion
+        #endregion Paged
 
         #region Update
 
@@ -219,7 +218,6 @@ namespace Manager.API.Controllers
             }
         }
 
-
         /// <summary>
         /// 编辑分组
         /// </summary>
@@ -264,7 +262,7 @@ namespace Manager.API.Controllers
             }
         }
 
-        #endregion
+        #endregion Update
 
         #region Add
 
@@ -343,9 +341,10 @@ namespace Manager.API.Controllers
             }
         }
 
-        #endregion
+        #endregion Add
 
         #region Del
+
         /// <summary>
         ///删除单个
         /// </summary>
@@ -377,6 +376,7 @@ namespace Manager.API.Controllers
             var res = await userFocusService.BatchDeleteUserFocus(x => req.UIds.Contains(x.BuId.Value) && x.UId == UId) > 0;
             return res ? Ok(Success("")) : Ok(Fail("删除用户关系失败或无需删除"));
         }
-        #endregion
+
+        #endregion Del
     }
 }
