@@ -117,7 +117,6 @@ namespace Manager.API.Controllers
         /// 增加【评论】|| 【回复】
         /// </summary>
         /// <param name="req"></param>
-        /// <param name="id"></param>
         /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> AddComment([FromBody] AddBlogCommentRequest req)
@@ -134,13 +133,14 @@ namespace Manager.API.Controllers
             //{
             //    return Ok(ApiResult.Fail(errorMessages, "参数错误"));
             //}
+
             //1.参数组合
             var blogComment = new BlogComment()
             {
                 Id = Guid.NewGuid(),
                 BId = req.BId,
-                UId = req.UId,
                 BuId = req.BuId,
+                UId = UId,
                 Message = req.Message,
                 Like = 0,
                 Type = (sbyte)req.Type,
