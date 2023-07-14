@@ -4,7 +4,6 @@ using Manager.Core;
 using Manager.Core.Enums;
 using Manager.Core.Models.Blogs;
 using Manager.Core.RequestModels;
-using Manager.Extensions;
 using Manager.Server.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -35,7 +34,7 @@ namespace Manager.API.Controllers
         /// <param name="req"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> GetBlogCommentList([FromQuery] GetBlogCommentListRequest req)
+        public async Task<IActionResult> Paged([FromQuery] GetBlogCommentListRequest req)
         {
             /*
              * 1.评论列表
@@ -47,31 +46,33 @@ namespace Manager.API.Controllers
              *
              */
 
+            var Uddd = UId;
+
             //1.评论列表
-            var result = await blogCommentService.GetPagedList(req.PageIndex, req.PageSize, req.OffSet, false, req.OrderBy, req.Id, req.BId, req.UId, req.Types, req.PId, req.Grp, req.StartTime, req.EndTime, req.Status);
+            var result = await blogCommentService.GetPagedList(req.PageIndex, req.PageSize, req.OffSet, isTrack: false, req.OrderBy, req.Id, req.BId, req.UId, req.Types, req.PId, req.Grp, req.StartTime, req.EndTime, Status.ENABLE);
 
             if (result != null && result.Any())
             {
                 foreach (var item in result)
                 {
                     //关联数据
-                    await BlogCommentRelation(item, req.WId);
+                    await CommentRelation(item, UId);
 
                     //5.0 通过 type=(sbyte)CommentTypeEnum.Comment 则获取评论的回复数 和 点赞第一高的回复数据
                     if (item.Type == (sbyte)CommentType.COMMENT)
                     {
                         //5.1 评论回复数
-                        item.ReplyCount = await blogCommentService.GetBlogCommentCountBy(x => x.Grp == item.Grp && (x.Type == (sbyte)CommentType.REPLY_FIRST_LEVEL || x.Type == (sbyte)CommentType.REPLY_SECOND_LEVEL) && x.Status == (sbyte)Status.ENABLE);
+                        item.ReplyCount = await blogCommentService.GetCommentCountBy(x => x.Grp == item.Grp && (x.Type == (sbyte)CommentType.REPLY_FIRST_LEVEL || x.Type == (sbyte)CommentType.REPLY_SECOND_LEVEL) && x.Status == (sbyte)Status.ENABLE);
 
                         //5.2 评论最新回复的用户数据
                         if (item.ReplyCount > 0)
                         {
                             // 置顶 | 按时间降序 的三条数据
-                            var replys = await blogCommentService.GetPagedList(b => b.Grp == item.Grp && (b.Type == (sbyte)CommentType.REPLY_FIRST_LEVEL || b.Type == (sbyte)CommentType.REPLY_SECOND_LEVEL) && b.Status == (sbyte)Status.ENABLE, 1, 3, 0, false, "Top desc,Created desc");
+                            var replys = await blogCommentService.GetPagedList(b => b.Grp == item.Grp && (b.Type == (sbyte)CommentType.REPLY_FIRST_LEVEL || b.Type == (sbyte)CommentType.REPLY_SECOND_LEVEL) && b.Status == (sbyte)Status.ENABLE, pageIndex: 1, pageSize: 3, offset: 0, isTrack: false, "Top desc,Created desc");
 
                             foreach (var reply in replys)
                             {
-                                var data = await BlogCommentRelation(reply, req.WId);
+                                var data = await CommentRelation(reply, UId);
 
                                 item.ReplyList.Add(data);
                             }
@@ -92,7 +93,7 @@ namespace Manager.API.Controllers
             return Ok(Fail("暂无数据"));
         }
 
-        private async Task<BlogComment> BlogCommentRelation(BlogComment item, Guid? wId)
+        private async Task<BlogComment> CommentRelation(BlogComment item, Guid? wId)
         {
             //2.评论用户的个人信息
             item.UInfo = await accountInfoService.FirstOrDefaultAsync(item.UId);
@@ -101,12 +102,12 @@ namespace Manager.API.Controllers
             item.BuInfo = await accountInfoService.FirstOrDefaultAsync(item.BuId);
 
             //4.1点赞数
-            item.Like = (await blogCommentLikeService.GetBlogCommentLikeCountBy(item.Id)).Int();
+            item.Like = await blogCommentLikeService.GetCommentLikeCountBy(item.Id);
 
             //4.2通过 wId != null && wId != Guid.Empty 当前网站登录的用户id是否对当前评论或回复【点赞】
             if (wId != null && wId != Guid.Empty)
             {
-                item.IsLike = await blogCommentLikeService.GetIsBlogCommentLikeByUser(item.Id, wId.Value);
+                item.IsLike = await blogCommentLikeService.GetIsCommentLikeByUser(item.Id, wId.Value);
             }
 
             return item;
@@ -119,7 +120,7 @@ namespace Manager.API.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> AddBlogComment([FromBody] AddBlogCommentRequest req)
+        public async Task<IActionResult> AddComment([FromBody] AddBlogCommentRequest req)
         {
             /*
              * 0.参数校验 JSON SCHEMA
@@ -162,7 +163,7 @@ namespace Manager.API.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{type}/{grp}/{id}")]
-        public async Task<IActionResult> DeleteBlogComment(CommentType type, Guid grp, Guid id)
+        public async Task<IActionResult> DelComment(CommentType type, Guid grp, Guid id)
         {
             var res = await blogCommentService.DeleteBlogComment(type, grp, id);
             return Ok(res.Item1 ? Success(res.Item2) : Fail(res.Item2));
@@ -175,7 +176,7 @@ namespace Manager.API.Controllers
         /// <param name="uId"></param>
         /// <returns></returns>
         [HttpPost("{id}/likes/{uId}")]
-        public async Task<IActionResult> AddBlogCommentLike(Guid id, Guid uId)
+        public async Task<IActionResult> AddCommentLike(Guid id, Guid uId)
         {
             var res = await blogCommentLikeService.AddBlogCommentLike(id, uId);
             return res.Item1 ? Ok(Success()) : Ok(Fail(res.Item2));
@@ -188,7 +189,7 @@ namespace Manager.API.Controllers
         /// <param name="uId"></param>
         /// <returns></returns>
         [HttpDelete("{id}/likes/{uId}")]
-        public async Task<IActionResult> DeleteBlogCommentLike(Guid id, Guid uId)
+        public async Task<IActionResult> DeleteCommentLike(Guid id, Guid uId)
         {
             var res = await blogCommentLikeService.DeleteBlogCommentLike(id, uId);
             return res.Item1 ? Ok(Success()) : Ok(Fail(res.Item2));

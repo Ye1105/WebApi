@@ -25,13 +25,7 @@ namespace Manager.Core.RequestModels
         public Guid? UId { get; set; }
 
         /// <summary>
-        /// 当前登录网站的用户
-        /// </summary>
-        [JsonProperty("wId")]
-        public Guid? WId { get; set; }
-
-        /// <summary>
-        /// 0.评论   1.【回复】来评论【评论】  2.【回复】来评论【回复】
+        /// 0.评论 1.【回复】来评论->评论 2.【回复】来评论->回复
         /// </summary>
         [JsonProperty("types")]
         public CommentType[]? Types { get; set; }
@@ -59,11 +53,5 @@ namespace Manager.Core.RequestModels
         /// </summary>
         [JsonProperty("endTime")]
         public DateTime? EndTime { get; set; }
-
-        /// <summary>
-        /// 状态
-        /// </summary>
-        [JsonProperty("status")]
-        public Status? Status { get; set; }
     }
 }

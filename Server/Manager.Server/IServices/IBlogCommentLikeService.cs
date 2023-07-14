@@ -8,7 +8,7 @@
         /// <param name="expression"></param>
         /// <param name="isTrack"></param>
         /// <returns></returns>
-        Task<long?> GetBlogCommentLikeCountBy(Guid cId);
+        Task<long?> GetCommentLikeCountBy(Guid cId);
 
         /// <summary>
         /// 当前登录用户是否对评论点赞
@@ -16,7 +16,7 @@
         /// <param name="cId"></param>
         /// <param name="uId"></param>
         /// <returns></returns>
-        Task<bool?> GetIsBlogCommentLikeByUser(Guid cId, Guid uId);
+        Task<bool?> GetIsCommentLikeByUser(Guid cId, Guid uId);
 
         /// <summary>
         /// 增加博客评论的点赞

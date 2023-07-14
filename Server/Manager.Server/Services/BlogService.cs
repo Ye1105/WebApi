@@ -450,7 +450,7 @@ namespace Manager.Server.Services
             blog.AccountInfo = await accountInfoService.FirstOrDefaultAsync(blog.UId, isCache: false);
 
             //3.获取博客评论数
-            blog.Comment = await blogCommentService.GetBlogCommentCountBy(x => x.BId == blog.Id);
+            blog.Comment = await blogCommentService.GetCommentCountBy(x => x.BId == blog.Id);
 
             //4.获取博客转发数
             //判定当前blog是原创blog

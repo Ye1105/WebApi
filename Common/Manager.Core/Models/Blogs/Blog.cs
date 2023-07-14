@@ -115,14 +115,14 @@ namespace Manager.Core.Models.Blogs
         /// </summary>
         [NotMapped]
         [JsonProperty("like")]
-        public Int64? Like { get; set; }
+        public long? Like { get; set; }
 
         /// <summary>
         /// 收藏数
         /// </summary>
         [NotMapped]
         [JsonProperty("favorite")]
-        public Int64? Favorite { get; set; }
+        public long? Favorite { get; set; }
 
         /// <summary>
         /// 当前网站的登录用户是否点赞

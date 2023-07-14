@@ -4,6 +4,7 @@ using Manager.Core.Page;
 using Manager.Infrastructure.IRepositoies;
 using Manager.Server.IServices;
 using Microsoft.EntityFrameworkCore;
+using NPOI.Util.ArrayExtensions;
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 
@@ -18,7 +19,7 @@ namespace Manager.Server.Services
             this.baseService = baseService;
         }
 
-        public async Task<int> GetBlogCommentCountBy(Expression<Func<BlogComment, bool>> expression, bool isTrack = true)
+        public async Task<int> GetCommentCountBy(Expression<Func<BlogComment, bool>> expression, bool isTrack = true)
         {
             return await baseService.Entities<BlogComment>().Where(expression).CountAsync();
         }
@@ -70,11 +71,11 @@ namespace Manager.Server.Services
             //状态
             if (status != null)
             {
-                query = query.Where(x => x.Status == (int)status);
+                query = query.Where(x => x.Status == (sbyte)status);
             }
 
             //排序
-            query = query.ApplySort(orderBy);
+            //query = query.ApplySort(orderBy);
 
             //整合分页数据
             return await PagedList<BlogComment>.CreateAsync(query, pageIndex, pageSize, offset);

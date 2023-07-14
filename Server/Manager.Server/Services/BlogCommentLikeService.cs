@@ -1,4 +1,5 @@
 ﻿using Manager.Core.Models.Blogs;
+using Manager.Core.Settings;
 using Manager.Extensions;
 using Manager.Infrastructure.IRepositoies;
 using Manager.Server.IServices;
@@ -10,16 +11,6 @@ namespace Manager.Server.Services
 {
     public class BlogCommentLikeService : IBlogCommentLikeService
     {
-        /// <summary>
-        ///【前缀】评论点赞数量
-        /// </summary>
-        private readonly string Prefix_BlogCommentLikeCount = "BlogCommentLike:Count:";
-
-        /// <summary>
-        ///【前缀】当前用户是否点赞
-        /// </summary>
-        private readonly string Prefix_IsBlogCommentLike = "BlogCommentLike:IsLike:";
-
         private readonly IBase baseService;
 
         public BlogCommentLikeService(IBase baseService)
@@ -27,7 +18,7 @@ namespace Manager.Server.Services
             this.baseService = baseService;
         }
 
-        public async Task<long?> GetBlogCommentLikeCountBy(Guid cId)
+        public async Task<long?> GetCommentLikeCountBy(Guid cId)
         {
             try
             {
@@ -37,7 +28,7 @@ namespace Manager.Server.Services
                  * 3.未命中则从mysql获取值，然后更新缓存值，并返回值
                  */
 
-                var keyName = $"{Prefix_BlogCommentLikeCount}{cId}";
+                var keyName = $"{RedisConstants.PREFIX_COMMENT_LIKE_COUNT}{cId}";
 
                 using var cli = Instance(RedisBaseEnum.Zeroth);
 
@@ -54,7 +45,7 @@ namespace Manager.Server.Services
 
                     await cli.SetExAsync(keyName, 300, count);
 
-                    return await GetBlogCommentLikeCountBy(cId);
+                    return await GetCommentLikeCountBy(cId);
                 }
             }
             catch (Exception ex)
@@ -64,7 +55,7 @@ namespace Manager.Server.Services
             }
         }
 
-        public async Task<bool?> GetIsBlogCommentLikeByUser(Guid cId, Guid uId)
+        public async Task<bool?> GetIsCommentLikeByUser(Guid cId, Guid uId)
         {
             try
             {
@@ -74,7 +65,7 @@ namespace Manager.Server.Services
                  * 3.未命中则从mysql获取值，然后更新缓存值，并返回值
                  */
 
-                var keyName = $"{Prefix_IsBlogCommentLike}{cId}_{uId}";
+                var keyName = $"{RedisConstants.PREFIX_COMMENT_ISLIKE}{cId}_{uId}";
 
                 using var cli = Instance(RedisBaseEnum.Zeroth);
 
@@ -92,7 +83,7 @@ namespace Manager.Server.Services
                     //设置缓存
                     await cli.SetExAsync(keyName, 300, count);
 
-                    return await GetIsBlogCommentLikeByUser(cId, uId);
+                    return await GetIsCommentLikeByUser(cId, uId);
                 }
             }
             catch (Exception ex)
@@ -125,10 +116,10 @@ namespace Manager.Server.Services
                     using var cli = Instance(RedisBaseEnum.Zeroth);
 
                     //评论的点赞数量
-                    var keyNameBlogCommentLikeCount = $"{Prefix_BlogCommentLikeCount}{cId}";
+                    var keyNameBlogCommentLikeCount = $"{RedisConstants.PREFIX_COMMENT_LIKE_COUNT}{cId}";
 
                     //当前用户是否点赞
-                    var keyNameBlogCommentLike = $"{Prefix_IsBlogCommentLike}{cId}_{uId}";
+                    var keyNameBlogCommentLike = $"{RedisConstants.PREFIX_COMMENT_ISLIKE}{cId}_{uId}";
 
                     await cli.DelAsync(keyNameBlogCommentLikeCount, keyNameBlogCommentLike);
                 }
@@ -162,10 +153,10 @@ namespace Manager.Server.Services
                     using var cli = Instance(RedisBaseEnum.Zeroth);
 
                     //评论的点赞数量
-                    var keyNameBlogCommentLikeCount = $"{Prefix_BlogCommentLikeCount}{cId}";
+                    var keyNameBlogCommentLikeCount = $"{RedisConstants.PREFIX_COMMENT_LIKE_COUNT}{cId}";
 
                     //当前用户是否点赞
-                    var keyNameBlogCommentLike = $"{Prefix_IsBlogCommentLike}{cId}_{uId}";
+                    var keyNameBlogCommentLike = $"{RedisConstants.PREFIX_COMMENT_ISLIKE}{cId}_{uId}";
 
                     await cli.DelAsync(keyNameBlogCommentLikeCount, keyNameBlogCommentLike);
                 }

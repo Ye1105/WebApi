@@ -35,24 +35,24 @@
         /// <summary>
         /// 用户分组
         /// </summary>
-        public static readonly string PREFIX_USER_GROUP= "usergroup:";
+        public static readonly string PREFIX_USER_GROUP = "usergroup:";
 
 
         /// <summary>
         ///【前缀】博客点赞数量
         /// </summary>
-        public static readonly string  PREFIX_BLOG_LIKE_COUNT= "blog_like_count:";
+        public static readonly string PREFIX_BLOG_LIKE_COUNT = "blog_like_count:";
 
         /// <summary>
         ///【前缀】博客用户是否点赞
         /// </summary>
-        public static readonly string PREFIX_BLOG_ISLIKE= "blog_like_islike:";
+        public static readonly string PREFIX_BLOG_ISLIKE = "blog_islike:";
 
         /// <summary>
         ///【前缀】点赞博客分页
         /// </summary>
-        public static readonly string PREFIX_BLOG_LIKE_PAGED= "blog_like_paged:";
-        
+        public static readonly string PREFIX_BLOG_LIKE_PAGED = "blog_like_paged:";
+
         //------------------------------------------------------------------------
 
         /// <summary>
@@ -63,11 +63,24 @@
         /// <summary>
         ///【前缀】博客用户是否收藏
         /// </summary>
-        public static readonly string PREFIX_BLOG_ISFAVOR = "blog_favor_isfavor:";
+        public static readonly string PREFIX_BLOG_ISFAVOR = "blog_isfavor:";
 
         /// <summary>
         ///【前缀】收藏博客分页
         /// </summary>
         public static readonly string PREFIX_BLOG_FAVOR_PAGED = "blog_favor_paged:";
+
+        //------------------------------------------------------------------------
+
+        /// <summary>
+        ///【前缀】评论点赞数量
+        /// </summary>
+        public static readonly string PREFIX_COMMENT_LIKE_COUNT = "comment_like_count:";
+
+        /// <summary>
+        ///【前缀】当前用户是否点赞
+        /// </summary>
+        public static readonly string PREFIX_COMMENT_ISLIKE = "comment_islike:";
+
     }
 }
