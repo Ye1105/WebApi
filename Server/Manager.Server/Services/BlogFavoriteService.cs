@@ -1,6 +1,7 @@
 ﻿using FreeRedis;
 using Manager.Core.Models.Blogs;
 using Manager.Core.Page;
+using Manager.Core.Settings;
 using Manager.Extensions;
 using Manager.Infrastructure.IRepositoies;
 using Manager.Server.IServices;
@@ -16,20 +17,7 @@ namespace Manager.Server.Services
         private readonly IBase baseService;
         private readonly IProcedure procService;
 
-        /// <summary>
-        ///【前缀】博客收藏数量
-        /// </summary>
-        private readonly string Prefix_BlogFavoriteCount = "BlogFavorite:Count:";
 
-        /// <summary>
-        ///【前缀】博客用户是否收藏
-        /// </summary>
-        private readonly string Prefix_IsBlogFavorite = "BlogFavorite:IsFavorite:";
-
-        /// <summary>
-        ///【前缀】收藏博客分页
-        /// </summary>
-        private readonly string Prefix_BlogByFavoritePagedList = "BlogFavorite:PagedList:";
 
         public BlogFavoriteService(IBase baseService, IProcedure procService)
         {
@@ -58,11 +46,11 @@ namespace Manager.Server.Services
                 {
                     using var cli = Instance(RedisBaseEnum.Zeroth);
                     //博客的收藏数量
-                    var keyNameBlogFavoriteCount = $"{Prefix_BlogFavoriteCount}{bId}";
+                    var keyNameBlogFavoriteCount = $"{RedisConstants.PREFIX_BLOG_FAVOR_COUNT}{bId}";
                     //博客的收藏用户
-                    var keyNameBlogFavorite = $"{Prefix_IsBlogFavorite}{bId}_{uId}";
+                    var keyNameBlogFavorite = $"{RedisConstants.PREFIX_BLOG_ISFAVOR}{bId}_{uId}";
                     //博客[收藏]的分页列表
-                    var keyNameBlogFavoritePagedList = $"{Prefix_BlogByFavoritePagedList}{uId}";
+                    var keyNameBlogFavoritePagedList = $"{RedisConstants.PREFIX_BLOG_FAVOR_PAGED}{uId}";
 
                     await cli.DelAsync(keyNameBlogFavoriteCount, keyNameBlogFavorite, keyNameBlogFavoritePagedList);
                 }
@@ -95,11 +83,11 @@ namespace Manager.Server.Services
                 {
                     using var cli = Instance(RedisBaseEnum.Zeroth);
                     //博客的收藏数量
-                    var keyNameBlogFavoriteCount = $"{Prefix_BlogFavoriteCount}{bId}";
+                    var keyNameBlogFavoriteCount = $"{RedisConstants.PREFIX_BLOG_FAVOR_COUNT}{bId}";
                     //博客的收藏用户
-                    var keyNameBlogFavorite = $"{Prefix_IsBlogFavorite}{bId}_{uId}";
+                    var keyNameBlogFavorite = $"{RedisConstants.PREFIX_BLOG_ISFAVOR}{bId}_{uId}";
                     //博客[收藏]的分页列表
-                    var keyNameBlogFavoritePagedList = $"{Prefix_BlogByFavoritePagedList}{uId}";
+                    var keyNameBlogFavoritePagedList = $"{RedisConstants.PREFIX_BLOG_FAVOR_PAGED}{uId}";
 
                     await cli.DelAsync(keyNameBlogFavoriteCount, keyNameBlogFavorite, keyNameBlogFavoritePagedList);
                 }
@@ -123,7 +111,7 @@ namespace Manager.Server.Services
                  * 3.未命中则从mysql获取值，然后更新缓存值，并返回值
                  */
 
-                var keyName = $"{Prefix_BlogFavoriteCount}{bId}";
+                var keyName = $"{RedisConstants.PREFIX_BLOG_FAVOR_COUNT}{bId}";
 
                 using var cli = Instance(RedisBaseEnum.Zeroth);
 
@@ -160,7 +148,7 @@ namespace Manager.Server.Services
                  * 3.未命中则从mysql获取值，然后更新缓存值，并返回值
                  */
 
-                var keyName = $"{Prefix_IsBlogFavorite}{bId}_{uId}";
+                var keyName = $"{RedisConstants.PREFIX_BLOG_ISFAVOR}{bId}_{uId}";
 
                 using var cli = Instance(RedisBaseEnum.Zeroth);
 
@@ -203,7 +191,7 @@ namespace Manager.Server.Services
                  * 4. 递归循环一次当前方法
                  */
 
-                var keyName = $"{Prefix_BlogByFavoritePagedList}{wId}";
+                var keyName = $"{RedisConstants.PREFIX_BLOG_FAVOR_PAGED}{wId}";
 
                 using var cli = Instance(RedisBaseEnum.Zeroth);
 

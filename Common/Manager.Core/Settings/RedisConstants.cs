@@ -52,5 +52,22 @@
         ///【前缀】点赞博客分页
         /// </summary>
         public static readonly string PREFIX_BLOG_LIKE_PAGED= "blog_like_paged:";
+        
+        //------------------------------------------------------------------------
+
+        /// <summary>
+        ///【前缀】博客收藏数量
+        /// </summary>
+        public static readonly string PREFIX_BLOG_FAVOR_COUNT = "blog_favor_count:";
+
+        /// <summary>
+        ///【前缀】博客用户是否收藏
+        /// </summary>
+        public static readonly string PREFIX_BLOG_ISFAVOR = "blog_favor_isfavor:";
+
+        /// <summary>
+        ///【前缀】收藏博客分页
+        /// </summary>
+        public static readonly string PREFIX_BLOG_FAVOR_PAGED = "blog_favor_paged:";
     }
 }

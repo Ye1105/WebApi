@@ -11,9 +11,9 @@ using Manager.Extensions;
 using Manager.Server.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
-using Newtonsoft.Json;
 using Serilog;
 using System.Text.RegularExpressions;
 
@@ -51,7 +51,6 @@ namespace Manager.API.Controllers
         {
             try
             {
-
                 /*
                  * 0. Json Schema 参数校验
                  * 1. 敏感词校验【未检测】
@@ -245,16 +244,15 @@ namespace Manager.API.Controllers
                     var newBlog = await blogService.FirstOrDefaultAsync(x => x.Id == bId);
                     if (newBlog == null)
                     {
-                        return Ok(Success("发布博客失败", new { }));
+                        return Ok(Fail("发布博客失败"));
                     }
                     else
                     {
                         await blogService.GetBlogRelation(newBlog, UId);
-                        return Ok(Success("发布博客成功", newBlog));
+                        return Ok(Success("发布博客成功", new { blog = newBlog }));
                     }
                 }
                 return Ok(Fail("发布博客失败"));
-
             }
             catch (Exception ex)
             {
@@ -271,14 +269,21 @@ namespace Manager.API.Controllers
         [HttpGet]
         public async Task<IActionResult> Paged([FromQuery] GetBlogListRequest req)
         {
-            var result = await blogService.GetPagedList(req.PageIndex, req.PageSize, req.OffSet, false, req.OrderBy, req.Id, req.WId, req.UId, req.Sort == null ? null : (sbyte)req.Sort.Value, req.Type == null ? null : (sbyte)req.Type.Value, req.IsFId, req.StartTime, req.EndTime, req.Scope == null ? null : (sbyte)req.Scope.Value, req.Grp, req.Status);
+            /*
+             * 0. model 参数校验
+             * 1. Paged 分页数据
+             * 2. 返回数据
+             */
+
+            var result = await blogService.GetPagedList(req.PageIndex, req.PageSize, req.OffSet, false, req.OrderBy, req.Id, UId, req.UId, req.Sort == null ? null : (sbyte)req.Sort.Value, req.Type == null ? null : (sbyte)req.Type.Value, req.IsFId, req.StartTime, req.EndTime, req.Scope == null ? null : (sbyte)req.Scope.Value, req.Grp, Status.ENABLE);
 
             if (result != null && result.Any())
             {
                 foreach (var item in result)
                 {
-                    await blogService.GetBlogRelation(item, req.WId);
+                    await blogService.GetBlogRelation(item, UId);
                 }
+
                 var JsonData = new
                 {
                     pageCount = result.TotalPages,
@@ -287,9 +292,23 @@ namespace Manager.API.Controllers
                     totalCount = result.TotalCount,
                     list = result
                 };
+
                 return Ok(Success("获取博客列表成功", JsonData));
             }
             return Ok(Fail("暂无数据"));
+        }
+
+        /// <summary>
+        /// 某年每月博客数量
+        /// </summary>
+        /// <param name="uId"></param>
+        /// <param name="year"></param>
+        /// <returns></returns>
+        [HttpGet("{uId}/groupcounts/{year}")]
+        public async Task<IActionResult> GetBlogGroupCount(Guid uId, int year)
+        {
+            var res = await blogService.GetBlogCountGroupbyMonth(uId, year);
+            return Ok(Success(new { list = res }));
         }
 
         /// <summary>
@@ -306,7 +325,7 @@ namespace Manager.API.Controllers
             var blog = await blogService.FirstOrDefaultAsync(x => x.Id == id && x.Status == (sbyte)Status.ENABLE && x.Sort != (sbyte)sort);
             if (blog == null)
             {
-                return Ok(Fail(""));
+                return Ok(Fail("博客不存在"));
             }
 
             blog.Sort = (sbyte)sort;
@@ -327,21 +346,22 @@ namespace Manager.API.Controllers
         /// <param name="id"></param>
         /// <param name="uId"></param>
         /// <returns></returns>
-        [HttpPatch("{id}/{uId}/top")]
-        public async Task<IActionResult> SetBlogTop(Guid id, Guid uId)
+        [HttpPatch("{id}/top")]
+        public async Task<IActionResult> SetBlogTop(Guid id)
         {
             /*
              * 0.判定当前用户是否已经有博客置顶
              * 1.没有则置顶
              */
 
-            var count = await blogService.GetBlogCountBy(x => x.UId == uId && x.Top == (sbyte)BoolType.YES && x.Status == (sbyte)Status.ENABLE);
+            var count = await blogService.GetBlogCountBy(x => x.UId == UId && x.Top == (sbyte)BoolType.YES && x.Status == (sbyte)Status.ENABLE);
             if (count > 0)
             {
                 return Ok(Fail("已存在置顶博客", "已存在置顶博客，请先取消置顶"));
             }
 
-            var blog = await blogService.FirstOrDefaultAsync(x => x.Id == id && x.FId == Guid.Empty && x.Top == (sbyte)BoolType.NO && x.Status == (sbyte)Status.ENABLE);
+            var blog = await blogService.FirstOrDefaultAsync(x => x.Id == id && x.UId == UId && x.FId == Guid.Empty && x.Top == (sbyte)BoolType.NO && x.Status == (sbyte)Status.ENABLE);
+
             if (blog != null)
             {
                 blog.Top = (sbyte)BoolType.YES;
@@ -352,7 +372,7 @@ namespace Manager.API.Controllers
             }
             else
             {
-                return Ok(Fail(""));
+                return Ok(Fail());
             }
         }
 
@@ -364,7 +384,7 @@ namespace Manager.API.Controllers
         [HttpPatch("{id}/untop")]
         public async Task<IActionResult> DeleteBlogTop(Guid id)
         {
-            var blog = await blogService.FirstOrDefaultAsync(x => x.Id == id && x.FId == Guid.Empty && x.Status == (sbyte)Status.ENABLE && x.Top == (sbyte)BoolType.YES);
+            var blog = await blogService.FirstOrDefaultAsync(x => x.Id == id && x.UId == UId && x.FId == Guid.Empty && x.Status == (sbyte)Status.ENABLE && x.Top == (sbyte)BoolType.YES);
             if (blog != null)
             {
                 blog.Top = (sbyte)BoolType.NO;
@@ -375,7 +395,7 @@ namespace Manager.API.Controllers
             }
             else
             {
-                return Ok(Fail("博客不存在"));
+                return Ok(Fail());
             }
         }
 
@@ -383,10 +403,9 @@ namespace Manager.API.Controllers
         /// 删除博客
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="uId"></param>
         /// <returns></returns>
-        [HttpDelete("{id}/{uId}")]
-        public async Task<IActionResult> DeleteBlog(Guid id, Guid uId)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteBlog(Guid id)
         {
             /* 1. 判定当前blog是否时转发blog
              * 1.1如果是原创blog
@@ -397,7 +416,7 @@ namespace Manager.API.Controllers
              * 1.2  事务删除转发
              */
 
-            var blog = await blogService.FirstOrDefaultAsync(x => x.Id == id && x.UId == uId && x.Status == (sbyte)Status.ENABLE);
+            var blog = await blogService.FirstOrDefaultAsync(x => x.Id == id && x.UId == UId && x.Status == (sbyte)Status.ENABLE);
             if (blog == null)
             {
                 return Ok(Fail("博客不存在"));
@@ -412,14 +431,12 @@ namespace Manager.API.Controllers
         /// 博客点赞
         /// </summary>
         /// <param name="bId"></param>
-        /// <param name="uId"></param>
-        /// <param name="req"></param>
         /// <returns></returns>
         [Authorize(Policy = Policys.VIP)]
-        [HttpPost("{bId}/likes/{uId}")]
-        public async Task<IActionResult> AddBlogLike(Guid bId, Guid uId)
+        [HttpPost("{bId}/likes")]
+        public async Task<IActionResult> AddBlogLike(Guid bId)
         {
-            var res = await blogLikeService.AddBlogLike(bId, uId);
+            var res = await blogLikeService.AddBlogLike(bId, UId);
             return res.Item1 ? Ok(Success()) : Ok(Fail(res.Item2));
         }
 
@@ -427,12 +444,11 @@ namespace Manager.API.Controllers
         /// 删除点赞
         /// </summary>
         /// <param name="bId"></param>
-        /// <param name="uId"></param>
         /// <returns></returns>
-        [HttpDelete("{bId}/likes/{uId}")]
-        public async Task<IActionResult> DeleteBlogLike(Guid bId, Guid uId)
+        [HttpDelete("{bId}/likes")]
+        public async Task<IActionResult> DeleteBlogLike(Guid bId)
         {
-            var res = await blogLikeService.DelBlogLike(bId, uId);
+            var res = await blogLikeService.DelBlogLike(bId, UId);
             return res.Item1 ? Ok(Success()) : Ok(Fail(res.Item2));
         }
 
@@ -440,26 +456,12 @@ namespace Manager.API.Controllers
         /// 博客收藏
         /// </summary>
         /// <param name="bId"></param>
-        /// <param name="uId"></param>
         /// <returns></returns>
-        [HttpPost("{bId}/favours/{uId}")]
-        public async Task<IActionResult> AddBlogFavorite(Guid bId, Guid uId)
+        [HttpPost("{bId}/favors")]
+        public async Task<IActionResult> AddBlogFavorite(Guid bId)
         {
-            /*
-             * 0.参数校验 JSON SCHEMA
-             * 1.参数组合
-             * 2.增加博客收藏
-             */
-
-            ////0.参数校验 JSON SCHEMA
-            //bool validator = JsonSchemaHelper.Validator<AddBlogFavoriteRequest>(req, out IList<string> errorMessages);
-            //if (!validator)
-            //{
-            //    return Ok(ApiResult.Fail(errorMessages, "参数错误"));
-            //}
-
             //2.增加博客收藏
-            var res = await blogFavoriteService.AddBlogFavorite(bId, uId);
+            var res = await blogFavoriteService.AddBlogFavorite(bId, UId);
             return res.Item1 ? Ok(Success()) : Ok(Fail(res.Item2));
         }
 
@@ -467,26 +469,12 @@ namespace Manager.API.Controllers
         /// 取消收藏
         /// </summary>
         /// <param name="bId"></param>
-        /// <param name="uId"></param>
         /// <returns></returns>
-        [HttpDelete("{bId}/favours/{uId}")]
-        public async Task<IActionResult> DeleteBlogFavorite(Guid bId, Guid uId)
+        [HttpDelete("{bId}/favors/{uId}")]
+        public async Task<IActionResult> DeleteBlogFavorite(Guid bId)
         {
-            var res = await blogFavoriteService.DelBlogFavorite(bId, uId);
+            var res = await blogFavoriteService.DelBlogFavorite(bId, UId);
             return res.Item1 ? Ok(Success()) : Ok(Fail(res.Item2));
-        }
-
-        /// <summary>
-        /// 某年每月博客数量
-        /// </summary>
-        /// <param name="uId"></param>
-        /// <param name="year"></param>
-        /// <returns></returns>
-        [HttpGet("{uId}/groupcounts/{year}")]
-        public async Task<IActionResult> GetBlogGroupCount(Guid uId, int year)
-        {
-            var res = await blogService.GetBlogCountGroupbyMonth(uId, year);
-            return Ok(Success(res));
         }
     }
 }

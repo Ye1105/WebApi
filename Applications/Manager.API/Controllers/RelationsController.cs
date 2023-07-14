@@ -81,18 +81,19 @@ namespace Manager.API.Controllers
                 {
                     item.AccountInfo = await accountInfoService.FirstOrDefaultAsync(item.BuId, isCache: false);
                 }
+
+                var JsonData = new
+                {
+                    pageCount = result.TotalPages,
+                    currentPage = result.CurrentPage,
+                    pageSize = result.PageSize,
+                    totalCount = result.TotalCount,
+                    list = result
+                };
+
+                return Ok(Success("获取关注列表成功", JsonData));
             }
-
-            var JsonData = new
-            {
-                pageCount = result.TotalPages,
-                currentPage = result.CurrentPage,
-                pageSize = result.PageSize,
-                totalCount = result.TotalCount,
-                list = result
-            };
-
-            return Ok(Success("获取关注列表成功", JsonData));
+            return Ok(Fail("暂无数据"));
         }
 
         /// <summary>
@@ -127,18 +128,19 @@ namespace Manager.API.Controllers
                 {
                     item.AccountInfo = await accountInfoService.FirstOrDefaultAsync(item.UId, isCache: false);
                 }
+
+                var JsonData = new
+                {
+                    pageCount = result.TotalPages,
+                    currentPage = result.CurrentPage,
+                    pageSize = result.PageSize,
+                    totalCount = result.TotalCount,
+                    list = result
+                };
+
+                return Ok(Success("获取粉丝列表成功", JsonData));
             }
-
-            var JsonData = new
-            {
-                pageCount = result.TotalPages,
-                currentPage = result.CurrentPage,
-                pageSize = result.PageSize,
-                totalCount = result.TotalCount,
-                list = result
-            };
-
-            return Ok(Success("获取粉丝列表成功", JsonData));
+            return Ok(Fail("暂无数据"));
         }
 
         #endregion Paged
