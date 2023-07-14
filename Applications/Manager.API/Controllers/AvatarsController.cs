@@ -38,16 +38,21 @@ namespace Manager.API.Controllers
         {
             var result = await logAvatarService.GetPagedList(UId, req.PageIndex, req.PageSize, req.OffSet, req.OrderBy);
 
-            var JsonData = new
+            if (result != null && result.Any())
             {
-                pageCount = result.TotalPages,
-                currentPage = result.CurrentPage,
-                pageSize = result.PageSize,
-                totalCount = result.TotalCount,
-                list = result
-            };
+                var JsonData = new
+                {
+                    pageCount = result.TotalPages,
+                    currentPage = result.CurrentPage,
+                    pageSize = result.PageSize,
+                    totalCount = result.TotalCount,
+                    list = result
+                };
 
-            return Ok(Success(JsonData));
+                return Ok(Success(JsonData));
+            }
+            else
+                return Ok(Fail("暂无数据"));
         }
 
         /// <summary>

@@ -30,16 +30,16 @@ namespace Manager.API.Controllers
         /// <param name="wId"></param>
         /// <param name="req"></param>
         /// <returns></returns>
-        [HttpGet("{wId}/blogs")]
-        public async Task<IActionResult> GetBlogLikeList(Guid wId, [FromQuery] GetBlogLikeListRequest req)
+        [HttpGet("blogs")]
+        public async Task<IActionResult> LikeBlogPaged([FromQuery] GetBlogLikeListRequest req)
         {
-            var result = await blogLikeService.GetPagedList(wId, req.PageIndex, req.PageSize, req.OffSet);
+            var result = await blogLikeService.GetPagedList(UId, req.PageIndex, req.PageSize, req.OffSet);
 
             if (result != null && result.Any())
             {
                 foreach (var item in result)
                 {
-                    await blogService.GetBlogRelation(item, wId);
+                    await blogService.GetBlogRelation(item, UId);
                 }
 
                 var JsonData = new

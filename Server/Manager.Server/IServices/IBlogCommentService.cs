@@ -20,7 +20,7 @@ namespace Manager.Server.IServices
         /// <param name="expression"></param>
         /// <param name="isTrack"></param>
         /// <returns></returns>
-        Task<int> GetBlogCommentCountBy(Expression<Func<BlogComment, bool>> expression, bool isTrack = true);
+        Task<int> GetCommentCountBy(Expression<Func<BlogComment, bool>> expression, bool isTrack = true);
 
         /// <summary>
         /// 删除blog

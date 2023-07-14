@@ -55,8 +55,8 @@ namespace Manager.Server.Services
                 {
                     var video = await baseService.FirstOrDefaultAsync<BlogVideo>(x => x.BId == id && x.Status == (sbyte)Status.ENABLE, false);
 
-                    //expire 10 minutes
-                    await cli.SetExAsync(keyName, 600, video.SerObj());
+                    //expire 5 minutes
+                    await cli.SetExAsync(keyName, 300, video.SerObj());
 
                     return await GetBlogVideoById(id);
                 }

@@ -50,7 +50,7 @@ namespace Manager.API.Controllers
             var status = (sbyte)Status.ENABLE;
 
             //1.判断 blog 是否存在
-            var v = await blogService.GetBlogBy(x => x.Id == req.BlogComment.BId && x.Status == (sbyte)Status.ENABLE, false);
+            var v = await blogService.FirstOrDefaultAsync(x => x.Id == req.BlogComment.BId && x.Status == (sbyte)Status.ENABLE, false);
             if (v == null)
             {
                 return Ok(Fail("博客不存在"));

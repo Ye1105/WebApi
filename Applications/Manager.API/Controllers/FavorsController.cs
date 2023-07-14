@@ -10,15 +10,15 @@ namespace Manager.API.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("v1/api/favours")]
+    [Route("v1/api/favors")]
     [ApiExplorerSettings(GroupName = nameof(ApiVersionInfo.V1))]
     [CustomExceptionFilter]
-    public class FavoursController : ApiController
+    public class FavorsController : ApiController
     {
         private readonly IBlogFavoriteService blogFavoriteService;
         private readonly IBlogService blogService;
 
-        public FavoursController(IBlogFavoriteService blogFavoriteService, IBlogService blogService)
+        public FavorsController(IBlogFavoriteService blogFavoriteService, IBlogService blogService)
         {
             this.blogFavoriteService = blogFavoriteService;
             this.blogService = blogService;
@@ -29,16 +29,16 @@ namespace Manager.API.Controllers
         /// </summary>
         /// <param name="req"></param>
         /// <returns></returns>
-        [HttpGet("{wId}/blogs")]
+        [HttpGet("blogs")]
         public async Task<IActionResult> GetBlogFavoriteList([FromQuery] GetBlogFavoriteListRequest req)
         {
-            var result = await blogFavoriteService.GetPagedList(req.WId, req.PageIndex, req.PageSize, req.OffSet, false);
+            var result = await blogFavoriteService.GetPagedList(UId, req.PageIndex, req.PageSize, req.OffSet, false);
 
             if (result != null && result.Any())
             {
                 foreach (var item in result)
                 {
-                    await blogService.GetBlogRelation(item, req.WId);
+                    await blogService.GetBlogRelation(item, UId);
                 }
 
                 var JsonData = new

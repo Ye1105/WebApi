@@ -2,7 +2,6 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Manager.API.Utility;
 using Manager.API.Utility.AutofaExt;
-using Manager.Core;
 using Manager.Core.AuthorizationModels;
 using Manager.Core.Settings;
 using Manager.Infrastructure.Database;
@@ -10,7 +9,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -20,8 +18,6 @@ using Serilog;
 using Serilog.Events;
 using System.Reflection;
 using System.Text;
-using System.Web;
-using X.PagedList;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -66,7 +62,7 @@ builder.Services
     // 配置授权服务，也就是具体的规则，已经对应的权限策略，比如公司不同权限的门禁卡
     .AddAuthorization(options =>
     {
-        // 自定义基于策略的授权权限   
+        // 自定义基于策略的授权权限
         // 用户 VIP 权限策略
         options.AddPolicy(Policys.VIP, policy => policy.Requirements.Add(new PermissionRequirement()));
     })
@@ -183,7 +179,7 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
 
     //containerBuilder.RegisterGeneric(typeof(IList<>)).As(typeof(IList<>));
 
-    /* 权限配置注入 */ // t.IsClass && (t.Name.EndsWith("Service") || 
+    /* 权限配置注入 */ // t.IsClass && (t.Name.EndsWith("Service") ||
     var authorizeAssembly = Assembly.Load("Manager.JwtAuthorizePolicy");
     containerBuilder.RegisterAssemblyTypes(authorizeAssembly).Where(t => t.Name.EndsWith("Handler")).AsImplementedInterfaces().InstancePerLifetimeScope();
 

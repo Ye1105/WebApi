@@ -16,12 +16,6 @@ namespace Manager.Core.RequestModels
         public Guid? UId { get; set; }
 
         /// <summary>
-        /// 当前登录网站的用户
-        /// </summary>
-        [JsonProperty("wId")]
-        public Guid? WId { get; set; }
-
-        /// <summary>
         /// 种类： 0.公开  1.仅自己可见  2.好友圈  3.粉丝  4.热推  5.广告
         /// </summary>
         [JsonProperty("sort")]
@@ -65,8 +59,5 @@ namespace Manager.Core.RequestModels
         /// </summary>
         [JsonProperty("grp")]
         public string? Grp { get; set; }
-
-        [JsonProperty("status")]
-        public Status? Status { get; set; }
     }
 }

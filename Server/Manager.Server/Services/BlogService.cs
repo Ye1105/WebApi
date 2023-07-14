@@ -24,7 +24,7 @@ namespace Manager.Server.Services
         /*
          * 【好友圈的】：只有私密的看不到
          */
-        public List<sbyte> FriendSortList { get; set; } = new List<sbyte>() { (sbyte)BlogSort.PUBLIC, (sbyte)BlogSort.FRIEND, (sbyte)BlogSort.FAN, (sbyte)BlogSort.HOT_PUSH, (sbyte)BlogSort.ADVERTISE };
+        private List<sbyte> FriendSortList { get; set; } = new List<sbyte>() { (sbyte)BlogSort.PUBLIC, (sbyte)BlogSort.FRIEND, (sbyte)BlogSort.FAN, (sbyte)BlogSort.HOT_PUSH, (sbyte)BlogSort.ADVERTISE };
 
         private readonly IBase baseService;
         private readonly IAccountInfoService accountInfoService;
@@ -51,7 +51,7 @@ namespace Manager.Server.Services
             this.blogLikeService = blogLikeService;
         }
 
-        public async Task<bool> CreateBlog(Blog blog, List<BlogTopic>? blogTopic, UserTopic? userTopic)
+        public async Task<bool> CreateBlogAsync(Blog blog, List<BlogTopic>? blogTopic, UserTopic? userTopic)
         {
             //blog表
             var dic = new Dictionary<object, CrudEnum>
@@ -148,7 +148,7 @@ namespace Manager.Server.Services
                         if (focusList != null && focusList.Any())
                         {
                             /*
-                             * 好友圈（相互关注的人）
+                             * 朋友圈（相互关注的人）
                              * 言下之意：我关注的用户中也有用户关注了我，这部分用户组成了朋友圈
                              */
 
@@ -166,7 +166,7 @@ namespace Manager.Server.Services
                                 /*
                                  * 筛选的目的：
                                  * 【好友圈的】：只有私密的看不到
-                                 * 【我是粉丝】我关注但未关注我的：私密的、好友圈的看不到
+                                 * 【我是粉丝】：我关注但未关注我的：私密的、好友圈的看不到
                                  */
                                 var blogs = baseService.Entities<Blog>().Where(x =>
                                     ((friendsList.Contains(x.UId)) && FriendSortList.Contains(x.Sort))
@@ -193,7 +193,7 @@ namespace Manager.Server.Services
                         }
 
                         //热推和广告的博客
-                        query = query.Union(baseService.Entities<Blog>().Where(x => x.Sort >= (sbyte)BlogSort.HOT_PUSH && x.Sort <= (sbyte)BlogSort.ADVERTISE));
+                        query = query.Union(baseService.Entities<Blog>().Where(x => x.Sort == (sbyte)BlogSort.HOT_PUSH || x.Sort == (sbyte)BlogSort.ADVERTISE));
 
                         break;
 
@@ -256,11 +256,24 @@ namespace Manager.Server.Services
                                  */
                                 var fansList = focusList.Where(x => !friendsList.Contains(x));
 
-                                query = query.Where(x =>
-                                    (friendsList.Contains(x.UId) && FriendSortList.Contains(x.Sort))
-                                    ||
-                                    (fansList.Contains(x.UId) && FanSortList.Contains(x.Sort))
-                                    );
+                                if (fansList != null && fansList.Any())
+                                {
+                                    /*
+                                     * 我关注的人= 朋友圈的人 【互关】 + 我是粉丝 【我关注但未关注我】
+                                     */
+                                    query = query.Where(x =>
+                                      (friendsList.Contains(x.UId) && FriendSortList.Contains(x.Sort))
+                                      ||
+                                      (fansList.Contains(x.UId) && FanSortList.Contains(x.Sort))
+                                      );
+                                }
+                                else
+                                {
+                                    /*
+                                     * 我关注的人= 朋友圈的人 【互关】【不包含粉丝】
+                                    */
+                                    query = query.Where(x => friendsList.Contains(x.UId) && FriendSortList.Contains(x.Sort));
+                                }
                             }
                             else
                             {
@@ -317,11 +330,18 @@ namespace Manager.Server.Services
 
                                     var fansList = groupList.Where(x => !friendsList.Contains(x));
 
-                                    query = query.Where(x =>
-                                       (friendsList.Contains(x.UId) && FriendSortList.Contains(x.Sort))
-                                       ||
-                                       (fansList.Contains(x.UId) && FanSortList.Contains(x.Sort))
-                                    );
+                                    if (fansList != null && fansList.Any())
+                                    {
+                                        query = query.Where(x =>
+                                           (friendsList.Contains(x.UId) && FriendSortList.Contains(x.Sort))
+                                           ||
+                                           (fansList.Contains(x.UId) && FanSortList.Contains(x.Sort))
+                                        );
+                                    }
+                                    else
+                                    {
+                                        query = query.Where(x => friendsList.Contains(x.UId) && FriendSortList.Contains(x.Sort));
+                                    }
                                 }
                                 else
                                 {
@@ -361,7 +381,7 @@ namespace Manager.Server.Services
             {
                 query = query.Where(x => x.Sort == sort);
             }
-            // 类型  -1.全部  0.图片  1.视频   2.头条文章  3.音乐  4.普通文字(表情)
+            // 类型  0.全部 1.普通文字(表情) 2.头条文章 3.图片 4.音乐 5.视频
             if (type != null)
             {
                 query = query.Where(x => x.Type == type);
@@ -427,28 +447,28 @@ namespace Manager.Server.Services
             }
 
             //2.获取 accountInfo 表
-            blog.AccountInfo = await accountInfoService.FirstOrDefaultAsync(blog.UId);
+            blog.AccountInfo = await accountInfoService.FirstOrDefaultAsync(blog.UId, isCache: false);
 
             //3.获取博客评论数
-            blog.Comment = await blogCommentService.GetBlogCommentCountBy(x => x.BId == blog.Id);
+            blog.Comment = await blogCommentService.GetCommentCountBy(x => x.BId == blog.Id);
 
             //4.获取博客转发数
             //判定当前blog是原创blog
             blog.Forward = blog.FId == Guid.Empty ? await blogForwardService.GetBlogForwardCountBy(x => x.BaseBId == blog.Id) : await blogForwardService.GetBlogForwardCountBy(x => x.PrevBId == blog.Id);
 
             //6.获取博客点赞数量
-            blog.Like = (await blogLikeService.GetBlogLikeCountBy(blog.Id)).Int();
+            blog.Like = await blogLikeService.GetBlogLikeCountBy(blog.Id);
 
             //7.获取博客收藏数量
-            blog.Favorite = (await blogFavoriteService.GetBlogFavoriteCountBy(blog.Id)).Int();
+            blog.Favorite = await blogFavoriteService.GetBlogFavoriteCountBy(blog.Id);
 
             if (wId != null && wId != Guid.Empty)
             {
                 //8.获取当前登录用户是否点赞博客
-                blog.IsLike = await blogLikeService.GetIsBlogLikeByUser(blog.Id, wId.Value) != null;
+                blog.IsLike = await blogLikeService.GetIsBlogLikeByUser(blog.Id, wId.Value);
 
                 //9.获取当前登录用户是否收藏博客
-                blog.IsFavorite = await blogFavoriteService.GetIsBlogFavoriteByUser(blog.Id, wId.Value) != null;
+                blog.IsFavorite = await blogFavoriteService.GetIsBlogFavoriteByUser(blog.Id, wId.Value);
 
                 //10.关系
                 blog.UserFocus = await userFocus.GetUserFocusBy(x => x.BuId == blog.UId && x.UId == wId);
@@ -459,7 +479,7 @@ namespace Manager.Server.Services
                 /*
                  * 11.获取关联的 blog
                  */
-                blog.FBlog = (await GetPagedList(1, 1, 0, false, "", blog.FId))?.FirstOrDefault();
+                blog.FBlog = (await GetPagedList(pageIndex: 1, pageSize: 1, offset: 0, isTrack: false, orderBy: "", id: blog.FId))?.FirstOrDefault();
                 if (blog.FBlog != null) await GetBlogRelation(blog.FBlog, wId);
             }
         }
@@ -476,13 +496,22 @@ namespace Manager.Server.Services
                 new MySqlParameter("@year",year)
             };
 
-            var sql = " SELECT year(Created) Year,month(Created) Month,count(*) Count FROM blog where UId =@uId and Status = 0 and year(Created)= @year group by month(Created)";
+            var sql = $" SELECT year(Created) Year,month(Created) Month,count(*) Count FROM blog where UId =@uId and Status = {(sbyte)Status.ENABLE} and year(Created)= @year group by month(Created)";
 
             var res = await procService.ExecSqlAsync(sql, mySqlParameter);
             return res;
         }
 
-        public async Task<Blog?> GetBlogBy(Expression<Func<Blog, bool>> expression, bool isTrack = true)
+        public class daaaa
+        {
+            public string? Year { get; set; }
+
+            public string? Month { get; set; }
+
+            public string? Count { get; set; }
+        }
+
+        public async Task<Blog?> FirstOrDefaultAsync(Expression<Func<Blog, bool>> expression, bool isTrack = true)
         {
             return await baseService.FirstOrDefaultAsync(expression, isTrack);
         }

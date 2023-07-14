@@ -12,13 +12,7 @@ namespace Manager.Core.RequestModels
         public Guid? BId { get; set; }
 
         /// <summary>
-        /// 评论用户Id  => CommentUserId
-        /// </summary>
-        [JsonProperty("uId")]
-        public Guid? UId { get; set; }
-
-        /// <summary>
-        /// 被评论的用户Id => BeCommentUserId
+        /// 被评论的用户Id 
         /// </summary>
         [JsonProperty("buId")]
         public Guid? BuId { get; set; }

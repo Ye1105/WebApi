@@ -15,7 +15,7 @@ namespace Manager.Server.IServices
         /// <param name="blogTopic"></param>
         /// <param name="topic"></param>
         /// <returns></returns>
-        Task<bool> CreateBlog(Blog blog, List<BlogTopic>? blogTopic, UserTopic? topic);
+        Task<bool> CreateBlogAsync(Blog blog, List<BlogTopic>? blogTopic, UserTopic? topic);
 
         /// <summary>
         /// 发表博客
@@ -32,7 +32,7 @@ namespace Manager.Server.IServices
         /// <param name="expression"></param>
         /// <param name="isTrack"></param>
         /// <returns></returns>
-        Task<Blog?> GetBlogBy(Expression<Func<Blog, bool>> expression, bool isTrack = true);
+        Task<Blog?> FirstOrDefaultAsync(Expression<Func<Blog, bool>> expression, bool isTrack = true);
 
         /// <summary>
         /// 获取博客
@@ -87,10 +87,10 @@ namespace Manager.Server.IServices
         Task<PagedList<Blog>?> GetPagedList(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "", Guid? id = null, Guid? wId = null, Guid? uId = null, sbyte? sort = null, sbyte? type = null, bool? isFId = null, DateTime? startTime = null, DateTime? endTime = null, int? scope = null, string? grp = null, Status? status = null);
 
         /// <summary>
-        /// 获取被转发baseblog
+        /// 获取 blog 的关联信息
         /// </summary>
-        /// <param name="blog"></param>
-        /// <param name="wId"></param>
+        /// <param name="blog">需要获取关系信息的 blog</param>
+        /// <param name="wId">当前网站的登录用户</param>
         /// <returns></returns>
         Task GetBlogRelation(Blog blog, Guid? wId);
 
