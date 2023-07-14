@@ -166,13 +166,11 @@
       },
       "height": {
         "type": "number",
-        "minimum": 0,
-        "exclusiveMinimum": true
+        "minimum": 0
       },
       "width": {
         "type": "number",
-        "minimum": 0,
-        "exclusiveMinimum": true
+        "minimum": 0
       }
     }
   },
@@ -190,13 +188,11 @@
       },
       "height": {
         "type": "number",
-        "minimum": 0,
-        "exclusiveMinimum": true
+        "minimum": 0
       },
       "width": {
         "type": "number",
-        "minimum": 0,
-        "exclusiveMinimum": true
+        "minimum": 0
       }
     }
   },
@@ -394,16 +390,16 @@
       "type": {
         "type": "integer",
         "enum": [
-          -1,
           0,
           1,
           2,
           3,
-          4
+          4,
+          5
         ],
-        "default": 4,
+        "default": 1,
         "title": "类型",
-        "description": " -1.全部  0.图片  1.视频   2.头条文章  3.音乐  4.普通文字(表情)"
+        "description": " 0.全部 1.普通文字(表情) 2.头条文章 3.图片 4.音乐 5.视频 "
       },
       "body": {
         "type": "string",
@@ -481,23 +477,37 @@
           },
           "duration": {
             "title": "视频时长",
-            "type": "integer"
+            "type": "number"
           },
-          "cUrl": {
-            "type": "string",
-            "title": "封面地址"
-          },
-          "cWidth": {
-            "title": "封面宽度",
-            "type": "integer"
-          },
-          "cHeight": {
-            "title": "封面高度",
-            "type": "integer"
-          },
-          "CHashblur": {
-            "type": "string",
-            "title": "封面占位符"
+          "cover": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "url": {
+                "type": "string",
+                "title": "封面地址"
+              },
+              "width": {
+                "type": "number",
+                "title": "宽度"
+              },
+              "height": {
+                "type": "number",
+                "title": "高度"
+              },
+              "blurhash": {
+                "type": "string",
+                "title": "占位符"
+              }
+            },
+            "required": [
+              "url",
+              "width",
+              "height",
+              "blurhash"
+            ]
           }
         },
         "required": [
@@ -506,11 +516,7 @@
           "collection",
           "type",
           "url",
-          "duration",
-          "cUrl",
-          "cWidth",
-          "cHeight",
-          "CHashblur"
+          "duration"
         ],
         "title": "视频对象"
       }

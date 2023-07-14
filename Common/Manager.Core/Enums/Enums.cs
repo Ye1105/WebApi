@@ -57,7 +57,6 @@
 
     public enum Relation
     {
-
         [EnumDescription("关注")]
         FOCUS = 0,
 
@@ -94,7 +93,6 @@
         [EnumDescription("关注")]
         FOCUS = 2,
     }
-
 
     /// <summary>
     /// 关注渠道
@@ -210,22 +208,22 @@
     public enum BlogType
     {
         [EnumDescription("全部")]
-        ALL = -1,
+        ALL = 0,
 
-        [EnumDescription("图片")]
-        IMAGE = 0,
-
-        [EnumDescription("视频")]
-        VIDEO = 1,
+        [EnumDescription("文本")]
+        TEXT = 1,
 
         [EnumDescription("头条文章")]
         ARTCILE = 2,
 
-        [EnumDescription("音乐")]
-        MUSIC = 3,
+        [EnumDescription("图片")]
+        IMAGE = 3,
 
-        [EnumDescription("文本")]
-        TEXT = 4
+        [EnumDescription("音乐")]
+        MUSIC = 4,
+
+        [EnumDescription("视频")]
+        VIDEO = 5
     }
 
     /// <summary>

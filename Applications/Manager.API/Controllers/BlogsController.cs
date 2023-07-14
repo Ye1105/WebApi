@@ -54,7 +54,7 @@ namespace Manager.API.Controllers
 
                 /*
                  * 0. Json Schema 参数校验
-                 * 1. 敏感词校验
+                 * 1. 敏感词校验【未检测】
                  * 2. blog 参数赋值
                  * 3.1 重复性校验：1分钟内是否发布超过10条博客
                  * 3.2 重复性校验：10分钟内是否存在相同的博客
@@ -77,7 +77,6 @@ namespace Manager.API.Controllers
                 {
                     return Ok(Fail(errorMessages, "参数错误"));
                 }
-
 
                 //1.敏感词校验
 
@@ -114,7 +113,7 @@ namespace Manager.API.Controllers
                 };
 
                 //4.2 如果发布的是图片blog，创建图片实例
-                if (req.Type == (int)BlogType.IMAGE)
+                if (req.Type == BlogType.IMAGE)
                 {
                     if (req.Images != null && req.Images.Any())
                     {
@@ -142,7 +141,7 @@ namespace Manager.API.Controllers
                 }
 
                 //4.3 如果发布的是视频blog，创建视频实例
-                if ((sbyte)req.Type == (sbyte)BlogType.VIDEO)
+                if (req.Type == BlogType.VIDEO)
                 {
                     if (req.Video != null)
                     {
@@ -161,10 +160,13 @@ namespace Manager.API.Controllers
                             Duration = v.Duration,
                             Created = dt,
                             Status = (sbyte)Status.UNDER_REVIEW,
-                            CUrl = v.CUrl,
-                            CWidth = v.CWidth,
-                            CHeight = v.CHeight,
-                            CHashblur = v.CHashblur
+                            Cover = new
+                            {
+                                v.Cover.Width,
+                                v.Cover.Height,
+                                v.Cover.Url,
+                                v.Cover.Blurhash
+                            }.SerObj(),
                         };
                     }
                     else
@@ -175,6 +177,7 @@ namespace Manager.API.Controllers
 
                 List<BlogTopic> blogTopics = new();
                 UserTopic? userTopic = null;
+
                 //5. 正则:是否有新话题产生
                 if (RegexHelper.RegexList(
                         req.Body,
@@ -236,17 +239,17 @@ namespace Manager.API.Controllers
                 }
 
                 //6.写入数据
-                if (blogService.CreateBlogSync(blog, blogTopics, userTopic))
+                if (await blogService.CreateBlogAsync(blog, blogTopics, userTopic))
                 {
                     // 6. 返回数据
-                    var newBlog = blogService.GetBlogBySync(x => x.Id == bId);
+                    var newBlog = await blogService.FirstOrDefaultAsync(x => x.Id == bId);
                     if (newBlog == null)
                     {
                         return Ok(Success("发布博客失败", new { }));
                     }
                     else
                     {
-                        blogService.GetBlogRelation(newBlog, UId).Wait();
+                        await blogService.GetBlogRelation(newBlog, UId);
                         return Ok(Success("发布博客成功", newBlog));
                     }
                 }
@@ -266,7 +269,7 @@ namespace Manager.API.Controllers
         /// <param name="req"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> GetBlogList([FromQuery] GetBlogListRequest req)
+        public async Task<IActionResult> Paged([FromQuery] GetBlogListRequest req)
         {
             var result = await blogService.GetPagedList(req.PageIndex, req.PageSize, req.OffSet, false, req.OrderBy, req.Id, req.WId, req.UId, req.Sort == null ? null : (sbyte)req.Sort.Value, req.Type == null ? null : (sbyte)req.Type.Value, req.IsFId, req.StartTime, req.EndTime, req.Scope == null ? null : (sbyte)req.Scope.Value, req.Grp, req.Status);
 
@@ -300,7 +303,7 @@ namespace Manager.API.Controllers
         [HttpPatch("{id}/sort/{sort}")]
         public async Task<IActionResult> UpdateSort(Guid id, BlogSort sort)
         {
-            var blog = await blogService.GetBlogBy(x => x.Id == id && x.Status == (sbyte)Status.ENABLE && x.Sort != (sbyte)sort);
+            var blog = await blogService.FirstOrDefaultAsync(x => x.Id == id && x.Status == (sbyte)Status.ENABLE && x.Sort != (sbyte)sort);
             if (blog == null)
             {
                 return Ok(Fail(""));
@@ -338,7 +341,7 @@ namespace Manager.API.Controllers
                 return Ok(Fail("已存在置顶博客", "已存在置顶博客，请先取消置顶"));
             }
 
-            var blog = await blogService.GetBlogBy(x => x.Id == id && x.FId == Guid.Empty && x.Top == (sbyte)BoolType.NO && x.Status == (sbyte)Status.ENABLE);
+            var blog = await blogService.FirstOrDefaultAsync(x => x.Id == id && x.FId == Guid.Empty && x.Top == (sbyte)BoolType.NO && x.Status == (sbyte)Status.ENABLE);
             if (blog != null)
             {
                 blog.Top = (sbyte)BoolType.YES;
@@ -361,7 +364,7 @@ namespace Manager.API.Controllers
         [HttpPatch("{id}/untop")]
         public async Task<IActionResult> DeleteBlogTop(Guid id)
         {
-            var blog = await blogService.GetBlogBy(x => x.Id == id && x.FId == Guid.Empty && x.Status == (sbyte)Status.ENABLE && x.Top == (sbyte)BoolType.YES);
+            var blog = await blogService.FirstOrDefaultAsync(x => x.Id == id && x.FId == Guid.Empty && x.Status == (sbyte)Status.ENABLE && x.Top == (sbyte)BoolType.YES);
             if (blog != null)
             {
                 blog.Top = (sbyte)BoolType.NO;
@@ -394,7 +397,7 @@ namespace Manager.API.Controllers
              * 1.2  事务删除转发
              */
 
-            var blog = await blogService.GetBlogBy(x => x.Id == id && x.UId == uId && x.Status == (sbyte)Status.ENABLE);
+            var blog = await blogService.FirstOrDefaultAsync(x => x.Id == id && x.UId == uId && x.Status == (sbyte)Status.ENABLE);
             if (blog == null)
             {
                 return Ok(Fail("博客不存在"));

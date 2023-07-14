@@ -15,7 +15,7 @@ namespace Manager.Server.IServices
         /// <param name="blogTopic"></param>
         /// <param name="topic"></param>
         /// <returns></returns>
-        Task<bool> CreateBlog(Blog blog, List<BlogTopic>? blogTopic, UserTopic? topic);
+        Task<bool> CreateBlogAsync(Blog blog, List<BlogTopic>? blogTopic, UserTopic? topic);
 
         /// <summary>
         /// 发表博客
@@ -32,7 +32,7 @@ namespace Manager.Server.IServices
         /// <param name="expression"></param>
         /// <param name="isTrack"></param>
         /// <returns></returns>
-        Task<Blog?> GetBlogBy(Expression<Func<Blog, bool>> expression, bool isTrack = true);
+        Task<Blog?> FirstOrDefaultAsync(Expression<Func<Blog, bool>> expression, bool isTrack = true);
 
         /// <summary>
         /// 获取博客

@@ -38,7 +38,7 @@ namespace Manager.API.Controllers
             {
                 foreach (var item in result)
                 {
-                    await blogService.GetBlogRelation(item, req.WId);
+                    await blogService.GetBlogRelation(item, UId);
                 }
 
                 var JsonData = new

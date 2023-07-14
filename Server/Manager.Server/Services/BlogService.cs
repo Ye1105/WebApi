@@ -51,7 +51,7 @@ namespace Manager.Server.Services
             this.blogLikeService = blogLikeService;
         }
 
-        public async Task<bool> CreateBlog(Blog blog, List<BlogTopic>? blogTopic, UserTopic? userTopic)
+        public async Task<bool> CreateBlogAsync(Blog blog, List<BlogTopic>? blogTopic, UserTopic? userTopic)
         {
             //blog表
             var dic = new Dictionary<object, CrudEnum>
@@ -427,7 +427,7 @@ namespace Manager.Server.Services
             }
 
             //2.获取 accountInfo 表
-            blog.AccountInfo = await accountInfoService.FirstOrDefaultAsync(blog.UId);
+            blog.AccountInfo = await accountInfoService.FirstOrDefaultAsync(blog.UId, isCache: false);
 
             //3.获取博客评论数
             blog.Comment = await blogCommentService.GetBlogCommentCountBy(x => x.BId == blog.Id);
@@ -437,18 +437,18 @@ namespace Manager.Server.Services
             blog.Forward = blog.FId == Guid.Empty ? await blogForwardService.GetBlogForwardCountBy(x => x.BaseBId == blog.Id) : await blogForwardService.GetBlogForwardCountBy(x => x.PrevBId == blog.Id);
 
             //6.获取博客点赞数量
-            blog.Like = (await blogLikeService.GetBlogLikeCountBy(blog.Id)).Int();
+            blog.Like = await blogLikeService.GetBlogLikeCountBy(blog.Id);
 
             //7.获取博客收藏数量
-            blog.Favorite = (await blogFavoriteService.GetBlogFavoriteCountBy(blog.Id)).Int();
+            blog.Favorite = await blogFavoriteService.GetBlogFavoriteCountBy(blog.Id);
 
             if (wId != null && wId != Guid.Empty)
             {
                 //8.获取当前登录用户是否点赞博客
-                blog.IsLike = await blogLikeService.GetIsBlogLikeByUser(blog.Id, wId.Value) != null;
+                blog.IsLike = await blogLikeService.GetIsBlogLikeByUser(blog.Id, wId.Value);
 
                 //9.获取当前登录用户是否收藏博客
-                blog.IsFavorite = await blogFavoriteService.GetIsBlogFavoriteByUser(blog.Id, wId.Value) != null;
+                blog.IsFavorite = await blogFavoriteService.GetIsBlogFavoriteByUser(blog.Id, wId.Value);
 
                 //10.关系
                 blog.UserFocus = await userFocus.GetUserFocusBy(x => x.BuId == blog.UId && x.UId == wId);
@@ -459,7 +459,7 @@ namespace Manager.Server.Services
                 /*
                  * 11.获取关联的 blog
                  */
-                blog.FBlog = (await GetPagedList(1, 1, 0, false, "", blog.FId))?.FirstOrDefault();
+                blog.FBlog = (await GetPagedList(pageIndex: 1, pageSize: 1, offset: 0, isTrack: false, orderBy: "", id: blog.FId))?.FirstOrDefault();
                 if (blog.FBlog != null) await GetBlogRelation(blog.FBlog, wId);
             }
         }
@@ -482,7 +482,7 @@ namespace Manager.Server.Services
             return res;
         }
 
-        public async Task<Blog?> GetBlogBy(Expression<Func<Blog, bool>> expression, bool isTrack = true)
+        public async Task<Blog?> FirstOrDefaultAsync(Expression<Func<Blog, bool>> expression, bool isTrack = true)
         {
             return await baseService.FirstOrDefaultAsync(expression, isTrack);
         }

@@ -13,7 +13,7 @@ namespace Manager.Core.RequestModels
         public BlogSort Sort { get; set; }
 
         /// <summary>
-        /// 类型  -1.全部  0.图片  1.视频   2.头条文章  3.音乐  4.普通文字(表情)
+        /// 类型   0.全部 1.普通文字(表情) 2.头条文章 3.图片 4.音乐 5.视频
         /// </summary>
         [JsonProperty("type")]
         public BlogType Type { get; set; }
@@ -104,27 +104,37 @@ namespace Manager.Core.RequestModels
         public int Duration { get; set; }
 
         /// <summary>
-        /// 封面地址
+        /// 封面
         /// </summary>
-        [JsonProperty("cUrl")]
-        public string CUrl { get; set; }
+        [JsonProperty("cover")]
+        public VideoCover Cover { get; set; }
+
+    }
+
+    public class VideoCover
+    {
+        /// <summary>
+        /// 地址
+        /// </summary>
+        [JsonProperty("url")]
+        public string Url { get; set; }
 
         /// <summary>
-        /// 封面宽度
+        /// blurhash
         /// </summary>
-        [JsonProperty("cWidth")]
-        public int CWidth { get; set; }
+        [JsonProperty("blurhash")]
+        public string Blurhash { get; set; }
 
         /// <summary>
-        /// 封面高度
+        /// 宽
         /// </summary>
-        [JsonProperty("cHeight")]
-        public int CHeight { get; set; }
+        [JsonProperty("width")]
+        public int Width { get; set; }
 
         /// <summary>
-        /// 封面hash
+        /// 高
         /// </summary>
-        [JsonProperty("cHashblur")]
-        public string CHashblur { get; set; }
+        [JsonProperty("height")]
+        public int Height { get; set; }
     }
 }

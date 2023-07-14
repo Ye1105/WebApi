@@ -36,5 +36,21 @@
         /// 用户分组
         /// </summary>
         public static readonly string PREFIX_USER_GROUP= "usergroup:";
+
+
+        /// <summary>
+        ///【前缀】博客点赞数量
+        /// </summary>
+        public static readonly string  PREFIX_BLOG_LIKE_COUNT= "blog_like_count:";
+
+        /// <summary>
+        ///【前缀】博客用户是否点赞
+        /// </summary>
+        public static readonly string PREFIX_BLOG_ISLIKE= "blog_like_islike:";
+
+        /// <summary>
+        ///【前缀】点赞博客分页
+        /// </summary>
+        public static readonly string PREFIX_BLOG_LIKE_PAGED= "blog_like_paged:";
     }
 }

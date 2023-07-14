@@ -47,8 +47,8 @@ namespace Manager.Server.Services
             {
                 var imageList = await baseService.QueryAsync<BlogImage>(x => x.BId == id && x.Status == (sbyte)Status.ENABLE, false);
 
-                //expire 10 minutes
-                await cli.SetExAsync(keyName, 600, imageList.SerObj());
+                //expire 5 minutes
+                await cli.SetExAsync(keyName, 300, imageList.SerObj());
 
                 return await GetBlogImageListById(id);
             }

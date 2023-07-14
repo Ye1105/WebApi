@@ -94,33 +94,17 @@ namespace Manager.Core.Models.Blogs
         public sbyte? Status { get; set; } = (sbyte)Enums.Status.ENABLE;
 
         /// <summary>
-        /// 封面地址
+        /// 视频封面
         /// </summary>
-        [JsonProperty("cUrl")]
-        public string? CUrl { get; set; }
+        [JsonProperty("cover")]
+        public string? Cover { get; set; }
+
 
         [NotMapped]
         [JsonProperty("fullCUrl")]
         public string FullCUrl
         { get { return $"{Configurations.AppSettings["TencentCosTwo"].DesObj<TencentCosTwoConfig>().BucketURL}{Url}"; } }
 
-        /// <summary>
-        /// 封面宽度
-        /// </summary>
-        [JsonProperty("cWidth")]
-        public int? CWidth { get; set; }
-
-        /// <summary>
-        /// 封面高度
-        /// </summary>
-        [JsonProperty("cHeight")]
-        public int? CHeight { get; set; }
-
-        /// <summary>
-        /// 封面hash
-        /// </summary>
-        [JsonProperty("cHashblur")]
-        public string? CHashblur { get; set; }
 
         /// <summary>
         /// 点赞数

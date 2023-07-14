@@ -1,6 +1,7 @@
 ﻿using FreeRedis;
 using Manager.Core.Models.Blogs;
 using Manager.Core.Page;
+using Manager.Core.Settings;
 using Manager.Extensions;
 using Manager.Infrastructure.IRepositoies;
 using Manager.Server.IServices;
@@ -17,20 +18,6 @@ namespace Manager.Server.Services
         private readonly IBase baseService;
         private readonly IProcedure procService;
 
-        /// <summary>
-        ///【前缀】博客点赞数量
-        /// </summary>
-        private readonly string Prefix_BlogLikeCount = "BlogLike:Count:";
-
-        /// <summary>
-        ///【前缀】博客用户是否点赞
-        /// </summary>
-        private readonly string Prefix_IsBlogLike = "BlogLike:IsLike:";
-
-        /// <summary>
-        ///【前缀】点赞博客分页
-        /// </summary>
-        private readonly string Prefix_BlogByLikePagedList = "BlogLike:PagedList:";
 
         public BlogLikeService(IBase baseService, IProcedure procService)
         {
@@ -59,11 +46,11 @@ namespace Manager.Server.Services
                 {
                     using var cli = Instance(RedisBaseEnum.Zeroth);
                     //博客的点赞数量
-                    var keyNameBlogLikeCount = $"{Prefix_BlogLikeCount}{bId}";
+                    var keyNameBlogLikeCount = $"{RedisConstants.PREFIX_BLOG_LIKE_COUNT}{bId}";
                     //博客的点赞用户
-                    var keyNameBlogLike = $"{Prefix_IsBlogLike}{bId}_{uId}";
+                    var keyNameBlogLike = $"{RedisConstants.PREFIX_BLOG_ISLIKE}{bId}:{uId}";
                     //博客[点赞]的分页列表
-                    var keyNameBlogLikePagedList = $"{Prefix_BlogByLikePagedList}{uId}";
+                    var keyNameBlogLikePagedList = $"{RedisConstants.PREFIX_BLOG_LIKE_PAGED}{uId}";
 
                     await cli.DelAsync(keyNameBlogLikeCount, keyNameBlogLike, keyNameBlogLikePagedList);
                 }
@@ -96,11 +83,11 @@ namespace Manager.Server.Services
                 {
                     using var cli = Instance(RedisBaseEnum.Zeroth);
                     //博客的点赞数量
-                    var keyNameBlogLikeCount = $"{Prefix_BlogLikeCount}{bId}";
+                    var keyNameBlogLikeCount = $"{RedisConstants.PREFIX_BLOG_LIKE_COUNT}{bId}";
                     //博客的点赞用户
-                    var keyNameBlogLike = $"{Prefix_IsBlogLike}{bId}_{uId}";
+                    var keyNameBlogLike = $"{RedisConstants.PREFIX_BLOG_ISLIKE}{bId}:{uId}";
                     //博客[点赞]的分页列表
-                    var keyNameBlogLikePagedList = $"{Prefix_BlogByLikePagedList}{uId}";
+                    var keyNameBlogLikePagedList = $"{RedisConstants.PREFIX_BLOG_LIKE_PAGED}{uId}";
 
                     await cli.DelAsync(keyNameBlogLikeCount, keyNameBlogLike, keyNameBlogLikePagedList);
                 }
@@ -124,7 +111,7 @@ namespace Manager.Server.Services
                  * 3.未命中则从mysql获取值，然后更新缓存值，并返回值
                  */
 
-                var keyName = $"{Prefix_BlogLikeCount}{bId}";
+                var keyName = $"{RedisConstants.PREFIX_BLOG_LIKE_COUNT}{bId}";
 
                 using var cli = Instance(RedisBaseEnum.Zeroth);
 
@@ -161,7 +148,7 @@ namespace Manager.Server.Services
                  * 3.未命中则从mysql获取值，然后更新缓存值，并返回值
                  */
 
-                var keyName = $"{Prefix_IsBlogLike}{bId}_{uId}";
+                var keyName = $"{RedisConstants.PREFIX_BLOG_ISLIKE}{bId}:{uId}";
 
                 using var cli = Instance(RedisBaseEnum.Zeroth);
 
@@ -204,7 +191,7 @@ namespace Manager.Server.Services
                  * 4. 递归循环一次当前方法
                  */
 
-                var keyName = $"{Prefix_BlogByLikePagedList}{wId}";
+                var keyName = $"{RedisConstants.PREFIX_BLOG_LIKE_PAGED}{wId}";
 
                 using var cli = Instance(RedisBaseEnum.Zeroth);
 
