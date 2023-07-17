@@ -29,20 +29,20 @@ namespace Manager.Server.Services
             return await baseService.BatchTransactionAsync(dic);
         }
 
-        public async Task<Tuple<bool, string>> DeleteBlogForward(Guid id)
+        public async Task<Tuple<bool, string>> DeleteBlogForward(Guid id, Guid uId)
         {
             /*
              * 1.判断blog blogforward 中是否存在
              * 2.禁用数据
              */
 
-            var blog = await baseService.FirstOrDefaultAsync<Blog>(x => x.Id == id, true);
+            var blog = await baseService.FirstOrDefaultAsync<Blog>(x => x.Id == id && x.UId == uId, true);
             if (blog == null)
             {
                 return Tuple.Create(false, "博客不存在");
             }
 
-            var blogForward = await baseService.FirstOrDefaultAsync<BlogForward>(x => x.Id == id, true);
+            var blogForward = await baseService.FirstOrDefaultAsync<BlogForward>(x => x.Id == id && x.UId == uId, true);
             if (blogForward == null)
             {
                 return Tuple.Create(false, "转发不存在");
@@ -50,13 +50,11 @@ namespace Manager.Server.Services
 
             blog.Status = (sbyte)Status.DISABLE;
             blogForward.Status = (sbyte)Status.DISABLE;
-
             var dic = new Dictionary<object, CrudEnum>
-            {
-                { blog, CrudEnum.UPDATE },
-                { blogForward, CrudEnum.UPDATE }
-            };
-
+                {
+                    { blog, CrudEnum.UPDATE },
+                    { blogForward, CrudEnum.UPDATE }
+                };
             var res = await baseService.BatchTransactionAsync(dic);
 
             return res ? Tuple.Create(true, "") : Tuple.Create(false, "删除转发失败");

@@ -175,10 +175,10 @@ namespace Manager.API.Controllers
         /// <param name="id"></param>
         /// <param name="uId"></param>
         /// <returns></returns>
-        [HttpPost("{id}/likes/{uId}")]
-        public async Task<IActionResult> AddCommentLike(Guid id, Guid uId)
+        [HttpPost("{id}/likes")]
+        public async Task<IActionResult> AddCommentLike(Guid id)
         {
-            var res = await blogCommentLikeService.AddBlogCommentLike(id, uId);
+            var res = await blogCommentLikeService.AddBlogCommentLike(id, UId);
             return res.Item1 ? Ok(Success()) : Ok(Fail(res.Item2));
         }
 
@@ -188,10 +188,10 @@ namespace Manager.API.Controllers
         /// <param name="id"></param>
         /// <param name="uId"></param>
         /// <returns></returns>
-        [HttpDelete("{id}/likes/{uId}")]
-        public async Task<IActionResult> DeleteCommentLike(Guid id, Guid uId)
+        [HttpDelete("{id}/likes")]
+        public async Task<IActionResult> DeleteCommentLike(Guid id)
         {
-            var res = await blogCommentLikeService.DeleteBlogCommentLike(id, uId);
+            var res = await blogCommentLikeService.DeleteBlogCommentLike(id, UId);
             return res.Item1 ? Ok(Success()) : Ok(Fail(res.Item2));
         }
     }

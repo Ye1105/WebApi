@@ -31,6 +31,6 @@ namespace Manager.Server.IServices
         /// <param name="blog"></param>
         /// <param name="blogForward"></param>
         /// <returns></returns>
-        Task<Tuple<bool, string>> DeleteBlogForward(Guid id);
+        Task<Tuple<bool, string>> DeleteBlogForward(Guid id, Guid uId);
     }
 }

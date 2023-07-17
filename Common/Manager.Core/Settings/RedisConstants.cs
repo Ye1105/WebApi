@@ -5,7 +5,7 @@
         /// <summary>
         /// 【Key】 JWT_REFRESH_TOKEN
         /// </summary>
-        public static readonly string JWT_REFRESH_TOKEN = "jwt_refresh_token";
+        public static readonly string JWT_REFRESH_TOKEN = "jwt_refresh_token:";
 
         /// <summary>
         /// 用户信息 | 头像 | 封面
@@ -81,6 +81,18 @@
         ///【前缀】当前用户是否点赞
         /// </summary>
         public static readonly string PREFIX_COMMENT_ISLIKE = "comment_islike:";
+
+        //------------------------------------------------------------------------
+
+        /// <summary>
+        ///【前缀】转发点赞数量
+        /// </summary>
+        public static readonly string PREFIX_FORWARD_LIKE_COUNT = "forward_like_Count:";
+
+        /// <summary>
+        ///【前缀】转发用户是否点赞
+        /// </summary>
+        public static readonly string PREFIX_FORWARD_ISLIKE = "forward_islike:";
 
     }
 }

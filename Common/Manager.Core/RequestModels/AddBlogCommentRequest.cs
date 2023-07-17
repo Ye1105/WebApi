@@ -24,12 +24,6 @@ namespace Manager.Core.RequestModels
         public string? Message { get; set; }
 
         /// <summary>
-        /// 点赞数
-        /// </summary>
-        [JsonProperty("like")]
-        public int? Like { get; set; }
-
-        /// <summary>
         ///类型 : 0.评论 1.【回复】来评论【评论】  2.【回复】来评论【回复】
         /// </summary>
         [JsonProperty("type")]

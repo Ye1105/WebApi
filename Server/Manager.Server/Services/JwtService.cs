@@ -1,5 +1,6 @@
 ﻿using Manager.Core.Settings;
 using Manager.Extensions;
+using NPOI.SS.Formula.Functions;
 using static Manager.Redis.Infrastructure.RedisClient;
 
 namespace Manager.Server.Services
@@ -16,7 +17,8 @@ namespace Manager.Server.Services
 
                 var pipe = cli.StartPipe();
 
-                pipe.HSet(RedisConstants.JWT_REFRESH_TOKEN, uId.Str(), refreshToken);
+                //7天
+                pipe.SetExAsync($"{RedisConstants.JWT_REFRESH_TOKEN}{uId.Str()}", 60 * 60 * 24 * 7, refreshToken);
 
                 pipe.EndPipe();
 
@@ -35,7 +37,7 @@ namespace Manager.Server.Services
             //return crudJWT.ExsitRefreshToken(uId, refreshToken);
             using var redis = Instance(RedisBaseEnum.Zeroth);
 
-            var res = await redis.HGetAsync(RedisConstants.JWT_REFRESH_TOKEN, uId.Str());
+            var res = await redis.GetAsync($"{RedisConstants.JWT_REFRESH_TOKEN}{uId.Str()}");
             if (res == null)
             {
                 return Tuple.Create(false, "用户Token不存在");

@@ -95,6 +95,6 @@ namespace Manager.Core.Models.Blogs
         /// </summary>
         [NotMapped]
         [JsonProperty("like")]
-        public int? Like { get; set; }
+        public long? Like { get; set; }
     }
 }
