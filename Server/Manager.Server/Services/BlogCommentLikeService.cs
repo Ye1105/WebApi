@@ -65,7 +65,7 @@ namespace Manager.Server.Services
                  * 3.未命中则从mysql获取值，然后更新缓存值，并返回值
                  */
 
-                var keyName = $"{RedisConstants.PREFIX_COMMENT_ISLIKE}{cId}_{uId}";
+                var keyName = $"{RedisConstants.PREFIX_COMMENT_ISLIKE}{cId}:{uId}";
 
                 using var cli = Instance(RedisBaseEnum.Zeroth);
 
@@ -119,10 +119,11 @@ namespace Manager.Server.Services
                     var keyNameBlogCommentLikeCount = $"{RedisConstants.PREFIX_COMMENT_LIKE_COUNT}{cId}";
 
                     //当前用户是否点赞
-                    var keyNameBlogCommentLike = $"{RedisConstants.PREFIX_COMMENT_ISLIKE}{cId}_{uId}";
+                    var keyNameBlogCommentLike = $"{RedisConstants.PREFIX_COMMENT_ISLIKE}{cId}:{uId}";
 
                     await cli.DelAsync(keyNameBlogCommentLikeCount, keyNameBlogCommentLike);
                 }
+
                 return Tuple.Create(res, "");
             }
             catch (Exception ex)
@@ -156,7 +157,7 @@ namespace Manager.Server.Services
                     var keyNameBlogCommentLikeCount = $"{RedisConstants.PREFIX_COMMENT_LIKE_COUNT}{cId}";
 
                     //当前用户是否点赞
-                    var keyNameBlogCommentLike = $"{RedisConstants.PREFIX_COMMENT_ISLIKE}{cId}_{uId}";
+                    var keyNameBlogCommentLike = $"{RedisConstants.PREFIX_COMMENT_ISLIKE}{cId}:{uId}";
 
                     await cli.DelAsync(keyNameBlogCommentLikeCount, keyNameBlogCommentLike);
                 }

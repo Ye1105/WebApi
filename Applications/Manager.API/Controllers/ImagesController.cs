@@ -1,6 +1,7 @@
 ﻿using Manager.API.Utility;
 using Manager.API.Utility.Filters;
 using Manager.Core;
+using Manager.Core.Enums;
 using Manager.Core.RequestModels;
 using Manager.Extensions;
 using Manager.Server.IServices;
@@ -31,21 +32,18 @@ namespace Manager.API.Controllers
         /// <param name="req"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> GetBlogImageList([FromQuery] GetBlogImageListRequest req)
+        public async Task<IActionResult> Paged([FromQuery] GetBlogImageListRequest req)
         {
-            var result = await blogImageService.GetPagedList(req.PageIndex, req.PageSize, req.OffSet, false, req.OrderBy, req.BId, req.UId, req.StartTime, req.EndTime);
+            var result = await blogImageService.GetPagedList(req.PageIndex, req.PageSize, req.OffSet, isTrack: false, req.OrderBy, req.BId, req.UId, req.StartTime, req.EndTime, Status.ENABLE);
 
             if (result != null && result.Any())
             {
                 foreach (var item in result)
                 {
                     //当前图片点赞数
-                    item.Like = (await blogImageLikeService.GetBlogImageLikeCountBy(item.Id)).Int();
-                    if (req.WId != null && req.WId != Guid.Empty)
-                    {
-                        //关联当前用户是否点赞
-                        item.IsLike = await blogImageLikeService.GetIsBlogImageLikeByUser(item.Id, req.WId.Value) != null;
-                    }
+                    item.Like = await blogImageLikeService.GetBlogImageLikeCountBy(item.Id);
+                    //关联当前用户是否点赞
+                    item.IsLike = await blogImageLikeService.GetIsBlogImageLikeByUser(item.Id, UId);
                 }
 
                 var JsonData = new
@@ -70,10 +68,10 @@ namespace Manager.API.Controllers
         /// <param name="id"></param>
         /// <param name="uId"></param>
         /// <returns></returns>
-        [HttpPost("{iId}/likes/{uId}")]
-        public async Task<IActionResult> AddBlogImageLike(Guid iId, Guid uId)
+        [HttpPost("{iId}/likes")]
+        public async Task<IActionResult> AddBlogImageLike(Guid iId)
         {
-            var res = await blogImageLikeService.AddBlogImageLike(iId, uId);
+            var res = await blogImageLikeService.AddBlogImageLike(iId, UId);
             return res.Item1 ? Ok(Success()) : Ok(Fail(res.Item2));
         }
 
@@ -85,10 +83,10 @@ namespace Manager.API.Controllers
         /// <param name="id"></param>
         /// <param name="uId"></param>
         /// <returns></returns>
-        [HttpDelete("{iId}/likes/{uId}")]
-        public async Task<IActionResult> DeleteBlogImageLike(Guid iId, Guid uId)
+        [HttpDelete("{iId}/likes")]
+        public async Task<IActionResult> DeleteBlogImageLike(Guid iId)
         {
-            var res = await blogImageLikeService.DelBlogImageLike(iId, uId);
+            var res = await blogImageLikeService.DelBlogImageLike(iId, UId);
             return res.Item1 ? Ok(Success()) : Ok(Fail(res.Item2));
         }
     }

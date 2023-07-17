@@ -1,4 +1,5 @@
 ﻿using Manager.Core.Models.Blogs;
+using Manager.Core.Settings;
 using Manager.Extensions;
 using Manager.Infrastructure.IRepositoies;
 using Manager.Server.IServices;
@@ -11,21 +12,6 @@ namespace Manager.Server.Services
     public class BlogImageLikeService : IBlogImageLikeService
     {
         private readonly IBase baseService;
-
-        /// <summary>
-        ///【前缀】图片点赞数量
-        /// </summary>
-        private readonly string Prefix_ImageLikeCount = "ImageLike:Count:";
-
-        /// <summary>
-        ///【前缀】图片用户是否点赞
-        /// </summary>
-        private readonly string Prefix_IsImageLike = "ImageLike:IsLike:";
-
-        /// <summary>
-        ///【前缀】点赞图片分页
-        /// </summary>
-        //private readonly string Prefix_ImageByLikePagedList = "ImageLike:PagedList:";
 
         public BlogImageLikeService(IBase baseService)
         {
@@ -53,11 +39,9 @@ namespace Manager.Server.Services
                 {
                     using var cli = Instance(RedisBaseEnum.Zeroth);
                     //图片的点赞数量
-                    var keyNameImageLikeCount = $"{Prefix_ImageLikeCount}{iId}";
+                    var keyNameImageLikeCount = $"{RedisConstants.PREFIX_IMAGE_LIKE_COUNT}{iId}";
                     //图片的点赞用户
-                    var keyNameImageLike = $"{Prefix_IsImageLike}{iId}_{uId}";
-                    //图片[点赞]的分页列表
-                    //var keyNameVideoLikePagedList = $"{Prefix_ImageByLikePagedList}{uId}";
+                    var keyNameImageLike = $"{RedisConstants.PREFIX_IMAGE_ISLIKE}{iId}:{uId}";
 
                     await cli.DelAsync(keyNameImageLikeCount, keyNameImageLike);
                 }
@@ -90,11 +74,9 @@ namespace Manager.Server.Services
                 {
                     using var cli = Instance(RedisBaseEnum.Zeroth);
                     //图片的点赞数量
-                    var keyNameImageLikeCount = $"{Prefix_ImageLikeCount}{iId}";
+                    var keyNameImageLikeCount = $"{RedisConstants.PREFIX_IMAGE_LIKE_COUNT}{iId}";
                     //图片的点赞用户
-                    var keyNameImageLike = $"{Prefix_IsImageLike}{iId}_{uId}";
-                    //图片[点赞]的分页列表
-                    //var keyNameVideoLikePagedList = $"{Prefix_ImageByLikePagedList}{uId}";
+                    var keyNameImageLike = $"{RedisConstants.PREFIX_IMAGE_ISLIKE}{iId}:{uId}";
 
                     await cli.DelAsync(keyNameImageLikeCount, keyNameImageLike);
                 }
@@ -118,7 +100,7 @@ namespace Manager.Server.Services
                  * 3.未命中则从mysql获取值，然后更新缓存值，并返回值
                  */
 
-                var keyName = $"{Prefix_ImageLikeCount}{iId}";
+                var keyName = $"{RedisConstants.PREFIX_IMAGE_LIKE_COUNT}{iId}";
 
                 using var cli = Instance(RedisBaseEnum.Zeroth);
 
@@ -155,7 +137,7 @@ namespace Manager.Server.Services
                  * 3.未命中则从mysql获取值，然后更新缓存值，并返回值
                  */
 
-                var keyName = $"{Prefix_IsImageLike}{iId}_{uId}";
+                var keyName = $"{RedisConstants.PREFIX_IMAGE_ISLIKE}{iId}:{uId}";
 
                 using var cli = Instance(RedisBaseEnum.Zeroth);
 

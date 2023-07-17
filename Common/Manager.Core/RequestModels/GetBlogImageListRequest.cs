@@ -18,12 +18,6 @@ namespace Manager.Core.RequestModels
         public Guid? BId { get; set; }
 
         /// <summary>
-        /// 当前网站登录的用户
-        /// </summary>
-        [JsonProperty("wId")]
-        public Guid? WId { get; set; }
-
-        /// <summary>
         /// 开始时间
         /// </summary>
         [JsonProperty("startTime")]

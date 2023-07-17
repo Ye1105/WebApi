@@ -54,7 +54,7 @@ namespace Manager.Server.Services
             }
         }
 
-        public async Task<PagedList<BlogImage>?> GetPagedList(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "", Guid? bId = null, Guid? uId = null, DateTime? startTime = null, DateTime? endTime = null)
+        public async Task<PagedList<BlogImage>?> GetPagedList(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "", Guid? bId = null, Guid? uId = null, DateTime? startTime = null, DateTime? endTime = null, Status status = Status.ENABLE)
         {
             var query = baseService.Entities<BlogImage>();
 
@@ -78,7 +78,8 @@ namespace Manager.Server.Services
                 query = query.Where(x => x.Created < endTime);
             }
 
-            query = query.Where(x => x.Status == (int)Status.ENABLE);
+
+            query = query.Where(x => x.Status == (sbyte)status);
 
             query = query.ApplySort(orderBy);
 

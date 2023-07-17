@@ -1,6 +1,7 @@
 ﻿using Manager.API.Utility;
 using Manager.API.Utility.Filters;
 using Manager.Core;
+using Manager.Core.Enums;
 using Manager.Core.RequestModels;
 using Manager.Extensions;
 using Manager.Server.IServices;
@@ -31,21 +32,18 @@ namespace Manager.API.Controllers
         /// <param name="req"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> GetBlogVideoList([FromQuery] GetBlogVideoListRequest req)
+        public async Task<IActionResult> Paged([FromQuery] GetBlogVideoListRequest req)
         {
-            var result = await blogVideoService.GetPagedList(req.PageIndex, req.PageSize, req.OffSet, false, req.OrderBy, req.BId, req.UId, req.Title, req.Channel, req.Collection, req.Type, req.StartTime, req.EndTime);
+            var result = await blogVideoService.GetPagedList(req.PageIndex, req.PageSize, req.OffSet, false, req.OrderBy, req.BId, req.UId, req.Title, req.Channel, req.Collection, req.Type, req.StartTime, req.EndTime, Status.ENABLE);
 
             if (result != null && result.Any())
             {
                 foreach (var item in result)
                 {
                     //当前视频点赞数
-                    item.Like = (await blogVideoLikeService.GetBlogVideoLikeCountBy(item.Id)).Int();
-                    if (req.WId != null && req.WId != Guid.Empty)
-                    {
-                        //关联当前用户是否点赞
-                        item.IsLike = await blogVideoLikeService.GetIsBlogVideoLikeByUser(item.Id, req.WId.Value) != null;
-                    }
+                    item.Like = await blogVideoLikeService.GetBlogVideoLikeCountBy(item.Id);
+                    //关联当前用户是否点赞
+                    item.IsLike = await blogVideoLikeService.GetIsBlogVideoLikeByUser(item.Id, UId);
                 }
 
                 var JsonData = new
@@ -69,10 +67,10 @@ namespace Manager.API.Controllers
         /// <param name="vId"></param>
         /// <param name="uId"></param>
         /// <returns></returns>
-        [HttpPost("{vId}/likes/{uId}")]
-        public async Task<IActionResult> AddBlogVideoLike(Guid vId, Guid uId)
+        [HttpPost("{vId}/likes")]
+        public async Task<IActionResult> AddBlogVideoLike(Guid vId)
         {
-            var res = await blogVideoLikeService.AddBlogVideoLike(vId, uId);
+            var res = await blogVideoLikeService.AddBlogVideoLike(vId, UId);
             return res.Item1 ? Ok(Success()) : Ok(Fail(res.Item2));
         }
 
@@ -82,10 +80,10 @@ namespace Manager.API.Controllers
         /// <param name="vId"></param>
         /// <param name="uId"></param>
         /// <returns></returns>
-        [HttpDelete("{vId}/likes/{uId}")]
-        public async Task<IActionResult> DeleteBlogVideoLike(Guid vId, Guid uId)
+        [HttpDelete("{vId}/likes")]
+        public async Task<IActionResult> DeleteBlogVideoLike(Guid vId)
         {
-            var res = await blogVideoLikeService.DelBlogVideoLike(vId, uId);
+            var res = await blogVideoLikeService.DelBlogVideoLike(vId, UId);
             return res.Item1 ? Ok(Success()) : Ok(Fail(res.Item2));
         }
     }

@@ -22,12 +22,6 @@ namespace Manager.Core.RequestModels
         public Guid? BuId { get; set; }
 
         /// <summary>
-        /// 当前登录网站的用户
-        /// </summary>
-        [JsonProperty("wId")]
-        public Guid? WId { get; set; }
-
-        /// <summary>
         /// 被转发的最原始blog id
         /// </summary>
         [JsonProperty("baseBId")]
@@ -62,8 +56,5 @@ namespace Manager.Core.RequestModels
         /// </summary>
         [JsonProperty("scope")]
         public ForwardScope? Scope { get; set; }
-
-        [JsonProperty("status")]
-        public Status? Status { get; set; }
     }
 }

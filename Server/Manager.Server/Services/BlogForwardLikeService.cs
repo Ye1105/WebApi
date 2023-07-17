@@ -1,4 +1,5 @@
 ﻿using Manager.Core.Models.Blogs;
+using Manager.Core.Settings;
 using Manager.Extensions;
 using Manager.Infrastructure.IRepositoies;
 using Manager.Server.IServices;
@@ -11,16 +12,6 @@ namespace Manager.Server.Services
     public class BlogForwardLikeService : IBlogForwardLikeService
     {
         private readonly IBase baseService;
-
-        /// <summary>
-        ///【前缀】转发点赞数量
-        /// </summary>
-        private readonly string Prefix_ForwardLikeCount = "ForwardLike:Count:";
-
-        /// <summary>
-        ///【前缀】转发用户是否点赞
-        /// </summary>
-        private readonly string Prefix_IsForwardLike = "ForwardLike:IsLike:";
 
         public BlogForwardLikeService(IBase baseService)
         {
@@ -48,9 +39,9 @@ namespace Manager.Server.Services
                 {
                     using var cli = Instance(RedisBaseEnum.Zeroth);
                     //转发的点赞数量
-                    var keyNameForwardLikeCount = $"{Prefix_ForwardLikeCount}{fId}";
+                    var keyNameForwardLikeCount = $"{RedisConstants.PREFIX_FORWARD_LIKE_COUNT}{fId}";
                     //转发的点赞用户
-                    var keyNameForwardLike = $"{Prefix_IsForwardLike}{fId}_{uId}";
+                    var keyNameForwardLike = $"{RedisConstants.PREFIX_FORWARD_ISLIKE}{fId}:{uId}";
 
                     await cli.DelAsync(keyNameForwardLikeCount, keyNameForwardLike);
                 }
@@ -83,9 +74,9 @@ namespace Manager.Server.Services
                 {
                     using var cli = Instance(RedisBaseEnum.Zeroth);
                     //转发的点赞数量
-                    var keyNameForwardLikeCount = $"{Prefix_ForwardLikeCount}{fId}";
+                    var keyNameForwardLikeCount = $"{RedisConstants.PREFIX_FORWARD_LIKE_COUNT}{fId}";
                     //转发的点赞用户
-                    var keyNameForwardLike = $"{Prefix_IsForwardLike}{fId}_{uId}";
+                    var keyNameForwardLike = $"{RedisConstants.PREFIX_FORWARD_ISLIKE}{fId}:{uId}";
 
                     await cli.DelAsync(keyNameForwardLikeCount, keyNameForwardLike);
                 }
@@ -109,7 +100,7 @@ namespace Manager.Server.Services
                  * 3.未命中则从mysql获取值，然后更新缓存值，并返回值
                  */
 
-                var keyName = $"{Prefix_ForwardLikeCount}{fId}";
+                var keyName = $"{RedisConstants.PREFIX_FORWARD_LIKE_COUNT}{fId}";
 
                 using var cli = Instance(RedisBaseEnum.Zeroth);
 
@@ -146,7 +137,7 @@ namespace Manager.Server.Services
                  * 3.未命中则从mysql获取值，然后更新缓存值，并返回值
                  */
 
-                var keyName = $"{Prefix_IsForwardLike}{fId}_{uId}";
+                var keyName = $"{RedisConstants.PREFIX_FORWARD_ISLIKE}{fId}:{uId}";
 
                 using var cli = Instance(RedisBaseEnum.Zeroth);
 
