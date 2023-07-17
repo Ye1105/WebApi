@@ -42,7 +42,7 @@
     |   |   └── Schemas                                                   //JsonSchema 帮助类（单例模式）  
     |   ├── appsettings.json                                            //项目配置文件                    
     |   ├── jsonschemas.json                                            //Jsonschema 配置文件    
-    |   ├── app.config                                                  //Jieba 分词的词典路径配置文件  
+    |   ├── app.config                                                  //Jieba 分词词典路径配置文件  
     |   └── Program.cs                                                  //程序入口 
     ├── Manager.Core                                                  //实体类库                   
     |   ├── AuthorizationModels                                         //权限实体类                       
@@ -69,7 +69,7 @@
 
 ## 💻项目进度
 
-> 项目基础框架基本搭建完成。全文检索库的接口、消息推送等接口尚未搭建，后续将继续更新，可以 `Star` :star: 关注一下，:pray:谢谢。
+> 项目基础框架基本搭建完成。全文检索库的接口、消息推送等接口尚在搭建，后续将继续更新，可以 `Star` :star: 关注一下，:pray:谢谢。
 
 ## 📄项目规范
 
