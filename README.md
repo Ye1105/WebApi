@@ -34,37 +34,37 @@
 
 ```C#
  Project 
-    ├── Manager.API                                                      //主程序接口                    
-    |   ├── Controllers                                                    //接口
-    |   ├── Utilities                                                      //帮助类
-    |   |   ├── AutofaExt                                                    //Auto fac
-    |   |   ├── Filters                                                      //AOP 过滤器
-    |   |   └── Schemas                                                      //JsonSchema 帮助类（单例模式）  
-    |   ├── appsettings.json                                               //项目配置文件                    
-    |   ├── jsonschemas.json                                               //Jsonschema 配置文件    
-    |   ├── app.config                                                     //Jieba 分词的词典路径配置文件  
-    |   └── Program.cs                                                     //程序入口 
-    ├── Manager.Core                                                     //实体类库                   
-    |   ├── AuthorizationModels                                            //权限实体类                       
-    |   ├── Enums                                                          //枚举
-    |   ├── Models                                                         //ORM 映射实体类
-    |   ├── Page                                                           //分页     
-    |   ├── RequestModels                                                  //接口请求实体类              
-    |   ├── ResponseModels                                                 //接口响应实体类     
-    |   ├── Settings                                                       //配置、常量实体类
-    |   └── Tencent                                                        //腾讯短信接口实体类     
-    ├── Manager.JwtAuthorizePolicy                                       //权限                
-    |   └── Handler                                                        //权限策略扩展 Handler
-    ├── Manager.Server                                                   //逻辑业务层 
-    |   ├── IServices                                                      //逻辑业务接口
-    |   └── Services                                                       //逻辑业务实现    
-    ├── Manager.SearchEngine                                             //全文索引库
-    |   ├── Analyzers                                                      //JieBa 分析器
-    |   ├── Engines                                                        //引擎接口
-    |   └── Tokenizers                                                     //JieBa 分词器   
-    └── Manager.Infrastructure                                          //仓储层
-        ├── IRepositoies                                                   //数据持久化接口
-        └── Repositoies                                                    //数据持久化实现
+    ├── Manager.API                                                   //主程序接口                    
+    |   ├── Controllers                                                 //接口
+    |   ├── Utilities                                                   //帮助类
+    |   |   ├── AutofaExt                                                 //Auto fac
+    |   |   ├── Filters                                                   //AOP 过滤器
+    |   |   └── Schemas                                                   //JsonSchema 帮助类（单例模式）  
+    |   ├── appsettings.json                                            //项目配置文件                    
+    |   ├── jsonschemas.json                                            //Jsonschema 配置文件    
+    |   ├── app.config                                                  //Jieba 分词的词典路径配置文件  
+    |   └── Program.cs                                                  //程序入口 
+    ├── Manager.Core                                                  //实体类库                   
+    |   ├── AuthorizationModels                                         //权限实体类                       
+    |   ├── Enums                                                       //枚举
+    |   ├── Models                                                      //ORM 映射实体类
+    |   ├── Page                                                        //分页     
+    |   ├── RequestModels                                               //接口请求实体类              
+    |   ├── ResponseModels                                              //接口响应实体类     
+    |   ├── Settings                                                    //配置、常量实体类
+    |   └── Tencent                                                     //腾讯短信接口实体类     
+    ├── Manager.JwtAuthorizePolicy                                    //权限                
+    |   └── Handler                                                     //权限策略扩展 Handler
+    ├── Manager.Server                                                //逻辑业务层 
+    |   ├── IServices                                                   //逻辑业务接口
+    |   └── Services                                                    //逻辑业务实现    
+    ├── Manager.SearchEngine                                          //全文索引库
+    |   ├── Analyzers                                                   //JieBa 分析器
+    |   ├── Engines                                                     //引擎接口
+    |   └── Tokenizers                                                  //JieBa 分词器   
+    └── Manager.Infrastructure                                       //仓储层
+        ├── IRepositoies                                                //数据持久化接口
+        └── Repositoies                                                 //数据持久化实现
 ```
 
 ## 💻项目进度
