@@ -12,14 +12,14 @@ namespace Manager.API.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("v1/api/comment-forwards")]
+    [Route("v1/api/cforwards")]
     [ApiExplorerSettings(GroupName = nameof(ApiVersionInfo.V1))]
     [CustomExceptionFilter]
-    public class CommentForwardsController : ApiController
+    public class CForwardsController : ApiController
     {
         private readonly IBlogService blogService;
 
-        public CommentForwardsController(IBlogService blogService)
+        public CForwardsController(IBlogService blogService)
         {
             this.blogService = blogService;
         }
@@ -60,21 +60,21 @@ namespace Manager.API.Controllers
             var blog = new Blog()
             {
                 Id = id,
-                UId = req.Blog.UId,
+                UId = UId,
                 Sort = (sbyte)req.Blog.Sort,
                 Type = (sbyte)req.Blog.Type,
-                FId = req.Blog.FId,
                 Body = req.Blog.Body,
                 Top = (sbyte)BoolType.NO,
                 Created = dt,
-                Status = status
+                Status = status,
+                FId = req.Blog.FId
             };
 
             var blogComment = new BlogComment()
             {
                 Id = id,
                 BId = req.BlogComment.BId,
-                UId = req.BlogComment.UId,
+                UId = UId,
                 BuId = req.BlogComment.BuId,
                 Message = req.BlogComment.Message,
                 Type = (sbyte)req.BlogComment.Type,
@@ -88,7 +88,7 @@ namespace Manager.API.Controllers
             var blogForward = new BlogForward()
             {
                 Id = id,
-                UId = req.BlogForward.UId,
+                UId = UId,
                 Message = req.BlogForward.Message,
                 BaseBId = req.BlogForward.BaseBId,
                 PrevBId = req.BlogForward.PrevBId,

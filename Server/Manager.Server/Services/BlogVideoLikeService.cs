@@ -1,4 +1,5 @@
 ﻿using Manager.Core.Models.Blogs;
+using Manager.Core.Settings;
 using Manager.Extensions;
 using Manager.Infrastructure.IRepositoies;
 using Manager.Server.IServices;
@@ -11,21 +12,6 @@ namespace Manager.Server.Services
     public class BlogVideoLikeService : IBlogVideoLikeService
     {
         private readonly IBase baseService;
-
-        /// <summary>
-        ///【前缀】博客视频点赞数量
-        /// </summary>
-        private readonly string Prefix_VideoLikeCount = "VideoLike:Count:";
-
-        /// <summary>
-        ///【前缀】博客视频用户是否点赞
-        /// </summary>
-        private readonly string Prefix_IsVideoLike = "VideoLike:IsLike:";
-
-        /// <summary>
-        ///【前缀】点赞博客视频分页
-        /// </summary>
-        //private readonly string Prefix_VideoByLikePagedList = "VideoLike:PagedList:";
 
         public BlogVideoLikeService(IBase baseService)
         {
@@ -53,9 +39,9 @@ namespace Manager.Server.Services
                 {
                     using var cli = Instance(RedisBaseEnum.Zeroth);
                     //视频的点赞数量
-                    var keyNameVideoLikeCount = $"{Prefix_VideoLikeCount}{vId}";
+                    var keyNameVideoLikeCount = $"{RedisConstants.PREFIX_VIDEO_LIKE_COUNT}{vId}";
                     //视频的点赞用户
-                    var keyNameVideoLike = $"{Prefix_IsVideoLike}{vId}_{uId}";
+                    var keyNameVideoLike = $"{RedisConstants.PREFIX_VIDEO_ISLIKE}{vId}:{uId}";
 
                     await cli.DelAsync(keyNameVideoLikeCount, keyNameVideoLike);
                 }
@@ -88,9 +74,9 @@ namespace Manager.Server.Services
                 {
                     using var cli = Instance(RedisBaseEnum.Zeroth);
                     //视频的点赞数量
-                    var keyNameVideoLikeCount = $"{Prefix_VideoLikeCount}{vId}";
+                    var keyNameVideoLikeCount = $"{RedisConstants.PREFIX_VIDEO_LIKE_COUNT}{vId}";
                     //视频的点赞用户
-                    var keyNameVideoLike = $"{Prefix_IsVideoLike}{vId}_{uId}";
+                    var keyNameVideoLike = $"{RedisConstants.PREFIX_VIDEO_ISLIKE}{vId}:{uId}";
 
                     await cli.DelAsync(keyNameVideoLikeCount, keyNameVideoLike);
                 }
@@ -114,7 +100,7 @@ namespace Manager.Server.Services
                  * 3.未命中则从mysql获取值，然后更新缓存值，并返回值
                  */
 
-                var keyName = $"{Prefix_VideoLikeCount}{vId}";
+                var keyName = $"{RedisConstants.PREFIX_VIDEO_LIKE_COUNT}{vId}";
 
                 using var cli = Instance(RedisBaseEnum.Zeroth);
 
@@ -151,7 +137,7 @@ namespace Manager.Server.Services
                  * 3.未命中则从mysql获取值，然后更新缓存值，并返回值
                  */
 
-                var keyName = $"{Prefix_IsVideoLike}{vId}_{uId}";
+                var keyName = $"{RedisConstants.PREFIX_VIDEO_ISLIKE}{vId}:{uId}";
 
                 using var cli = Instance(RedisBaseEnum.Zeroth);
 

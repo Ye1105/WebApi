@@ -111,7 +111,7 @@ namespace Manager.Core.Models.Blogs
         /// </summary>
         [NotMapped]
         [JsonProperty("like")]
-        public int? Like { get; set; }
+        public long? Like { get; set; }
 
         /// <summary>
         /// 当前网站的登录用户是否点赞

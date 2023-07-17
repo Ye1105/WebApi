@@ -94,5 +94,29 @@
         /// </summary>
         public static readonly string PREFIX_FORWARD_ISLIKE = "forward_islike:";
 
+
+        //------------------------------------------------------------------------
+
+        /// <summary>
+        ///【前缀】图片点赞数量
+        /// </summary>
+        public static readonly string PREFIX_IMAGE_LIKE_COUNT = "image_like_count:";
+
+        /// <summary>
+        ///【前缀】图片用户是否点赞
+        /// </summary>
+        public static readonly string PREFIX_IMAGE_ISLIKE = "image_islike:";
+
+        //------------------------------------------------------------------------
+
+        /// <summary>
+        ///【前缀】博客视频点赞数量
+        /// </summary>
+        public static readonly string PREFIX_VIDEO_LIKE_COUNT = "video_like_count:";
+
+        /// <summary>
+        ///【前缀】博客视频用户是否点赞
+        /// </summary>
+        public static readonly string PREFIX_VIDEO_ISLIKE = "video_islike:";
     }
 }

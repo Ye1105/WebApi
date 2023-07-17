@@ -1,4 +1,5 @@
-﻿using Manager.Core.Models.Blogs;
+﻿using Manager.Core.Enums;
+using Manager.Core.Models.Blogs;
 using Manager.Core.Page;
 using System.Linq.Expressions;
 
@@ -33,8 +34,9 @@ namespace Manager.Server.IServices
         /// <param name="uId"></param>
         /// <param name="startTime"></param>
         /// <param name="endTime"></param>
+        /// <param name="status"></param>
         /// <returns></returns>
-        Task<PagedList<BlogImage>?> GetPagedList(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "", Guid? bId = null, Guid? uId = null, DateTime? startTime = null, DateTime? endTime = null);
+        Task<PagedList<BlogImage>?> GetPagedList(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "", Guid? bId = null, Guid? uId = null, DateTime? startTime = null, DateTime? endTime = null, Status status = Status.ENABLE);
 
         /// <summary>
         /// 更新博客图片

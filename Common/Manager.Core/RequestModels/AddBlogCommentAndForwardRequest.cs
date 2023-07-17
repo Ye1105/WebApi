@@ -19,14 +19,6 @@ namespace Manager.Core.RequestModels
 
     public class BlogRequest
     {
-        //[JsonProperty("id")]
-        //public Guid Id { get; set; }
-        /// <summary>
-        /// 用户
-        /// </summary>
-        [JsonProperty("uId")]
-        public Guid UId { get; set; }
-
         /// <summary>
         /// 种类： 0.公开  1.仅自己可见  2.好友圈  3.粉丝  4.热推  5.广告
         /// </summary>
@@ -58,19 +50,12 @@ namespace Manager.Core.RequestModels
 
     public class BlogCommentRequest
     {
-        //[JsonProperty("id")]
-        //public Guid Id { get; set; }
+
         /// <summary>
         /// blog表Id
         /// </summary>
         [JsonProperty("bId")]
         public Guid BId { get; set; }
-
-        /// <summary>
-        /// 评论用户Id  => CommentUserId
-        /// </summary>
-        [JsonProperty("uId")]
-        public Guid UId { get; set; }
 
         /// <summary>
         /// 被评论的用户Id => BeCommentUserId
@@ -84,11 +69,6 @@ namespace Manager.Core.RequestModels
         [JsonProperty("message")]
         public string Message { get; set; }
 
-        ///// <summary>
-        ///// 点赞数
-        ///// </summary>
-        //[JsonProperty("like")]
-        //public int Like { get; set; }
         /// <summary>
         /// 0.评论   1.【回复】来评论【评论】  2.【回复】来评论【回复】
         /// </summary>
@@ -114,17 +94,6 @@ namespace Manager.Core.RequestModels
 
     public class BlogForwardRequest
     {
-        /// <summary>
-        /// 转发的同时会产生一条新的blog记录，BId表示这条blog的Id
-        /// </summary>
-        //[JsonProperty("id")]
-        //public Guid Id { get; set; }
-        /// <summary>
-        /// 转发的同时会产生一条新的blog记录，BId表示这条blog的uId
-        /// </summary>
-        [JsonProperty("uId")]
-        public Guid UId { get; set; }
-
         /// <summary>
         /// 转发信息
         /// </summary>
