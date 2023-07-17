@@ -3,7 +3,6 @@ using Manager.API.Utility.Filters;
 using Manager.Core;
 using Manager.Core.Enums;
 using Manager.Core.RequestModels;
-using Manager.Extensions;
 using Manager.Server.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

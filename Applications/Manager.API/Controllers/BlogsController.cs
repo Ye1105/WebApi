@@ -31,7 +31,6 @@ namespace Manager.API.Controllers
         private readonly IBlogTopicService blogTopicService;
         private readonly IBlogLikeService blogLikeService;
         private readonly IBlogFavoriteService blogFavoriteService;
-        private readonly object CreateLock = new();
 
         public BlogsController(IBlogService blogService, IBlogTopicService blogTopicService, IBlogLikeService blogLikeService, IBlogFavoriteService blogFavoriteService)
         {
