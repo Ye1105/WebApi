@@ -304,7 +304,7 @@ namespace Manager.API.Controllers
         /// <param name="year"></param>
         /// <returns></returns>
         [HttpGet("{uId}/groupcounts/{year}")]
-        public async Task<IActionResult> GetBlogGroupCount(Guid uId, int year)
+        public async Task<IActionResult> GroupCount(Guid uId, int year)
         {
             var res = await blogService.GetBlogCountGroupbyMonth(uId, year);
             return Ok(Success(new { list = res }));
