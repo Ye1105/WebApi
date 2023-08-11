@@ -46,7 +46,7 @@ namespace Manager.API.Controllers
         /// <param name="phone"></param>
         /// <param name="pwd"></param>
         /// <returns></returns>
-        [HttpGet("logins")]
+        [HttpPost("logins")]
         public async Task<IActionResult> LoginPwd([FromForm] string phone, [FromForm] string pwd)
         {
             /*
@@ -115,7 +115,7 @@ namespace Manager.API.Controllers
         /// <param name="phone"></param>
         /// <param name="sms"></param>
         /// <returns></returns>
-        [HttpGet("logins/sms")]
+        [HttpPost("logins/sms")]
         public async Task<IActionResult> LoginSms([FromForm] string phone, [FromForm] string sms)
         {
             /*
@@ -154,6 +154,63 @@ namespace Manager.API.Controllers
             if (account == null)
             {
                 return Ok(Fail("手机号不存在"));
+            }
+            else
+            {
+                /* 账号状态 */
+                if (account.Status != (sbyte)Status.ENABLE)
+                {
+                    return Ok(Fail($"账号状态:{EnumDescriptionAttribute.GetEnumDescription((Status)account.Status)}"));
+                }
+
+                /* AccessToken RefreshToken */
+                if (!authenticateService.IsAuthenticated(new AuthenticateRequest() { Id = account.Id, UId = account.UId }, out string AccessToken, out string RefreshToken))
+                {
+                    return Ok(Fail("账号认证失败"));
+                }
+
+                /* RefreshToken 存入 Redis */
+                var tokenRes = jWTService.AddRefreshToken(account.UId, RefreshToken);
+                if (!tokenRes.Item1)
+                {
+                    return Ok(Fail(tokenRes.Item2));
+                }
+
+                /* AccountInfo */
+                var accountInfo = await accountInfoService.FirstOrDefaultAsync(account.UId, true);
+
+                return Ok(Success("账号登陆成功", new { account, accountInfo, AccessToken, RefreshToken }));
+            }
+        }
+
+
+        /// <summary>
+        /// 用户登录【邮箱+密码】
+        /// </summary>
+        /// <param name="mail"></param>
+        /// <param name="pwd"></param>
+        /// <returns></returns>
+        [HttpPost("logins/mail")]
+        public async Task<IActionResult> LoginMail([FromForm] string mail, [FromForm] string pwd)
+        {
+            /*
+             * 1.校验参数 ： phone sms
+             * 2.限定时间间隔内是否存在对应的sms
+             * 3.账号是否存在
+             * 4.账号Token认证
+             */
+
+            //1.1校验参数 phone 是否邮箱
+            if (!Regex.IsMatch(mail, RegexHelper.MailPattern))
+            {
+                return Ok(Fail("不是合法的邮箱"));
+            }
+
+            //账号是否存在
+            var account = await accountService.GetAccountBy(x => x.Mail == mail && x.Password == Md5Helper.MD5(pwd), false);
+            if (account == null)
+            {
+                return Ok(Fail("邮箱不存在"));
             }
             else
             {
