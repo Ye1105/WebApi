@@ -206,18 +206,24 @@ namespace Manager.API.Controllers
                 return Ok(Fail("²»ÊÇºÏ·¨µÄÓÊÏä"));
             }
 
+            var password = Md5Helper.MD5(pwd);
             //ÕËºÅÊÇ·ñ´æÔÚ
-            var account = await accountService.GetAccountBy(x => x.Mail == mail && x.Password == Md5Helper.MD5(pwd), false);
+            var account = await accountService.GetAccountBy(x => x.Mail == mail, false);
             if (account == null)
             {
                 return Ok(Fail("ÓÊÏä²»´æÔÚ"));
             }
             else
             {
+                if (account.Password != password)
+                {
+                    return Ok(Fail("ÃÜÂë´íÎó"));
+                }
+
                 /* ÕËºÅ×´Ì¬ */
                 if (account.Status != (sbyte)Status.ENABLE)
                 {
-                    return Ok(Fail($"ÕËºÅ×´Ì¬:{EnumDescriptionAttribute.GetEnumDescription((Status)account.Status)}"));
+                    return Ok(Fail($"ÕËºÅ{EnumDescriptionAttribute.GetEnumDescription((Status)account.Status)}"));
                 }
 
                 /* AccessToken RefreshToken */
