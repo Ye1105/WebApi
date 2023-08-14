@@ -44,7 +44,7 @@ namespace Manager.Server.Services
 
                 SubjectEncoding = System.Text.Encoding.UTF8,
 
-                Body = "您好，以下是重置密码操作所需的验证码："
+                Body = "您好，以下是操作所需的验证码："
             };
 
             message.Body += Environment.NewLine + Environment.NewLine + sms;

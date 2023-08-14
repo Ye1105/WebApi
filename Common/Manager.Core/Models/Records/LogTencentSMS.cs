@@ -13,12 +13,14 @@ namespace Manager.Core.Models.Logs
         public Guid RequestId { get; set; }
 
         [JsonProperty("sendStatusSet")]
-        public string?  SendStatusSet { get; set; }
+        public string? SendStatusSet { get; set; }
+
         /// <summary>
         /// sms
         /// </summary>
         [JsonProperty("sms")]
         public string? Sms { get; set; }
+
         /// <summary>
         /// 创建时间
         /// </summary>

@@ -1,39 +1,39 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>annotations</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>annotations</Nullable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="AdminPages\Page\**" />
-    <Compile Remove="Models\Redis\**" />
-    <EmbeddedResource Remove="AdminPages\Page\**" />
-    <EmbeddedResource Remove="Models\Redis\**" />
-    <None Remove="AdminPages\Page\**" />
-    <None Remove="Models\Redis\**" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Remove="AdminPages\Page\**" />
+		<Compile Remove="Models\Redis\**" />
+		<EmbeddedResource Remove="AdminPages\Page\**" />
+		<EmbeddedResource Remove="Models\Redis\**" />
+		<None Remove="AdminPages\Page\**" />
+		<None Remove="Models\Redis\**" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Compile Remove="Settings\GlobalSettings.cs" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Remove="Settings\GlobalSettings.cs" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="7.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.2.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.2" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
-    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.25" />
-    <PackageReference Include="X.PagedList.Mvc.Core" Version="8.4.3" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Authorization" Version="7.0.2" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.2.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.2" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+		<PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.25" />
+		<PackageReference Include="X.PagedList.Mvc.Core" Version="8.4.3" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Manager.Extensions\Manager.Extensions.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Manager.Extensions\Manager.Extensions.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ResponseModels\" />
-  </ItemGroup>
+	<ItemGroup>
+		<Folder Include="ResponseModels\" />
+	</ItemGroup>
 
 </Project>
