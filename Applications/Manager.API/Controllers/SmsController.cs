@@ -109,8 +109,9 @@ namespace Manager.API.Controllers
             /*
              * 1.邮箱参数校验
              * 2.邮箱对应的账号是否存在
-             * 3.发送邮件
-             * 4.写入发送邮箱Sms记录
+             * 3.是否重复发送
+             * 4.发送邮件
+             * 5.写入发送邮箱Sms记录
              */
 
             //1.邮箱参数校验
@@ -125,6 +126,14 @@ namespace Manager.API.Controllers
             {
                 return Ok(Fail("账号不存在"));
             }
+
+            //3.是否重复发送
+            var mailExsit = await mailService.FirstOrDefaultAsync(x => x.Mail == mail && x.Created >= DateTime.Now.AddMinutes(-1));
+            if (mailExsit != null)
+            {
+                return Ok(Fail("已发送"));
+            }
+
 
             //发送邮件Sms配置信息
             var sms = RandHelper.RndomNum(6);

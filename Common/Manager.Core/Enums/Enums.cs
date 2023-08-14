@@ -201,6 +201,9 @@
 
         [EnumDescription("重置")]
         RETRIEVE = 1,
+
+        [EnumDescription("注册")]
+        REGISTER = 2,
     }
 
     /// <summary>

@@ -60,11 +60,11 @@ namespace Manager.API.Controllers
             }
 
             //2.判断除当前用户之外的 name mail phone 是否已经有存在
-            var accountName = await accountService.GetAccountBy(x => x.Name == req.Name && x.UId != UId, false);
-            if (accountName != null)
-            {
-                return Ok(Fail("账号名称已存在"));
-            }
+            //var accountName = await accountService.GetAccountBy(x => x.Name == req.Name && x.UId != UId, false);
+            //if (accountName != null)
+            //{
+            //    return Ok(Fail("账号名称已存在"));
+            //}
 
             var accountMail = await accountService.GetAccountBy(x => x.Mail.ToLower() == req.Mail.ToLower() && x.UId != UId, false);
             if (accountMail != null)
@@ -79,7 +79,7 @@ namespace Manager.API.Controllers
             }
 
             //3.修改账号信息
-            account.Name = req.Name;
+            //account.Name = req.Name;
             account.Mail = req.Mail;
             account.Phone = req.Phone;
 

@@ -145,10 +145,6 @@
         "type": "string",
         "title": "手机",
         "pattern": "^1[3456789]\\d{9}$"
-      },
-      "name": {
-        "type": "string",
-        "title": "账号名"
       }
     }
   },
@@ -205,14 +201,15 @@
         "title": "手机",
         "pattern": "^1[3456789]\\d{9}$"
       },
+      "mail": {
+        "type": "string",
+        "title": "邮箱",
+        "pattern": "^([a-zA-Z]|[0-9])(\\w|-)+@[a-zA-Z0-9]+\\.([a-zA-Z]{2,4})$"
+      },
       "sms": {
         "type": "string",
         "title": "腾讯短信",
         "pattern": "^[0-9]{6}$"
-      },
-      "name": {
-        "type": "string",
-        "title": "账号名"
       },
       "nickName": {
         "type": "string",
@@ -225,9 +222,9 @@
       }
     },
     "required": [
+      "mail",
       "phone",
       "sms",
-      "name",
       "nickName",
       "pwd"
     ]
@@ -265,7 +262,7 @@
       "mail": {
         "type": "string",
         "title": "邮箱",
-        "pattern": "(@)(.+)$"
+        "pattern": "^([a-zA-Z]|[0-9])(\\w|-)+@[a-zA-Z0-9]+\\.([a-zA-Z]{2,4})$"
       },
       "sms": {
         "type": "string",

@@ -25,12 +25,12 @@ namespace Manager.Server.IServices
         /// <summary>
         /// 创建用户账号
         /// </summary>
-        /// <param name="name"></param>
         /// <param name="password"></param>
         /// <param name="phone"></param>
         /// <param name="nickName"></param>
+        /// <param name="mail"></param>
         /// <returns></returns>
-        Task<bool> CreateAccount(string name, string password, string phone, string nickName);
+        Task<bool> CreateAccount(string password, string phone, string nickName, string mail);
 
         /// <summary>
         /// 更新用户账号

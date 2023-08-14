@@ -17,7 +17,7 @@ namespace Manager.Server.Services
             this.baseService = baseService;
         }
 
-        public async Task<bool> CreateAccount(string name, string password, string phone, string nickName)
+        public async Task<bool> CreateAccount(string password, string phone, string nickName, string mail)
         {
             /*
              * 1.创建账号信息相关表
@@ -32,9 +32,9 @@ namespace Manager.Server.Services
             {
                 Id = Guid.NewGuid(),
                 UId = UId,
-                Name = name,
+                //Name = name,
                 Phone = phone,
-                Mail = "",
+                Mail = mail,
                 Password = Md5Helper.MD5(password),
                 Status = (sbyte)Status.ENABLE,
                 Created = dt
