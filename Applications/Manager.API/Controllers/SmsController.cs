@@ -5,7 +5,6 @@ using Manager.Core.Settings;
 using Manager.Core.Tencent;
 using Manager.Extensions;
 using Manager.Server.IServices;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.Text.RegularExpressions;
@@ -102,9 +101,10 @@ namespace Manager.API.Controllers
         /// mail sms
         /// </summary>
         /// <param name="mail"></param>
+        /// <param name="type"></param>
         /// <returns></returns>
-        [HttpPost("mails/{mail}")]
-        public async Task<IActionResult> SendMailSms(string mail)
+        [HttpPost("mails/{mail}/{type}")]
+        public async Task<IActionResult> SendMailSms(string mail, Manager.Core.Enums.MailType type)
         {
             /*
              * 1.邮箱参数校验
@@ -134,7 +134,7 @@ namespace Manager.API.Controllers
             var displayName = appSettings.Value.Mail.DisplayName;
 
             //3.发送邮件
-            if (await mailService.SendMail(authorizationCode, host, displayName, mailSender, mail, sms))
+            if (await mailService.SendMail(authorizationCode, host, displayName, mailSender, mail, sms, type))
             {
                 return Ok(Success("验证码发送成功"));
             }

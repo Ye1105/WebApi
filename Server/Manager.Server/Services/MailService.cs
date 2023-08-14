@@ -1,4 +1,5 @@
-﻿using Manager.Core.Models.Logs;
+﻿using Manager.Core.Enums;
+using Manager.Core.Models.Logs;
 using Manager.Infrastructure.IRepositoies;
 using Manager.Server.IServices;
 using System.Linq.Expressions;
@@ -17,13 +18,19 @@ namespace Manager.Server.Services
             this.baseService = baseService;
         }
 
+        public async Task<LogMailSMS?> FirstOrDefaultAsync(Expression<Func<LogMailSMS, bool>> expression, bool isTrack = true)
+        {
+            var mail = await baseService.FirstOrDefaultAsync(expression, isTrack);
+            return mail;
+        }
+
         public async Task<LogMailSMS?> GetLogMailSmsBy(Expression<Func<LogMailSMS, bool>> expression, bool isTrack = true)
         {
             var res = await baseService.QueryAsync(expression, 1, 1, 0, false, "created desc");
             return res.FirstOrDefault();
         }
 
-        public async Task<bool> SendMail(string authorizationCode, string host, string displayName, string mailSender, string mailRecipient, string sms)
+        public async Task<bool> SendMail(string authorizationCode, string host, string displayName, string mailSender, string mailRecipient, string sms, Manager.Core.Enums.MailType mailType)
         {
             var client = new SmtpClient(host)
             {
@@ -44,7 +51,7 @@ namespace Manager.Server.Services
 
                 SubjectEncoding = System.Text.Encoding.UTF8,
 
-                Body = "您好，以下是操作所需的验证码："
+                Body = $"您好，以下是{EnumDescriptionAttribute.GetEnumDescription(mailType)}操作所需的验证码："
             };
 
             message.Body += Environment.NewLine + Environment.NewLine + sms;
