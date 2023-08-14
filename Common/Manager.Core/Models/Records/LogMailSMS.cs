@@ -22,6 +22,12 @@ namespace Manager.Core.Models.Logs
         public string? Sms { get; set; }
 
         /// <summary>
+        /// 0 登录  1 重置  2 注册
+        /// </summary>
+        [JsonProperty("type")]
+        public sbyte? Type { get; set; }
+
+        /// <summary>
         /// 创建时间
         /// </summary>
         [JsonProperty("created")]
