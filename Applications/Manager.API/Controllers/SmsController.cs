@@ -120,20 +120,31 @@ namespace Manager.API.Controllers
                 return Ok(Fail("不是合法的邮箱"));
             }
 
-            //2.邮箱对应的账号是否存在
-            var res = await accountService.GetAccountBy(x => x.Mail == mail, false);
-            if (res == null)
+            //2.1【登录】邮箱对应的账号是否存在
+            if (type == Core.Enums.MailType.LOGIN)
             {
-                return Ok(Fail("账号不存在"));
+                var res = await accountService.GetAccountBy(x => x.Mail == mail, false);
+                if (res == null)
+                {
+                    return Ok(Fail("邮箱不存在"));
+                }
+            }
+            //2.2【注册】
+            if (type == Core.Enums.MailType.REGISTER)
+            {
+                var res = await accountService.GetAccountBy(x => x.Mail == mail, false);
+                if (res != null)
+                {
+                    return Ok(Fail("邮箱已存在"));
+                }
             }
 
             //3.是否重复发送
             var mailExsit = await mailService.FirstOrDefaultAsync(x => x.Mail == mail && x.Created >= DateTime.Now.AddMinutes(-1));
             if (mailExsit != null)
             {
-                return Ok(Fail("已发送"));
+                return Ok(Fail("验证码已发送"));
             }
-
 
             //发送邮件Sms配置信息
             var sms = RandHelper.RndomNum(6);
