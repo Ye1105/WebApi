@@ -12,16 +12,22 @@ namespace Manager.Core.RequestModels
         public string Phone { get; set; }
 
         /// <summary>
-        /// 腾讯sms
+        /// 邮箱
+        /// </summary>
+        [JsonProperty("mail")]
+        public string Mail { get; set; }
+
+        /// <summary>
+        /// 邮箱sms
         /// </summary>
         [JsonProperty("sms")]
         public string Sms { get; set; }
 
-        /// <summary>
-        /// 账号
-        /// </summary>
-        [JsonProperty("name")]
-        public string Name { get; set; }
+        ///// <summary>
+        ///// 账号
+        ///// </summary>
+        //[JsonProperty("name")]
+        //public string Name { get; set; }
 
         /// <summary>
         /// 昵称

@@ -16,8 +16,6 @@ namespace Manager.Core.Models.Logs
         [JsonProperty("uId")]
         public Guid UId { get; set; }
 
-
-
         [JsonProperty("blurhash")]
         public string? Blurhash { get; set; }
 
@@ -36,14 +34,11 @@ namespace Manager.Core.Models.Logs
         [JsonProperty("status")]
         public sbyte? Status { get; set; } = (sbyte)Enums.Status.ENABLE;
 
-        /// <summary>
-        /// 封面地址
-        /// </summary>
         [JsonIgnore]
-        [JsonProperty("url")]
         public string? Url { get; set; }
 
         private string _FullUrl { get; set; }
+
         [NotMapped]
         [JsonProperty("fullUrl")]
         public string FullUrl

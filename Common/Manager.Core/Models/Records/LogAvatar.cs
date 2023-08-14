@@ -12,26 +12,31 @@ namespace Manager.Core.Models.Logs
         [Key]
         [JsonProperty("id")]
         public Guid Id { get; set; }
+
         /// <summary>
         /// 用户Id
         /// </summary>
         [JsonProperty("uId")]
         public Guid UId { get; set; }
+
         /// <summary>
         /// blurhash
         /// </summary>
         [JsonProperty("blurhash")]
         public string? Blurhash { get; set; }
+
         /// <summary>
         /// 宽度
         /// </summary>
         [JsonProperty("width")]
         public int? Width { get; set; }
+
         /// <summary>
         /// 高度
         /// </summary>
         [JsonProperty("height")]
         public int? Height { get; set; }
+
         /// <summary>
         /// 创建时间
         /// </summary>
@@ -44,10 +49,6 @@ namespace Manager.Core.Models.Logs
         [JsonProperty("status")]
         public sbyte? Status { get; set; } = (sbyte)Enums.Status.ENABLE;
 
-        [JsonIgnore]
-        public AccountInfo? AccountInfo { get; set; }
-
-
         /// <summary>
         /// 头像地址
         /// </summary>
@@ -55,6 +56,10 @@ namespace Manager.Core.Models.Logs
         [JsonProperty("url")]
         public string? Url { get; set; }
 
+        [JsonIgnore]
+        public AccountInfo? AccountInfo { get; set; }
+
+        [NotMapped]
         private string _FullUrl { get; set; }
 
         [NotMapped]
@@ -74,6 +79,5 @@ namespace Manager.Core.Models.Logs
                 _FullUrl = value;
             }
         }
-
     }
 }

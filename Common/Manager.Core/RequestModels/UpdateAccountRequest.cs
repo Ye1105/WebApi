@@ -11,11 +11,11 @@ namespace Manager.Core.RequestModels
         [JsonProperty("uId")]
         public Guid? UId { get; set; }
 
-        /// <summary>
-        /// 账号名称
-        /// </summary>
-        [JsonProperty("name")]
-        public string? Name { get; set; }
+        ///// <summary>
+        ///// 账号名称
+        ///// </summary>
+        //[JsonProperty("name")]
+        //public string? Name { get; set; }
 
         /// <summary>
         /// 手机

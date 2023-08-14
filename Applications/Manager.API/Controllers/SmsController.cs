@@ -5,14 +5,13 @@ using Manager.Core.Settings;
 using Manager.Core.Tencent;
 using Manager.Extensions;
 using Manager.Server.IServices;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.Text.RegularExpressions;
 
 namespace Manager.API.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("v1/api/sms")]
     [ApiExplorerSettings(GroupName = nameof(ApiVersionInfo.V1))]
@@ -102,15 +101,17 @@ namespace Manager.API.Controllers
         /// mail sms
         /// </summary>
         /// <param name="mail"></param>
+        /// <param name="type"></param>
         /// <returns></returns>
-        [HttpPost("mails/{mail}")]
-        public async Task<IActionResult> SendMailSms(string mail)
+        [HttpPost("mails/{mail}/{type}")]
+        public async Task<IActionResult> SendMailSms(string mail, Manager.Core.Enums.MailType type)
         {
             /*
              * 1.邮箱参数校验
              * 2.邮箱对应的账号是否存在
-             * 3.发送邮件
-             * 4.写入发送邮箱Sms记录
+             * 3.是否重复发送
+             * 4.发送邮件
+             * 5.写入发送邮箱Sms记录
              */
 
             //1.邮箱参数校验
@@ -119,11 +120,30 @@ namespace Manager.API.Controllers
                 return Ok(Fail("不是合法的邮箱"));
             }
 
-            //2.邮箱对应的账号是否存在
-            var res = await accountService.GetAccountBy(x => x.Mail == mail, false);
-            if (res == null)
+            //2.1【登录】邮箱对应的账号是否存在
+            if (type == Core.Enums.MailType.LOGIN)
             {
-                return Ok(Fail("账号不存在"));
+                var res = await accountService.GetAccountBy(x => x.Mail == mail, false);
+                if (res == null)
+                {
+                    return Ok(Fail("邮箱不存在"));
+                }
+            }
+            //2.2【注册】
+            if (type == Core.Enums.MailType.REGISTER)
+            {
+                var res = await accountService.GetAccountBy(x => x.Mail == mail, false);
+                if (res != null)
+                {
+                    return Ok(Fail("邮箱已存在"));
+                }
+            }
+
+            //3.是否重复发送
+            var mailExsit = await mailService.FirstOrDefaultAsync(x => x.Mail == mail && x.Created >= DateTime.Now.AddMinutes(-1));
+            if (mailExsit != null)
+            {
+                return Ok(Fail("验证码已发送"));
             }
 
             //发送邮件Sms配置信息
@@ -134,7 +154,7 @@ namespace Manager.API.Controllers
             var displayName = appSettings.Value.Mail.DisplayName;
 
             //3.发送邮件
-            if (await mailService.SendMail(authorizationCode, host, displayName, mailSender, mail, sms))
+            if (await mailService.SendMail(authorizationCode, host, displayName, mailSender, mail, sms, type))
             {
                 return Ok(Success("验证码发送成功"));
             }

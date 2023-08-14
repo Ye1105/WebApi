@@ -29,8 +29,9 @@ namespace Manager.API.Controllers
         private readonly IJwtService jWTService;
         private readonly ITencentService tencentService;
         private readonly IOptions<AppSettings> appSettings;
+        private readonly IMailService mailService;
 
-        public LoginsController(IAccountService accountService, IAccountInfoService accountInfoService, IAuthenticateService authenticateService, IJwtService jWTService, ITencentService tencentService, IOptions<AppSettings> appSettings)
+        public LoginsController(IAccountService accountService, IAccountInfoService accountInfoService, IAuthenticateService authenticateService, IJwtService jWTService, ITencentService tencentService, IOptions<AppSettings> appSettings, IMailService mailService)
         {
             this.accountService = accountService;
             this.accountInfoService = accountInfoService;
@@ -38,6 +39,7 @@ namespace Manager.API.Controllers
             this.jWTService = jWTService;
             this.tencentService = tencentService;
             this.appSettings = appSettings;
+            this.mailService = mailService;
         }
 
         /// <summary>
@@ -179,7 +181,7 @@ namespace Manager.API.Controllers
                 /* AccountInfo */
                 var accountInfo = await accountInfoService.FirstOrDefaultAsync(account.UId, true);
 
-                return Ok(Success("账号登陆成功", new { account, accountInfo, AccessToken, RefreshToken }));
+                return Ok(Success("账号登录成功", new { account, accountInfo, AccessToken, RefreshToken }));
             }
         }
 
@@ -242,7 +244,84 @@ namespace Manager.API.Controllers
                 /* AccountInfo */
                 var accountInfo = await accountInfoService.FirstOrDefaultAsync(account.UId, true);
 
-                return Ok(Success("账号登陆成功", new { account, accountInfo, AccessToken, RefreshToken }));
+                return Ok(Success("账号登录成功", new { account, accountInfo, AccessToken, RefreshToken }));
+            }
+        }
+
+        /// <summary>
+        /// 邮箱验证码登录
+        /// </summary>
+        /// <param name="mail"></param>
+        /// <param name="sms"></param>
+        /// <returns></returns>
+        [HttpPost("logins/mailsms")]
+        public async Task<IActionResult> LoginMailSms([FromForm] string mail, [FromForm] string sms)
+        {
+            /*
+             * 1.校验参数 ： phone sms
+             * 2.限定时间间隔内是否存在对应的sms
+             * 3.账号是否存在
+             * 4.账号Token认证
+             */
+
+            //1.1校验参数 phone 是否为手机号
+            if (!Regex.IsMatch(mail, RegexHelper.MailPattern))
+            {
+                return Ok(Fail("邮箱格式不正确"));
+            }
+
+            //1.2校验参数 phone 是否为验证码
+            if (appSettings.Value.ServerStatus == (sbyte)ServerType.F0RMAL)
+            {
+                if (!Regex.IsMatch(sms, RegexHelper.SmsPattern))
+                {
+                    return Ok(Fail("验证码格式不正确"));
+                }
+
+                var dt = DateTime.Now;
+
+                //2.限定时间间隔5分钟内是否存在对应的sms
+                var res = await mailService.FirstOrDefaultAsync(x => x.Mail == mail && x.Sms == sms,false);
+                if (res == null)
+                {
+                    return Ok(Fail("验证码不存在"));
+                }
+                if (res.Created <= dt.AddMinutes(-5))
+                {
+                    return Ok(Fail("验证码超时"));
+                }
+            }
+            //账号是否存在
+            var account = await accountService.GetAccountBy(x => x.Mail == mail, false);
+            if (account == null)
+            {
+                return Ok(Fail("邮箱号不存在"));
+            }
+            else
+            {
+                /* 账号状态 */
+                if (account.Status != (sbyte)Status.ENABLE)
+                {
+                    return Ok(Fail($"账号{EnumDescriptionAttribute.GetEnumDescription((Status)account.Status)}"));
+                }
+
+                /* AccessToken RefreshToken */
+                if (!authenticateService.IsAuthenticated(new AuthenticateRequest() { Id = account.Id, UId = account.UId }, out string AccessToken, out string RefreshToken))
+                {
+                    return Ok(Fail("账号认证失败"));
+                }
+
+                /* RefreshToken 存入 Redis */
+                var tokenRes = jWTService.AddRefreshToken(account.UId, RefreshToken);
+                if (!tokenRes.Item1)
+                {
+                    return Ok(Fail(tokenRes.Item2));
+                }
+
+                /* AccountInfo */
+                var accountInfo = await accountInfoService.FirstOrDefaultAsync(account.UId, true);
+
+                return Ok(Success("账号登录成功", new { account, accountInfo, AccessToken, RefreshToken }));
             }
         }
     }

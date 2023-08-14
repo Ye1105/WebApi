@@ -193,6 +193,19 @@
         UNKNOWN = 4,
     }
 
+
+    public enum MailType
+    {
+        [EnumDescription("登录")]
+        LOGIN = 0,
+
+        [EnumDescription("重置")]
+        RETRIEVE = 1,
+
+        [EnumDescription("注册")]
+        REGISTER = 2,
+    }
+
     /// <summary>
     /// 状态是否置顶
     /// </summary>
