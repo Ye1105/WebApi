@@ -18,9 +18,9 @@ namespace Manager.Server.Services
             this.baseService = baseService;
         }
 
-        public async Task<LogMailSMS?> FirstOrDefaultAsync(Expression<Func<LogMailSMS, bool>> expression, bool isTrack = true)
+        public async Task<LogMailSMS?> FirstOrDefaultAsync(Expression<Func<LogMailSMS, bool>> expression, bool isTrack = true, string orderBy = "")
         {
-            var mail = await baseService.FirstOrDefaultAsync(expression, isTrack);
+            var mail = await baseService.FirstOrDefaultAsync(expression, orderBy, isTrack);
             return mail;
         }
 
@@ -67,6 +67,7 @@ namespace Manager.Server.Services
                 Id = Guid.NewGuid(),
                 Mail = mailRecipient,
                 Sms = sms,
+                Type = (sbyte)mailType,
                 Created = DateTime.Now
             };
             return await baseService.AddAsync(logMailSMS) > 0;

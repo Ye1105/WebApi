@@ -281,10 +281,14 @@ namespace Manager.API.Controllers
                 var dt = DateTime.Now;
 
                 //2.限定时间间隔5分钟内是否存在对应的sms
-                var res = await mailService.FirstOrDefaultAsync(x => x.Mail == mail && x.Sms == sms,false);
+                var res = await mailService.FirstOrDefaultAsync(x => x.Mail == mail, isTrack: false, orderBy: "created desc");
                 if (res == null)
                 {
-                    return Ok(Fail("验证码不存在"));
+                    return Ok(Fail("邮箱不存在"));
+                }
+                if (res.Sms != sms)
+                {
+                    return Ok(Fail("验证码不正确"));
                 }
                 if (res.Created <= dt.AddMinutes(-5))
                 {
