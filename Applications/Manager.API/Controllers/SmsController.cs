@@ -121,7 +121,7 @@ namespace Manager.API.Controllers
             }
 
             //2.1【登录】邮箱对应的账号是否存在
-            if (type == Core.Enums.MailType.LOGIN)
+            if (type == Core.Enums.MailType.LOGIN|| type == Core.Enums.MailType.RETRIEVE)
             {
                 var res = await accountService.GetAccountBy(x => x.Mail == mail, false);
                 if (res == null)

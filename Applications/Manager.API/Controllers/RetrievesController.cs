@@ -97,12 +97,12 @@ namespace Manager.API.Controllers
             }
 
             //2.验证码是否过期
-            var dt = DateTime.Now;
-            var res = await mailService.GetLogMailSmsBy(x => x.Mail.ToLower() == req.Mail.ToLower() && x.Sms == req.Sms && x.Created >= dt.AddMinutes(-5) && x.Created < dt, false);
-            if (res == null)
-            {
-                return Ok(Fail("验证码过期"));
-            }
+            //var dt = DateTime.Now;
+            //var res = await mailService.GetLogMailSmsBy(x => x.Mail.ToLower() == req.Mail.ToLower() && x.Sms == req.Sms && x.Created >= dt.AddMinutes(-5) && x.Created < dt, false);
+            //if (res == null)
+            //{
+            //    return Ok(Fail("验证码过期"));
+            //}
 
             //3.更新账号密码
             if (await accountService.ModifyAccountPassword(x => x.Mail == req.Mail, req.Pwd))
