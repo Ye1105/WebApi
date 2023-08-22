@@ -104,10 +104,7 @@ namespace Manager.API.Controllers
                     return Ok(Fail(tokenRes.Item2));
                 }
 
-                /* AccountInfo */
-                var accountInfo = await accountInfoService.FirstOrDefaultAsync(account.UId, isCache: true);
-
-                return Ok(Success("ÕËºÅµÇÂ¼³É¹¦", new { account, accountInfo, AccessToken, RefreshToken }));
+                return Ok(Success("ÕËºÅµÇÂ¼³É¹¦", new { account, AccessToken, RefreshToken }));
             }
         }
 
@@ -178,10 +175,7 @@ namespace Manager.API.Controllers
                     return Ok(Fail(tokenRes.Item2));
                 }
 
-                /* AccountInfo */
-                var accountInfo = await accountInfoService.FirstOrDefaultAsync(account.UId, true);
-
-                return Ok(Success("ÕËºÅµÇÂ¼³É¹¦", new { account, accountInfo, AccessToken, RefreshToken }));
+                return Ok(Success("ÕËºÅµÇÂ¼³É¹¦", new { account, AccessToken, RefreshToken }));
             }
         }
 
@@ -241,10 +235,7 @@ namespace Manager.API.Controllers
                     return Ok(Fail(tokenRes.Item2));
                 }
 
-                /* AccountInfo */
-                var accountInfo = await accountInfoService.FirstOrDefaultAsync(account.UId, true);
-
-                return Ok(Success("ÕËºÅµÇÂ¼³É¹¦", new { account, accountInfo, AccessToken, RefreshToken }));
+                return Ok(Success("ÕËºÅµÇÂ¼³É¹¦", new { account, AccessToken, RefreshToken }));
             }
         }
 
@@ -322,10 +313,7 @@ namespace Manager.API.Controllers
                     return Ok(Fail(tokenRes.Item2));
                 }
 
-                /* AccountInfo */
-                var accountInfo = await accountInfoService.FirstOrDefaultAsync(account.UId, true);
-
-                return Ok(Success("ÕËºÅµÇÂ¼³É¹¦", new { account, accountInfo, AccessToken, RefreshToken }));
+                return Ok(Success("ÕËºÅµÇÂ¼³É¹¦", new { account, AccessToken, RefreshToken }));
             }
         }
     }
