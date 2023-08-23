@@ -103,7 +103,7 @@ namespace Manager.API.Controllers
 
             var res = await logAvatarService.AddLogAvatar(logAvatar);
 
-            return res.Item1 ? Ok(Success("上传头像成功")) : Ok(Fail(res.Item2));
+            return res.Item1 ? Ok(Success(new { avatar = logAvatar })) : Ok(Fail(res.Item2));
         }
     }
 }

@@ -78,7 +78,7 @@ namespace Manager.API.Controllers
             var wId = UId;
 
             //1.Account AccountInfo
-            var account = await accountService.GetAccountBy(x => x.UId == uId, false);
+            //var account = await accountService.GetAccountBy(x => x.UId == uId, false);
 
             var accountInfo = await accountInfoService.FirstOrDefaultAsync(uId, false);
 
@@ -94,7 +94,7 @@ namespace Manager.API.Controllers
             //3.关注关系
             var relation = await userFocusService.GetUserFocusBy(x => x.BuId == uId && x.UId == wId);
 
-            return Ok(Success("用户信息获取成功", new { account, accountInfo, blogCount, focusCount, fanCount, relation }));
+            return Ok(Success("用户信息获取成功", new { accountInfo, blogCount, focusCount, fanCount, relation }));
         }
     }
 }
