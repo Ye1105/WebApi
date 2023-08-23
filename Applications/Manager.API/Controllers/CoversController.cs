@@ -105,7 +105,7 @@ namespace Manager.API.Controllers
 
             var res = await logCoverService.AddLogCover(logCover);
 
-            return res.Item1 ? Ok(Success("上传封面成功")) : Ok(Fail(res.Item2));
+            return res.Item1 ? Ok(Success(new { cover = logCover })) : Ok(Fail(res.Item2));
         }
     }
 }

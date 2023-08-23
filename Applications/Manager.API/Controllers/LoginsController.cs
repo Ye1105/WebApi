@@ -104,7 +104,7 @@ namespace Manager.API.Controllers
                     return Ok(Fail(tokenRes.Item2));
                 }
 
-                return Ok(Success("ÕËºÅµÇÂ¼³É¹¦", new { account, AccessToken, RefreshToken }));
+                return Ok(Success("ÕËºÅµÇÂ¼³É¹¦", new { AccessToken, RefreshToken }));
             }
         }
 
@@ -175,7 +175,7 @@ namespace Manager.API.Controllers
                     return Ok(Fail(tokenRes.Item2));
                 }
 
-                return Ok(Success("ÕËºÅµÇÂ¼³É¹¦", new { account, AccessToken, RefreshToken }));
+                return Ok(Success("ÕËºÅµÇÂ¼³É¹¦", new {AccessToken, RefreshToken }));
             }
         }
 
@@ -235,7 +235,7 @@ namespace Manager.API.Controllers
                     return Ok(Fail(tokenRes.Item2));
                 }
 
-                return Ok(Success("ÕËºÅµÇÂ¼³É¹¦", new { account, AccessToken, RefreshToken }));
+                return Ok(Success("ÕËºÅµÇÂ¼³É¹¦", new { AccessToken, RefreshToken }));
             }
         }
 
@@ -313,7 +313,7 @@ namespace Manager.API.Controllers
                     return Ok(Fail(tokenRes.Item2));
                 }
 
-                return Ok(Success("ÕËºÅµÇÂ¼³É¹¦", new { account, AccessToken, RefreshToken }));
+                return Ok(Success("ÕËºÅµÇÂ¼³É¹¦", new {  AccessToken, RefreshToken }));
             }
         }
     }
