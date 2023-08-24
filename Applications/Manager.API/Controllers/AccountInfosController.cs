@@ -62,6 +62,31 @@ namespace Manager.API.Controllers
             return await accountInfoService.UpdateAsync(accountInfo) ? Ok(Success("修改成功")) : Ok(Fail("修改失败"));
         }
 
+        /// <summary>
+        /// 修改简介
+        /// </summary>
+        /// <param name="description"></param>
+        /// <returns></returns>
+        [HttpPatch("description")]
+        public async Task<IActionResult> UpdateDescription([FromForm] string description)
+        {
+            if (!Regex.IsMatch(description, RegexHelper.DescriptionPattern))
+            {
+                return Ok(Fail("简介格式不正确", "参数错误"));
+            }
+
+            //1.1 判断表用户信息是否存在
+            var accountInfo = await accountInfoService.FirstOrDefaultAsync(x => x.UId == UId, true);
+            if (accountInfo == null)
+            {
+                return Ok(Fail("账号信息表不存在"));
+            }
+
+            // 2. 修改数据
+            accountInfo.Describe = description;
+
+            return await accountInfoService.UpdateAsync(accountInfo) ? Ok(Success("修改成功")) : Ok(Fail("修改失败"));
+        }
 
 
         /// <summary>

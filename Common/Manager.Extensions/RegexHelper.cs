@@ -28,6 +28,11 @@
         public static readonly string NickNamePattern = @"^[\u4E00-\u9FA5]{2,5}$";
 
         /// <summary>
+        /// 用户简介
+        /// </summary>
+        public static readonly string DescriptionPattern = @"^.{1,50}$";
+
+        /// <summary>
         /// 数值类型
         /// </summary>
         public static readonly string NumberPattern = @"^[0-9]\d*$";
