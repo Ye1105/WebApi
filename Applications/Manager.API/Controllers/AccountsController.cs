@@ -34,8 +34,8 @@ namespace Manager.API.Controllers
         /// </summary>
         /// <param name="mail"></param>
         /// <returns></returns>
-        [HttpPatch("/mail")]
-        public async Task<IActionResult> UpdateAccountMail([FromForm] string mail)
+        [HttpPatch("mail")]
+        public async Task<IActionResult> UpdateMail([FromForm] string mail)
         {
             /*
              * 0.参数校验
@@ -77,8 +77,8 @@ namespace Manager.API.Controllers
         /// </summary>
         /// <param name="phone"></param>
         /// <returns></returns>
-        [HttpPatch("/phone")]
-        public async Task<IActionResult> UpdateAccountPhone([FromForm] string phone)
+        [HttpPatch("phone")]
+        public async Task<IActionResult> UpdatePhone([FromForm] string phone)
         {
             /*
              * 0.参数校验

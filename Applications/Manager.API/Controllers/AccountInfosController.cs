@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
+using System.Text.RegularExpressions;
 
 namespace Manager.API.Controllers
 {
@@ -26,6 +27,42 @@ namespace Manager.API.Controllers
         {
             this.accountInfoService = accountInfoService;
         }
+
+        /// <summary>
+        /// 修改账号昵称
+        /// </summary>
+        /// <param name="nickName"></param>
+        /// <returns></returns>
+        [HttpPatch("nickname")]
+        public async Task<IActionResult> UpdateNickName([FromForm] string nickName)
+        {
+            if (!Regex.IsMatch(nickName, RegexHelper.NickNamePattern))
+            {
+                return Ok(Fail("邮箱格式不正确", "参数错误"));
+            }
+
+
+            //1.1 判断表用户信息是否存在
+            var accountInfo = await accountInfoService.FirstOrDefaultAsync(x => x.UId == UId, true);
+            if (accountInfo == null)
+            {
+                return Ok(Fail("账号信息表不存在"));
+            }
+
+            //1.2 判断表用户昵称是否存在
+            var exsit = await accountInfoService.FirstOrDefaultAsync(x => x.UId != UId && x.NickName == nickName, false);
+            if (exsit != null)
+            {
+                return Ok(Fail("账号昵称已存在"));
+            }
+
+            // 2. 修改数据
+            accountInfo.NickName = nickName;
+
+            return await accountInfoService.UpdateAsync(accountInfo) ? Ok(Success("修改成功")) : Ok(Fail("修改失败"));
+        }
+
+
 
         /// <summary>
         /// 修改账号信息
