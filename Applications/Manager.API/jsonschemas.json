@@ -25,7 +25,8 @@
     "properties:": {
       "nickName": {
         "type": "string",
-        "title": "用户昵称"
+        "title": "用户昵称",
+        "pattern": "^1[3456789]\\d{9}$"
       },
       "sex": {
         "type": "integer",
