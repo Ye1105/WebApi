@@ -132,22 +132,6 @@
       "birthday"
     ]
   },
-  "account-update": {
-    "type": "object",
-    "description": "修改账号信息",
-    "properties": {
-      "mail": {
-        "type": "string",
-        "title": "邮件",
-        "pattern": "(@)(.+)$"
-      },
-      "phone": {
-        "type": "string",
-        "title": "手机",
-        "pattern": "^1[3456789]\\d{9}$"
-      }
-    }
-  },
   "avatar-add": {
     "type": "object",
     "description": "添加头像",
