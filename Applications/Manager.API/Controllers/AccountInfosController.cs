@@ -2,6 +2,7 @@
 using Manager.API.Utility.Filters;
 using Manager.API.Utility.Schemas;
 using Manager.Core;
+using Manager.Core.Enums;
 using Manager.Core.RequestModels;
 using Manager.Extensions;
 using Manager.Server.IServices;
@@ -65,14 +66,18 @@ namespace Manager.API.Controllers
         /// <summary>
         /// 修改简介
         /// </summary>
-        /// <param name="description"></param>
+        /// <param name="describe"></param>
         /// <returns></returns>
-        [HttpPatch("description")]
-        public async Task<IActionResult> UpdateDescription([FromForm] string description)
+        [HttpPatch("describe")]
+        public async Task<IActionResult> UpdateDescribe([FromForm] string? describe)
         {
-            if (!Regex.IsMatch(description, RegexHelper.DescriptionPattern))
+
+            if (describe != null)
             {
-                return Ok(Fail("简介格式不正确", "参数错误"));
+                if (!Regex.IsMatch(describe, RegexHelper.DescriptionPattern))
+                {
+                    return Ok(Fail("简介格式不正确", "参数错误"));
+                }
             }
 
             //1.1 判断表用户信息是否存在
@@ -83,10 +88,124 @@ namespace Manager.API.Controllers
             }
 
             // 2. 修改数据
-            accountInfo.Describe = description;
+            accountInfo.Describe = describe;
 
             return await accountInfoService.UpdateAsync(accountInfo) ? Ok(Success("修改成功")) : Ok(Fail("修改失败"));
         }
+
+        /// <summary>
+        /// 修改性别
+        /// </summary>
+        /// <param name="sex"></param>
+        /// <returns></returns>
+        [HttpPatch("sex")]
+        public async Task<IActionResult> UpdateDescribe([FromForm] Sex sex)
+        {
+
+
+            //1.1 判断表用户信息是否存在
+            var accountInfo = await accountInfoService.FirstOrDefaultAsync(x => x.UId == UId, true);
+            if (accountInfo == null)
+            {
+                return Ok(Fail("账号信息表不存在"));
+            }
+
+            // 2. 修改数据
+            accountInfo.Sex = (sbyte)sex;
+
+            return await accountInfoService.UpdateAsync(accountInfo) ? Ok(Success("修改成功")) : Ok(Fail("修改失败"));
+        }
+
+        /// <summary>
+        /// 修改生日
+        /// </summary>
+        /// <param name="birthday"></param>
+        /// <returns></returns>
+        [HttpPatch("birthday")]
+        public async Task<IActionResult> UpdateBirthday([FromForm] DateTime? birthday)
+        {
+
+            //1.1 判断表用户信息是否存在
+            var accountInfo = await accountInfoService.FirstOrDefaultAsync(x => x.UId == UId, true);
+            if (accountInfo == null)
+            {
+                return Ok(Fail("账号信息表不存在"));
+            }
+
+            // 2. 修改数据
+            accountInfo.Birthday = birthday;
+
+            return await accountInfoService.UpdateAsync(accountInfo) ? Ok(Success("修改成功")) : Ok(Fail("修改失败"));
+        }
+
+
+        /// <summary>
+        /// 修改感情状态
+        /// </summary>
+        /// <param name="emotion"></param>
+        /// <returns></returns>
+        [HttpPatch("emotion")]
+        public async Task<IActionResult> UpdateEmotion([FromForm] EmotionEnum emotion)
+        {
+
+            //1.1 判断表用户信息是否存在
+            var accountInfo = await accountInfoService.FirstOrDefaultAsync(x => x.UId == UId, true);
+            if (accountInfo == null)
+            {
+                return Ok(Fail("账号信息表不存在"));
+            }
+
+            // 2. 修改数据
+            accountInfo.Emotion = (sbyte)emotion;
+
+            return await accountInfoService.UpdateAsync(accountInfo) ? Ok(Success("修改成功")) : Ok(Fail("修改失败"));
+        }
+
+
+        /// <summary>
+        /// 省市
+        /// </summary>
+        /// <param name="location"></param>
+        /// <returns></returns>
+        [HttpPatch("location")]
+        public async Task<IActionResult> UpdateLocation([FromForm] UpdateProvinceCityRequest location)
+        {
+
+            //1.1 判断表用户信息是否存在
+            var accountInfo = await accountInfoService.FirstOrDefaultAsync(x => x.UId == UId, true);
+            if (accountInfo == null)
+            {
+                return Ok(Fail("账号信息表不存在"));
+            }
+
+            // 2. 修改数据
+            accountInfo.Location = location.SerObj();
+
+            return await accountInfoService.UpdateAsync(accountInfo) ? Ok(Success("修改成功")) : Ok(Fail("修改失败"));
+        }
+
+        /// <summary>
+        /// 修改故乡
+        /// </summary>
+        /// <param name="location"></param>
+        /// <returns></returns>
+        [HttpPatch("hometown")]
+        public async Task<IActionResult> UpdateHometown([FromForm] UpdateProvinceCityRequest location)
+        {
+
+            //1.1 判断表用户信息是否存在
+            var accountInfo = await accountInfoService.FirstOrDefaultAsync(x => x.UId == UId, true);
+            if (accountInfo == null)
+            {
+                return Ok(Fail("账号信息表不存在"));
+            }
+
+            // 2. 修改数据
+            accountInfo.Hometown = location.SerObj();
+
+            return await accountInfoService.UpdateAsync(accountInfo) ? Ok(Success("修改成功")) : Ok(Fail("修改失败"));
+        }
+
 
 
         /// <summary>

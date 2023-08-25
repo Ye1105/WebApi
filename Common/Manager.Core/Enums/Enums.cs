@@ -132,44 +132,44 @@
         [EnumDescription("女性")]
         FEMALE = 1,
 
-        [EnumDescription("中性")]
+        [EnumDescription("其他")]
         NEUTRAL = 2
     }
 
     public enum EmotionEnum
     {
         [EnumDescription("未知")]
-        UNKNOWN = -1,
+        UNKNOWN = 0,
 
         [EnumDescription("单身")]
-        SINGLE = 0,
+        SINGLE = 1,
 
         [EnumDescription("求交往")]
-        ASK_FOR_CONTACT = 1,
+        ASK_FOR_CONTACT = 2,
 
         [EnumDescription("暗恋中")]
-        IN_CRUSH = 2,
+        IN_CRUSH = 3,
 
         [EnumDescription("暧昧中")]
-        AMBIGUOUS = 3,
+        AMBIGUOUS = 4,
 
         [EnumDescription("恋爱中")]
-        IN_LOVE = 4,
+        IN_LOVE = 5,
 
         [EnumDescription("订婚")]
-        GOT_ENGAGED = 5,
+        GOT_ENGAGED = 6,
 
         [EnumDescription("已婚")]
-        MARRIRED = 6,
+        MARRIRED = 7,
 
         [EnumDescription("分居")]
-        SEPARATED = 7,
+        SEPARATED = 8,
 
         [EnumDescription("离异")]
-        DIVORCED = 8,
+        DIVORCED = 9,
 
         [EnumDescription("丧偶")]
-        WIDOWED = 9,
+        WIDOWED = 10,
     }
 
     /// <summary>
