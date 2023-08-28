@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
+using Org.BouncyCastle.Ocsp;
 using System.Text.RegularExpressions;
 
 namespace Manager.API.Controllers
@@ -206,6 +207,39 @@ namespace Manager.API.Controllers
             return await accountInfoService.UpdateAsync(accountInfo) ? Ok(Success("修改成功")) : Ok(Fail("修改失败"));
         }
 
+
+
+        /// <summary>
+        /// 修改学校
+        /// </summary>
+        /// <param name="school"></param>
+        /// <returns></returns>
+        [HttpPatch("school")]
+        public async Task<IActionResult> UpdateSchool([FromForm] string school)
+        {
+            //参数校验
+            var jsonSchema = await JsonSchemas.GetSchema("school");
+
+            var schema = JSchema.Parse(jsonSchema);
+
+            var validate = JArray.Parse(school).IsValid(schema, out IList<string> errorMessages);
+            if (!validate)
+            {
+                return Ok(Fail(errorMessages, "参数错误"));
+            }
+
+            //1.1 判断表用户信息是否存在
+            var accountInfo = await accountInfoService.FirstOrDefaultAsync(x => x.UId == UId, true);
+            if (accountInfo == null)
+            {
+                return Ok(Fail("账号信息表不存在"));
+            }
+
+            // 2. 修改数据
+            accountInfo.School = school;
+
+            return await accountInfoService.UpdateAsync(accountInfo) ? Ok(Success("修改成功")) : Ok(Fail("修改失败"));
+        }
 
 
         /// <summary>

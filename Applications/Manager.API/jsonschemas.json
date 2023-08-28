@@ -19,6 +19,42 @@
       "pwd"
     ]
   },
+  "school": {
+    "type": "array",
+    "description": "修改accountinfo的学校信息",
+    "properties:": {
+      "time": {
+        "type": "string",
+        "title": "入学年份"
+      },
+      "type": {
+        "type": "string",
+        "title": "学校类型",
+        "enum": [
+          "大学",
+          "高中",
+          "中专技校",
+          "初中",
+          "小学",
+          "高职",
+          "海外"
+        ]
+      },
+      "school": {
+        "type": "string",
+        "title": "学校名称"
+      },
+      "department": {
+        "type": "string",
+        "title": "院系"
+      }
+    },
+    "required": [
+      "time",
+      "type",
+      "school"
+    ]
+  },
   "accountinfo-update": {
     "type": "object",
     "description": "修改accountinfo",
