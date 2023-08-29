@@ -19,7 +19,68 @@
       "pwd"
     ]
   },
-  "school": {
+  "companies": {
+    "type": "array",
+    "items": {
+      "type": "object",
+      "properties": {
+        "start": {
+          "type": "string",
+          "title": "开始年份"
+        },
+        "end": {
+          "type": "string",
+          "title": "结束年份"
+        },
+        "location": {
+          "type": "string",
+          "title": "所在地"
+        },
+        "isShowIndustryOnly": {
+          "type": "boolean",
+          "title": "仅显示行业"
+        },
+        "industry": {
+          "type": "string",
+          "title": "行业",
+          "enum": [
+            "文化/艺术",
+            "影视/娱乐",
+            "金融/保险",
+            "信息技术",
+            "工业制造",
+            "媒体/公关",
+            "医疗/健康",
+            "教育/科研",
+            "商业服务",
+            "公共事业",
+            "其他"
+          ]
+        },
+        "company": {
+          "type": "string",
+          "title": "公司"
+        },
+        "department": {
+          "type": "string",
+          "title": "部门/职位"
+        }
+      },
+      "required": [
+        "start",
+        "location",
+        "isShowIndustryOnly",
+        "end",
+        "industry",
+        "company",
+        "department"
+      ]
+    },
+    "title": "公司信息",
+    "maxItems": 10,
+    "uniqueItems": true
+  },
+  "schools": {
     "type": "array",
     "description": "修改accountinfo的学校信息",
     "items": {
