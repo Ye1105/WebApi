@@ -100,7 +100,7 @@ namespace Manager.API.Controllers
         /// <param name="sex"></param>
         /// <returns></returns>
         [HttpPatch("sex")]
-        public async Task<IActionResult> UpdateDescribe([FromForm] Sex sex)
+        public async Task<IActionResult> UpdateSex([FromForm] Sex sex)
         {
 
 
@@ -148,7 +148,6 @@ namespace Manager.API.Controllers
         [HttpPatch("emotion")]
         public async Task<IActionResult> UpdateEmotion([FromForm] EmotionEnum emotion)
         {
-
             //1.1 判断表用户信息是否存在
             var accountInfo = await accountInfoService.FirstOrDefaultAsync(x => x.UId == UId, true);
             if (accountInfo == null)
