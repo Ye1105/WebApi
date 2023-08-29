@@ -215,14 +215,14 @@ namespace Manager.API.Controllers
         /// <param name="school"></param>
         /// <returns></returns>
         [HttpPatch("school")]
-        public async Task<IActionResult> UpdateSchool([FromForm] string school)
+        public async Task<IActionResult> UpdateSchool([FromBody] List<UpdateSchoolRequest> school)
         {
             //参数校验
             var jsonSchema = await JsonSchemas.GetSchema("school");
 
             var schema = JSchema.Parse(jsonSchema);
 
-            var validate = JArray.Parse(school).IsValid(schema, out IList<string> errorMessages);
+            var validate = JArray.Parse(school.SerObj()).IsValid(schema, out IList<string> errorMessages);
             if (!validate)
             {
                 return Ok(Fail(errorMessages, "参数错误"));
@@ -236,7 +236,7 @@ namespace Manager.API.Controllers
             }
 
             // 2. 修改数据
-            accountInfo.School = school;
+            accountInfo.School = school.SerObj();
 
             return await accountInfoService.UpdateAsync(accountInfo) ? Ok(Success("修改成功")) : Ok(Fail("修改失败"));
         }
