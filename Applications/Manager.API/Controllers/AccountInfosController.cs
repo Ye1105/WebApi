@@ -212,17 +212,17 @@ namespace Manager.API.Controllers
         /// <summary>
         /// 修改学校
         /// </summary>
-        /// <param name="school"></param>
+        /// <param name="req"></param>
         /// <returns></returns>
-        [HttpPatch("school")]
-        public async Task<IActionResult> UpdateSchool([FromBody] List<UpdateSchoolRequest> school)
+        [HttpPatch("schools")]
+        public async Task<IActionResult> UpdateSchools([FromBody] List<UpdateSchoolRequest> req)
         {
             //参数校验
-            var jsonSchema = await JsonSchemas.GetSchema("school");
+            var jsonSchema = await JsonSchemas.GetSchema("schools");
 
             var schema = JSchema.Parse(jsonSchema);
 
-            var validate = JArray.Parse(school.SerObj()).IsValid(schema, out IList<string> errorMessages);
+            var validate = JArray.Parse(req.SerObj()).IsValid(schema, out IList<string> errorMessages);
             if (!validate)
             {
                 return Ok(Fail(errorMessages, "参数错误"));
@@ -236,7 +236,39 @@ namespace Manager.API.Controllers
             }
 
             // 2. 修改数据
-            accountInfo.School = school.SerObj();
+            accountInfo.School = req.SerObj();
+
+            return await accountInfoService.UpdateAsync(accountInfo) ? Ok(Success("修改成功")) : Ok(Fail("修改失败"));
+        }
+
+        /// <summary>
+        /// 修改公司
+        /// </summary>
+        /// <param name="req"></param>
+        /// <returns></returns>
+        [HttpPatch("companies")]
+        public async Task<IActionResult> UpdateCompanies([FromBody] List<UpdateCompanyRequest> req)
+        {
+            //参数校验
+            var jsonSchema = await JsonSchemas.GetSchema("companies");
+
+            var schema = JSchema.Parse(jsonSchema);
+
+            var validate = JArray.Parse(req.SerObj()).IsValid(schema, out IList<string> errorMessages);
+            if (!validate)
+            {
+                return Ok(Fail(errorMessages, "参数错误"));
+            }
+
+            //1.1 判断表用户信息是否存在
+            var accountInfo = await accountInfoService.FirstOrDefaultAsync(x => x.UId == UId, true);
+            if (accountInfo == null)
+            {
+                return Ok(Fail("账号信息表不存在"));
+            }
+
+            // 2. 修改数据
+            accountInfo.Company = req.SerObj();
 
             return await accountInfoService.UpdateAsync(accountInfo) ? Ok(Success("修改成功")) : Ok(Fail("修改失败"));
         }
