@@ -19,7 +19,7 @@ using System.Text.RegularExpressions;
 
 namespace Manager.API.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("v1/api/blogs")]
     [ApiExplorerSettings(GroupName = nameof(ApiVersionInfo.V1))]
