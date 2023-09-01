@@ -390,7 +390,7 @@ namespace Manager.Server.Services
             if (fId != null && fId != 0)
             {
                 var res = fId!.Value;
-                query = fId!.Value == BlogForwardType.Origin ? query.Where(x => x.FId == Guid.Empty) : query.Where(x => x.FId != Guid.Empty);
+                query = fId!.Value == BlogForwardType.ORIGION ? query.Where(x => x.FId == Guid.Empty) : query.Where(x => x.FId != Guid.Empty);
             }
             // 开始时间
             if (startTime != null)

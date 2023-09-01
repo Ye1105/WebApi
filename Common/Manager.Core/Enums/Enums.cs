@@ -18,15 +18,15 @@
 
     public enum BlogForwardType
     {
-        Default = 0,
+        DEFAULT = 0,
         /// <summary>
         /// 原创
         /// </summary>
-        Origin = 1,
+        ORIGION = 1,
         /// <summary>
         /// 转发
         /// </summary>
-        Forward = 2
+        FORWARD = 2
     }
 
 
