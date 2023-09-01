@@ -389,6 +389,7 @@ namespace Manager.Server.Services
             // 是否原创
             if (fId != null && fId != 0)
             {
+                var res = fId!.Value;
                 query = fId!.Value == BlogForwardType.Origin ? query.Where(x => x.FId == Guid.Empty) : query.Where(x => x.FId != Guid.Empty);
             }
             // 开始时间
