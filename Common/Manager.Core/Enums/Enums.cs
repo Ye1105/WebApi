@@ -16,6 +16,20 @@
         ACCOUNT = 1
     }
 
+    public enum BlogForwardType
+    {
+        Default = 0,
+        /// <summary>
+        /// 原创
+        /// </summary>
+        Origin = 1,
+        /// <summary>
+        /// 转发
+        /// </summary>
+        Forward = 2
+    }
+
+
     /// <summary>
     /// 服务器类型
     /// </summary>

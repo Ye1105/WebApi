@@ -28,10 +28,10 @@ namespace Manager.Core.RequestModels
         public BlogType? Type { get; set; }
 
         /// <summary>
-        /// 是否原创
+        /// 0 默认不处理  1 原创  2 转发 
         /// </summary>
-        [JsonProperty("isFId")]
-        public bool? IsFId { get; set; }
+        [JsonProperty("fId")]
+        public BlogForwardType? FId { get; set; }
 
         /// <summary>
         /// 开始时间
