@@ -121,7 +121,7 @@ namespace Manager.Server.Services
             return baseService.Entities<Blog>().Where(expression).Count();
         }
 
-        public async Task<PagedList<Blog>?> GetPagedList(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "", Guid? id = null, Guid? wId = null, Guid? uId = null, sbyte? sort = null, sbyte? type = null, bool? isFId = null, DateTime? startTime = null, DateTime? endTime = null, int? scope = null, string? grp = null, Status? status = null)
+        public async Task<PagedList<Blog>?> GetPagedList(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "", Guid? id = null, Guid? wId = null, Guid? uId = null, sbyte? sort = null, sbyte? type = null, BlogForwardType? fId = null, DateTime? startTime = null, DateTime? endTime = null, int? scope = null, string? grp = null, Status? status = null)
         {
             var query = baseService.Entities<Blog>();
 
@@ -387,9 +387,10 @@ namespace Manager.Server.Services
                 query = query.Where(x => x.Type == type);
             }
             // 是否原创
-            if (isFId != null)
+            if (fId != null && fId != 0)
             {
-                query = isFId.Value ? query.Where(x => x.FId == Guid.Empty) : query.Where(x => x.FId != Guid.Empty);
+                var res = fId!.Value;
+                query = fId!.Value == BlogForwardType.ORIGION ? query.Where(x => x.FId == Guid.Empty) : query.Where(x => x.FId != Guid.Empty);
             }
             // 开始时间
             if (startTime != null)

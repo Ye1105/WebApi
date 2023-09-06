@@ -274,7 +274,7 @@ namespace Manager.API.Controllers
              * 2. 返回数据
              */
 
-            var result = await blogService.GetPagedList(req.PageIndex, req.PageSize, req.OffSet, false, req.OrderBy, req.Id, UId, req.UId, req.Sort == null ? null : (sbyte)req.Sort.Value, req.Type == null ? null : (sbyte)req.Type.Value, req.IsFId, req.StartTime, req.EndTime, req.Scope == null ? null : (sbyte)req.Scope.Value, req.Grp, Status.ENABLE);
+            var result = await blogService.GetPagedList(req.PageIndex, req.PageSize, req.OffSet, false, req.OrderBy, req.Id, UId, req.UId, req.Sort == null ? null : (sbyte)req.Sort.Value, req.Type == null ? null : (sbyte)req.Type.Value, req.FId, req.StartTime, req.EndTime, req.Scope == null ? null : (sbyte)req.Scope.Value, req.Grp, Status.ENABLE);
 
             if (result != null && result.Any())
             {
