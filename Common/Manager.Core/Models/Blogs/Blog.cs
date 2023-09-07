@@ -26,7 +26,7 @@ namespace Manager.Core.Models.Blogs
         public sbyte Sort { get; set; }
 
         /// <summary>
-        /// 类型  -1.全部  0.图片  1.视频   2.头条文章  3.音乐  4.普通文字(表情)
+        /// 类型  "文本" 1,"头条文章" 2 "图片" 3,"音乐" 4,"视频" 5
         /// </summary>
         [JsonProperty("type")]
         public sbyte? Type { get; set; }
