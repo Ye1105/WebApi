@@ -19,12 +19,12 @@ namespace Manager.Server.Services
             this.baseService = baseService;
         }
 
-        public async Task<List<BlogImage>> GetBlogImageListBy(Expression<Func<BlogImage, bool>> expression, bool isTrack = true)
+        public async Task<List<BlogImage>> QueryAsync(Expression<Func<BlogImage, bool>> expression, bool isTrack = true)
         {
             return await baseService.QueryAsync(expression, isTrack);
         }
 
-        public async Task<List<BlogImage>?> GetBlogImageListById(Guid id)
+        public async Task<List<BlogImage>?> QueryAsync(Guid id)
         {
             /*
              * 1.缓存是否命中
@@ -50,11 +50,11 @@ namespace Manager.Server.Services
                 //expire 5 minutes
                 await cli.SetExAsync(keyName, 300, imageList.SerObj());
 
-                return await GetBlogImageListById(id);
+                return await QueryAsync(id);
             }
         }
 
-        public async Task<PagedList<BlogImage>?> GetPagedList(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "", Guid? bId = null, Guid? uId = null, DateTime? startTime = null, DateTime? endTime = null, Status status = Status.ENABLE)
+        public async Task<PagedList<BlogImage>?> PagedAsync(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "", Guid? bId = null, Guid? uId = null, DateTime? startTime = null, DateTime? endTime = null, Status status = Status.ENABLE)
         {
             var query = baseService.Entities<BlogImage>();
 
@@ -78,7 +78,6 @@ namespace Manager.Server.Services
                 query = query.Where(x => x.Created < endTime);
             }
 
-
             query = query.Where(x => x.Status == (sbyte)status);
 
             query = query.ApplySort(orderBy);
@@ -86,7 +85,7 @@ namespace Manager.Server.Services
             return await PagedList<BlogImage>.CreateAsync(query, pageIndex, pageSize, offset);
         }
 
-        public async Task<bool> UpdateBlogImage(BlogImage blogImage)
+        public async Task<bool> UpdateAsync(BlogImage blogImage)
         {
             return await baseService.UpdateAsync(blogImage) > 0;
         }

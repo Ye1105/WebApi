@@ -56,7 +56,7 @@ namespace Manager.API.Controllers
             }
 
             //2.校验1分钟内是否已经存在有已发送短信
-            var minuteLimitRes = tencentService.GetTencentSms(phone, DateTime.Now.AddMinutes(-1));
+            var minuteLimitRes = tencentService.FirstOrDefaultAsync(phone, DateTime.Now.AddMinutes(-1));
             if (minuteLimitRes)
             {
                 return Ok(Fail($"1分钟内已经存在已发送短信"));
@@ -86,7 +86,7 @@ namespace Manager.API.Controllers
             };
 
             //5.调用sms第三方接口
-            var res = await tencentService.SendSMS(tencentSendSmsConfig);
+            var res = await tencentService.AddAsync(tencentSendSmsConfig);
             if (res.Item1)
             {
                 return Ok(Success("验证码发送成功"));
@@ -121,9 +121,9 @@ namespace Manager.API.Controllers
             }
 
             //2.1【登录】邮箱对应的账号是否存在
-            if (type == Core.Enums.MailType.LOGIN|| type == Core.Enums.MailType.RETRIEVE)
+            if (type == Core.Enums.MailType.LOGIN || type == Core.Enums.MailType.RETRIEVE)
             {
-                var res = await accountService.GetAccountBy(x => x.Mail == mail, false);
+                var res = await accountService.FirstOrDefaultAsync(x => x.Mail == mail, false);
                 if (res == null)
                 {
                     return Ok(Fail("邮箱不存在"));
@@ -132,7 +132,7 @@ namespace Manager.API.Controllers
             //2.2【注册】
             if (type == Core.Enums.MailType.REGISTER)
             {
-                var res = await accountService.GetAccountBy(x => x.Mail == mail, false);
+                var res = await accountService.FirstOrDefaultAsync(x => x.Mail == mail, false);
                 if (res != null)
                 {
                     return Ok(Fail("邮箱已存在"));
@@ -154,7 +154,7 @@ namespace Manager.API.Controllers
             var displayName = appSettings.Value.Mail.DisplayName;
 
             //3.发送邮件
-            if (await mailService.SendMail(authorizationCode, host, displayName, mailSender, mail, sms, type))
+            if (await mailService.AddAsync(authorizationCode, host, displayName, mailSender, mail, sms, type))
             {
                 return Ok(Success("验证码发送成功"));
             }

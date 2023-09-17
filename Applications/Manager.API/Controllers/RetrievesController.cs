@@ -57,14 +57,14 @@ namespace Manager.API.Controllers
 
             //2.验证码是否过期
             var dt = DateTime.Now;
-            var res = tencentService.GetTencentSms(req.Phone, req.Sms, dt.AddMinutes(-5), dt);
+            var res = tencentService.ExsitAsync(req.Phone, req.Sms, dt.AddMinutes(-5), dt);
             if (!res)
             {
                 return Ok(Fail("验证码不存在或已过期"));
             }
 
             //3.更新账号密码
-            if (await accountService.ModifyAccountPassword(x => x.Phone == req.Phone, req.Pwd))
+            if (await accountService.UpdateAsync(x => x.Phone == req.Phone, req.Pwd))
             {
                 return Ok(Success("密码重置成功"));
             }
@@ -105,7 +105,7 @@ namespace Manager.API.Controllers
             //}
 
             //3.更新账号密码
-            if (await accountService.ModifyAccountPassword(x => x.Mail == req.Mail, req.Pwd))
+            if (await accountService.UpdateAsync(x => x.Mail == req.Mail, req.Pwd))
             {
                 return Ok(Success("密码重置成功"));
             }

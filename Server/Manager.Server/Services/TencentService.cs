@@ -40,7 +40,7 @@ namespace Manager.Server.Services
             return res != null && res.Count() > 0 && (res.Count >= upperCount);
         }
 
-        public LogTencentSMS? GetTencentSms(string phone, string sms)
+        public LogTencentSMS? FirstOrDefaultAsync(string phone, string sms)
         {
             MySqlParameter[] mySqlParameter =
             {
@@ -58,7 +58,7 @@ namespace Manager.Server.Services
             return res.FirstOrDefault();
         }
 
-        public bool GetTencentSms(string phone, DateTime afterTime)
+        public bool FirstOrDefaultAsync(string phone, DateTime afterTime)
         {
             MySqlParameter[] mySqlParameter =
             {
@@ -76,7 +76,7 @@ namespace Manager.Server.Services
             return res != null && res.Count() > 0;
         }
 
-        public bool GetTencentSms(string phone, string sms, DateTime afterTime, DateTime? beforeTime)
+        public bool ExsitAsync(string phone, string sms, DateTime afterTime, DateTime? beforeTime)
         {
             MySqlParameter[] mySqlParameter =
             {
@@ -96,7 +96,7 @@ namespace Manager.Server.Services
             return res != null && res.Count() > 0;
         }
 
-        public async Task<(bool, object?)> SendSMS(TencentSendSmsConfig tencentSendSmsConfig)
+        public async Task<(bool, object?)> AddAsync(TencentSendSmsConfig tencentSendSmsConfig)
         {
             var credential = new Credential
             {

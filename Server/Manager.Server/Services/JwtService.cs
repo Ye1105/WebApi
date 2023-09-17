@@ -1,13 +1,12 @@
 ﻿using Manager.Core.Settings;
 using Manager.Extensions;
-using NPOI.SS.Formula.Functions;
 using static Manager.Redis.Infrastructure.RedisClient;
 
 namespace Manager.Server.Services
 {
     public class JwtService : IJwtService
     {
-        public Tuple<bool, string> AddRefreshToken(Guid uId, string refreshToken)
+        public Tuple<bool, string> AddAsync(Guid uId, string refreshToken)
         {
             try
             {
@@ -32,7 +31,7 @@ namespace Manager.Server.Services
             }
         }
 
-        public async Task<Tuple<bool, string>> ExsitRefreshToken(Guid uId, string refreshToken)
+        public async Task<Tuple<bool, string>> ExsitAsync(Guid uId, string refreshToken)
         {
             //return crudJWT.ExsitRefreshToken(uId, refreshToken);
             using var redis = Instance(RedisBaseEnum.Zeroth);

@@ -36,7 +36,7 @@ namespace Manager.API.Controllers
         [HttpGet]
         public async Task<IActionResult> CoverPaged([FromQuery] QueryParameters req)
         {
-            var result = await logCoverService.GetPagedList(UId, req.PageIndex, req.PageSize, req.OffSet, req.OrderBy);
+            var result = await logCoverService.PagedAsync(UId, req.PageIndex, req.PageSize, req.OffSet, req.OrderBy);
 
             if (result != null && result.Any())
             {
@@ -103,7 +103,7 @@ namespace Manager.API.Controllers
                 Status = (sbyte)Status.UNDER_REVIEW
             };
 
-            var res = await logCoverService.AddLogCover(logCover);
+            var res = await logCoverService.AddAsync(logCover);
 
             return res.Item1 ? Ok(Success(new { cover = logCover })) : Ok(Fail(res.Item2));
         }

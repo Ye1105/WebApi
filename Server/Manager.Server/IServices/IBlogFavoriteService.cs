@@ -11,7 +11,7 @@ namespace Manager.Server.IServices
         /// <param name="bId"></param>
         /// <param name="uId"></param>
         /// <returns></returns>
-        Task<Tuple<bool, string>> AddBlogFavorite(Guid bId, Guid uId);
+        Task<Tuple<bool, string>> AddAsync(Guid bId, Guid uId);
 
         /// <summary>
         ///  博客收藏：删除收藏
@@ -19,7 +19,7 @@ namespace Manager.Server.IServices
         /// <param name="bId"></param>
         /// <param name="uId"></param>
         /// <returns></returns>
-        Task<Tuple<bool, string>> DelBlogFavorite(Guid bId, Guid uId);
+        Task<Tuple<bool, string>> DeleteAsync(Guid bId, Guid uId);
 
         /// <summary>
         /// 收藏数量
@@ -27,7 +27,7 @@ namespace Manager.Server.IServices
         /// <param name="expression"></param>
         /// <param name="isTrack"></param>
         /// <returns></returns>
-        Task<long?> GetBlogFavoriteCountBy(Guid bId);
+        Task<long?> CountAsync(Guid bId);
 
         /// <summary>
         /// 当前用户是否收藏博客
@@ -35,7 +35,7 @@ namespace Manager.Server.IServices
         /// <param name="bId"></param>
         /// <param name="uId"></param>
         /// <returns></returns>
-        Task<bool?> GetIsBlogFavoriteByUser(Guid bId, Guid uId);
+        Task<bool?> ExsitAsync(Guid bId, Guid uId);
 
         /// <summary>
         /// 收藏博客分页列表
@@ -46,6 +46,6 @@ namespace Manager.Server.IServices
         /// <param name="offset"></param>
         /// <param name="isTrack"></param>
         /// <returns></returns>
-        Task<PagedList<Blog?>?> GetPagedList(Guid wId, int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true);
+        Task<PagedList<Blog?>?> PagedAsync(Guid wId, int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true);
     }
 }

@@ -20,17 +20,17 @@ namespace Manager.Server.Services
             this.baseService = baseService;
         }
 
-        public async Task<BlogVideo?> GetBlogVideoBy(Expression<Func<BlogVideo, bool>> expression, bool isTrack = true)
+        public async Task<BlogVideo?> FirstOrDefaultAsync(Expression<Func<BlogVideo, bool>> expression, bool isTrack = true)
         {
             return await baseService.FirstOrDefaultAsync(expression, isTrack);
         }
 
-        public async Task<List<BlogVideo>> GetBlogVideoListBy(Expression<Func<BlogVideo, bool>> expression, bool isTrack = true)
+        public async Task<List<BlogVideo>> QueryAsync(Expression<Func<BlogVideo, bool>> expression, bool isTrack = true)
         {
             return await baseService.QueryAsync(expression, isTrack);
         }
 
-        public async Task<BlogVideo?> GetBlogVideoById(Guid id)
+        public async Task<BlogVideo?> FirstOrDefaultAsync(Guid id)
         {
             try
             {
@@ -58,7 +58,7 @@ namespace Manager.Server.Services
                     //expire 5 minutes
                     await cli.SetExAsync(keyName, 300, video.SerObj());
 
-                    return await GetBlogVideoById(id);
+                    return await FirstOrDefaultAsync(id);
                 }
             }
             catch (Exception ex)
@@ -68,7 +68,7 @@ namespace Manager.Server.Services
             }
         }
 
-        public async Task<PagedList<BlogVideo>?> GetPagedList(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "", Guid? bId = null, Guid? uId = null, string? title = "", string? channel = null, string? collection = null, string? type = null, DateTime? startTime = null, DateTime? endTime = null, Status status = Status.ENABLE)
+        public async Task<PagedList<BlogVideo>?> PagedAsync(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "", Guid? bId = null, Guid? uId = null, string? title = "", string? channel = null, string? collection = null, string? type = null, DateTime? startTime = null, DateTime? endTime = null, Status status = Status.ENABLE)
         {
             var query = baseService.Entities<BlogVideo>();
 

@@ -18,14 +18,13 @@ namespace Manager.Server.Services
         private readonly IBase baseService;
         private readonly IProcedure procService;
 
-
         public BlogLikeService(IBase baseService, IProcedure procService)
         {
             this.baseService = baseService;
             this.procService = procService;
         }
 
-        public async Task<Tuple<bool, string>> AddBlogLike(Guid bId, Guid uId)
+        public async Task<Tuple<bool, string>> AddAsync(Guid bId, Guid uId)
         {
             try
             {
@@ -64,7 +63,7 @@ namespace Manager.Server.Services
             }
         }
 
-        public async Task<Tuple<bool, string>> DelBlogLike(Guid bId, Guid uId)
+        public async Task<Tuple<bool, string>> DeleteAsync(Guid bId, Guid uId)
         {
             try
             {
@@ -101,7 +100,7 @@ namespace Manager.Server.Services
             }
         }
 
-        public async Task<long?> GetBlogLikeCountBy(Guid bId)
+        public async Task<long?> CountAsync(Guid bId)
         {
             try
             {
@@ -128,7 +127,7 @@ namespace Manager.Server.Services
 
                     await cli.SetExAsync(keyName, 300, count);
 
-                    return await GetBlogLikeCountBy(bId);
+                    return await CountAsync(bId);
                 }
             }
             catch (Exception ex)
@@ -138,7 +137,7 @@ namespace Manager.Server.Services
             }
         }
 
-        public async Task<bool?> GetIsBlogLikeByUser(Guid bId, Guid uId)
+        public async Task<bool?> ExsitAsync(Guid bId, Guid uId)
         {
             try
             {
@@ -176,14 +175,14 @@ namespace Manager.Server.Services
             }
         }
 
-        public async Task<PagedList<Blog?>?> GetPagedList(Guid wId, int pageIndex = 1, int pageSize = 10, int offset = 0)
+        public async Task<PagedList<Blog?>?> PagedAsync(Guid wId, int pageIndex = 1, int pageSize = 10, int offset = 0)
         {
             try
             {
                 /*
                  * 1.是否命中缓存
                  * 2.命中缓存
-                 * 2.1 获取键的类型 【string 类型代表没有数据，zset 类型戴白点赞列表有数据】
+                 * 2.1 获取键的类型 【string 类型代表没有数据，zset 类型代表点赞列表有数据】
                  * 2.2 zset ZRevRangeAsync 分页
                  * 3.未命中缓存
                  * 3.1 没有数据 设置 string key
@@ -264,7 +263,7 @@ namespace Manager.Server.Services
 
                         object[] ret = pipe.EndPipe();
 
-                        return await GetPagedList(wId, pageIndex, pageSize, offset);
+                        return await PagedAsync(wId, pageIndex, pageSize, offset);
                     }
                     else
                     {

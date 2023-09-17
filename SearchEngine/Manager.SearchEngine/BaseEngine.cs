@@ -46,13 +46,13 @@ namespace Manager.SearchEngine
 
     public abstract class BaseEngine
     {
-        protected readonly string jiebaConfigFileDir;
-        protected readonly string jiebaConfigCustomDictDir;
+        protected readonly string luceneDir;
+        protected readonly string jiebaTextDir;
 
         public BaseEngine()
         {
-            jiebaConfigFileDir = ConfigurationManager.AppSettings["JiebaConfigFileDir"]?.ToString() ?? throw new ArgumentNullException("jiebaConfigFileDir is null");
-            jiebaConfigCustomDictDir = ConfigurationManager.AppSettings["JiebaConfigCustomDictDir"]?.ToString() ?? throw new ArgumentNullException("jiebaConfigCustomDictDir is null"); ;
+            luceneDir = ConfigurationManager.AppSettings["LuceneDir"]?.ToString() ?? throw new ArgumentNullException("LuceneDir is null");
+            jiebaTextDir = ConfigurationManager.AppSettings["JiebaTextDir"]?.ToString() ?? throw new ArgumentNullException("JiebaTextDir is null"); ;
         }
 
         /// <summary>
@@ -66,9 +66,9 @@ namespace Manager.SearchEngine
             try
             {
                 //FSDirectory.Open 中封装了用来对索引目录进行的加锁方案，使得同一时间只能有一个IndexWriter对象对索引目录进行操作
-                var directory = FSDirectory.Open(new DirectoryInfo(jiebaConfigFileDir));
+                var directory = FSDirectory.Open(new DirectoryInfo(luceneDir));
                 var VERSION = Lucene.Net.Util.LuceneVersion.LUCENE_48;
-                var analyzer = new JieBaAnalyzer(TokenizerMode.Search, jiebaConfigCustomDictDir);
+                var analyzer = new JieBaAnalyzer(TokenizerMode.Search, jiebaTextDir);
                 var indexWriterConfig = new IndexWriterConfig(VERSION, analyzer);
                 //设置打开方式：OpenMode.APPEND 会在索引库的基础上追加新的索引；OpenMode.CREATE 会清空原来的数据，再提交索引
                 //indexWriterConfig.SetOpenMode(OpenMode.APPEND);
@@ -100,9 +100,9 @@ namespace Manager.SearchEngine
             try
             {
                 //FSDirectory.Open 中封装了用来对索引目录进行的加锁方案，使得同一时间只能有一个IndexWriter对象对索引目录进行操作
-                var directory = FSDirectory.Open(new DirectoryInfo(jiebaConfigFileDir));
+                var directory = FSDirectory.Open(new DirectoryInfo(luceneDir));
                 var VERSION = Lucene.Net.Util.LuceneVersion.LUCENE_48;
-                var analyzer = new JieBaAnalyzer(TokenizerMode.Search, jiebaConfigCustomDictDir);
+                var analyzer = new JieBaAnalyzer(TokenizerMode.Search, jiebaTextDir);
                 var indexWriterConfig = new IndexWriterConfig(VERSION, analyzer);
                 //indexWriter创建索引写入器
                 using var indexWriter = new IndexWriter(directory, indexWriterConfig);
@@ -130,9 +130,9 @@ namespace Manager.SearchEngine
             try
             {
                 //FSDirectory.Open 中封装了用来对索引目录进行的加锁方案，使得同一时间只能有一个IndexWriter对象对索引目录进行操作
-                var directory = FSDirectory.Open(new DirectoryInfo(jiebaConfigFileDir));
+                var directory = FSDirectory.Open(new DirectoryInfo(luceneDir));
                 var VERSION = Lucene.Net.Util.LuceneVersion.LUCENE_48;
-                var analyzer = new JieBaAnalyzer(TokenizerMode.Search, jiebaConfigCustomDictDir);
+                var analyzer = new JieBaAnalyzer(TokenizerMode.Search, jiebaTextDir);
                 var indexWriterConfig = new IndexWriterConfig(VERSION, analyzer);
 
                 //indexWriter创建索引写入器
@@ -159,9 +159,9 @@ namespace Manager.SearchEngine
             try
             {
                 //FSDirectory.Open 中封装了用来对索引目录进行的加锁方案，使得同一时间只能有一个IndexWriter对象对索引目录进行操作
-                var directory = FSDirectory.Open(new DirectoryInfo(jiebaConfigFileDir));
+                var directory = FSDirectory.Open(new DirectoryInfo(luceneDir));
                 var VERSION = Lucene.Net.Util.LuceneVersion.LUCENE_48;
-                var analyzer = new JieBaAnalyzer(TokenizerMode.Search, jiebaConfigCustomDictDir);
+                var analyzer = new JieBaAnalyzer(TokenizerMode.Search, jiebaTextDir);
                 var indexWriterConfig = new IndexWriterConfig(VERSION, analyzer);
                 //indexWriter创建索引写入器
                 using var indexWriter = new IndexWriter(directory, indexWriterConfig);
@@ -189,7 +189,7 @@ namespace Manager.SearchEngine
         {
             try
             {
-                var directory = FSDirectory.Open(new DirectoryInfo(jiebaConfigFileDir));
+                var directory = FSDirectory.Open(new DirectoryInfo(luceneDir));
                 var reader = DirectoryReader.Open(directory);
                 var searcher = new IndexSearcher(reader);
 
@@ -248,7 +248,7 @@ namespace Manager.SearchEngine
         {
             try
             {
-                var directory = FSDirectory.Open(new DirectoryInfo(jiebaConfigFileDir));
+                var directory = FSDirectory.Open(new DirectoryInfo(luceneDir));
                 var reader = DirectoryReader.Open(directory);
                 var searcher = new IndexSearcher(reader);
 

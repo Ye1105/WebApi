@@ -14,7 +14,7 @@ namespace Manager.Server.Services
             this.baseService = baseService;
         }
 
-        public Task<PagedList<Blog>?> GetPagedList(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, Guid? id = null, Guid? wId = null)
+        public Task<PagedList<Blog>?> PagedAsync(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, Guid? id = null, Guid? wId = null)
         {
             throw new NotImplementedException();
         }

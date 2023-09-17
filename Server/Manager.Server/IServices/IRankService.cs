@@ -15,6 +15,6 @@ namespace Manager.Server.IServices
         /// <param name="id"></param>
         /// <param name="wId"></param>
         /// <returns></returns>
-        Task<PagedList<Blog>?> GetPagedList(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, Guid? id = null, Guid? wId = null);
+        Task<PagedList<Blog>?> PagedAsync(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, Guid? id = null, Guid? wId = null);
     }
 }

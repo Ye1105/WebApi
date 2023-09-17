@@ -8,7 +8,7 @@
         /// <param name="vId"></param>
         /// <param name="uId"></param>
         /// <returns></returns>
-        Task<Tuple<bool, string>> AddBlogVideoLike(Guid vId, Guid uId);
+        Task<Tuple<bool, string>> AddAsync(Guid vId, Guid uId);
 
         /// <summary>
         /// 删除博客视频点赞
@@ -16,21 +16,21 @@
         /// <param name="vId"></param>
         /// <param name="uId"></param>
         /// <returns></returns>
-        Task<Tuple<bool, string>> DelBlogVideoLike(Guid vId, Guid uId);
+        Task<Tuple<bool, string>> DeleteAsync(Guid vId, Guid uId);
 
         /// <summary>
         /// 博客图片点赞数
         /// </summary>
         /// <param name="iId"></param>
         /// <returns></returns>
-        Task<long?> GetBlogVideoLikeCountBy(Guid vId);
+        Task<long?> CountAsync(Guid vId);
 
         /// <summary>
-        ///  博客视频点赞数
+        ///  当前博客视频是否被点赞
         /// </summary>
         /// <param name="vId"></param>
         /// <param name="uId"></param>
         /// <returns></returns>
-        Task<bool?> GetIsBlogVideoLikeByUser(Guid vId, Guid uId);
+        Task<bool?> ExsitAsync(Guid vId, Guid uId);
     }
 }

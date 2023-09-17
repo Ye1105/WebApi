@@ -14,13 +14,13 @@ namespace Manager.Server.IServices
         /// <param name="offset"></param>
         /// <param name="orderBy"></param>
         /// <returns></returns>
-        Task<PagedList<LogAvatar?>?> GetPagedList(Guid uId, int pageIndex = 1, int pageSize = 10, int offset = 0, string orderBy = "");
+        Task<PagedList<LogAvatar?>?> PagedAsync(Guid uId, int pageIndex = 1, int pageSize = 10, int offset = 0, string orderBy = "");
 
         /// <summary>
         /// 新增头像
         /// </summary>
         /// <param name="logAvatar"></param>
         /// <returns></returns>
-        Task<Tuple<bool, string>> AddLogAvatar(LogAvatar logAvatar);
+        Task<Tuple<bool, string>> AddAsync(LogAvatar logAvatar);
     }
 }

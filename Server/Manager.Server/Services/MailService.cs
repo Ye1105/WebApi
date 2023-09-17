@@ -20,17 +20,17 @@ namespace Manager.Server.Services
 
         public async Task<LogMailSMS?> FirstOrDefaultAsync(Expression<Func<LogMailSMS, bool>> expression, bool isTrack = true, string orderBy = "")
         {
-            var mail = await baseService.FirstOrDefaultAsync(expression, orderBy, isTrack);
+            var mail = await baseService.FirstOrDefaultAsync(expression, isTrack, orderBy);
             return mail;
         }
 
-        public async Task<LogMailSMS?> GetLogMailSmsBy(Expression<Func<LogMailSMS, bool>> expression, bool isTrack = true)
+        public async Task<LogMailSMS?> FirstOrDefaultAsync(Expression<Func<LogMailSMS, bool>> expression, bool isTrack = true)
         {
             var res = await baseService.QueryAsync(expression, 1, 1, 0, false, "created desc");
             return res.FirstOrDefault();
         }
 
-        public async Task<bool> SendMail(string authorizationCode, string host, string displayName, string mailSender, string mailRecipient, string sms, Manager.Core.Enums.MailType mailType)
+        public async Task<bool> AddAsync(string authorizationCode, string host, string displayName, string mailSender, string mailRecipient, string sms, Manager.Core.Enums.MailType mailType)
         {
             var client = new SmtpClient(host)
             {

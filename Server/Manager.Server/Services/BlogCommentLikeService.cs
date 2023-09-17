@@ -18,7 +18,7 @@ namespace Manager.Server.Services
             this.baseService = baseService;
         }
 
-        public async Task<long?> GetCommentLikeCountBy(Guid cId)
+        public async Task<long?> CountAsync(Guid cId)
         {
             try
             {
@@ -45,7 +45,7 @@ namespace Manager.Server.Services
 
                     await cli.SetExAsync(keyName, 300, count);
 
-                    return await GetCommentLikeCountBy(cId);
+                    return await CountAsync(cId);
                 }
             }
             catch (Exception ex)
@@ -55,7 +55,7 @@ namespace Manager.Server.Services
             }
         }
 
-        public async Task<bool?> GetIsCommentLikeByUser(Guid cId, Guid uId)
+        public async Task<bool?> ExsitAsync(Guid cId, Guid uId)
         {
             try
             {
@@ -83,7 +83,7 @@ namespace Manager.Server.Services
                     //设置缓存
                     await cli.SetExAsync(keyName, 300, count);
 
-                    return await GetIsCommentLikeByUser(cId, uId);
+                    return await ExsitAsync(cId, uId);
                 }
             }
             catch (Exception ex)
@@ -93,7 +93,7 @@ namespace Manager.Server.Services
             }
         }
 
-        public async Task<Tuple<bool, string>> AddBlogCommentLike(Guid cId, Guid uId)
+        public async Task<Tuple<bool, string>> AddAsync(Guid cId, Guid uId)
         {
             try
             {
@@ -133,7 +133,7 @@ namespace Manager.Server.Services
             }
         }
 
-        public async Task<Tuple<bool, string>> DeleteBlogCommentLike(Guid cId, Guid uId)
+        public async Task<Tuple<bool, string>> DeleteAsync(Guid cId, Guid uId)
         {
             try
             {

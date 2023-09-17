@@ -35,7 +35,7 @@ namespace Manager.API.Controllers
         [HttpGet("{uId}")]
         public async Task<IActionResult> Group(Guid uId)
         {
-            var res = await userGroupService.GetUserGroupByUId(uId);
+            var res = await userGroupService.FirstOrDefaultAsync(uId);
             return res != null ? Ok(Success(res)) : Ok(Fail("获取用户分组失败"));
         }
 
@@ -58,7 +58,7 @@ namespace Manager.API.Controllers
                 return Ok(Fail("分组为空"));
             }
             // 1.获取当前用户的Grp【是否存在】
-            var userGroup = await userGroupService.GetUserGroupBy(x => x.UId == UId, true);
+            var userGroup = await userGroupService.FirstOrDefaultAsync(x => x.UId == UId, true);
             if (userGroup != null)
             {
                 dynamic groupArray = userGroup.Grp.DesObj();
@@ -72,7 +72,7 @@ namespace Manager.API.Controllers
                 groupArray.Add(grp);
                 userGroup.Grp = JsonHelper.SerJArray(groupArray);
                 //4.新增博客用户分组
-                var res = await userGroupService.ModifyUserGroup(userGroup);
+                var res = await userGroupService.UpdateAsync(userGroup);
                 return res ? Ok(Success()) : Ok(Fail("新增用户分组失败"));
             }
             else
@@ -103,7 +103,7 @@ namespace Manager.API.Controllers
 
             var curGrp = $"\"{grp}\"";
             // 1.获取当前用户的Grp【是否存在】
-            var userGroup = await userGroupService.GetUserGroupBy(x => x.UId == UId, true);
+            var userGroup = await userGroupService.FirstOrDefaultAsync(x => x.UId == UId, true);
             if (userGroup != null)
             {
                 //2.转变为 ArrayList
@@ -128,7 +128,7 @@ namespace Manager.API.Controllers
                 var Group = '[' + string.Join(',', gArray) + ']';
                 userGroup.Grp = Group;
                 //3.删除博客用户分组
-                var res = await userGroupService.ModifyUserGroup(userGroup);
+                var res = await userGroupService.UpdateAsync(userGroup);
                 return res ? Ok(Success()) : Ok(Fail("删除用户分组失败"));
             }
             else

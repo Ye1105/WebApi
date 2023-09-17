@@ -49,7 +49,7 @@ namespace Manager.API.Controllers
             var Uddd = UId;
 
             //1.评论列表
-            var result = await blogCommentService.GetPagedList(req.PageIndex, req.PageSize, req.OffSet, isTrack: false, req.OrderBy, req.Id, req.BId, req.UId, req.Types, req.PId, req.Grp, req.StartTime, req.EndTime, Status.ENABLE);
+            var result = await blogCommentService.PagedAsync(req.PageIndex, req.PageSize, req.OffSet, isTrack: false, req.OrderBy, req.Id, req.BId, req.UId, req.Types, req.PId, req.Grp, req.StartTime, req.EndTime, Status.ENABLE);
 
             if (result != null && result.Any())
             {
@@ -62,13 +62,13 @@ namespace Manager.API.Controllers
                     if (item.Type == (sbyte)CommentType.COMMENT)
                     {
                         //5.1 评论回复数
-                        item.ReplyCount = await blogCommentService.GetCommentCountBy(x => x.Grp == item.Grp && (x.Type == (sbyte)CommentType.REPLY_FIRST_LEVEL || x.Type == (sbyte)CommentType.REPLY_SECOND_LEVEL) && x.Status == (sbyte)Status.ENABLE);
+                        item.ReplyCount = await blogCommentService.CountAsync(x => x.Grp == item.Grp && (x.Type == (sbyte)CommentType.REPLY_FIRST_LEVEL || x.Type == (sbyte)CommentType.REPLY_SECOND_LEVEL) && x.Status == (sbyte)Status.ENABLE);
 
                         //5.2 评论最新回复的用户数据
                         if (item.ReplyCount > 0)
                         {
                             // 置顶 | 按时间降序 的三条数据
-                            var replys = await blogCommentService.GetPagedList(b => b.Grp == item.Grp && (b.Type == (sbyte)CommentType.REPLY_FIRST_LEVEL || b.Type == (sbyte)CommentType.REPLY_SECOND_LEVEL) && b.Status == (sbyte)Status.ENABLE, pageIndex: 1, pageSize: 3, offset: 0, isTrack: false, "Top desc,Created desc");
+                            var replys = await blogCommentService.PagedAsync(b => b.Grp == item.Grp && (b.Type == (sbyte)CommentType.REPLY_FIRST_LEVEL || b.Type == (sbyte)CommentType.REPLY_SECOND_LEVEL) && b.Status == (sbyte)Status.ENABLE, pageIndex: 1, pageSize: 3, offset: 0, isTrack: false, "Top desc,Created desc");
 
                             foreach (var reply in replys)
                             {
@@ -102,12 +102,12 @@ namespace Manager.API.Controllers
             item.BuInfo = await accountInfoService.FirstOrDefaultAsync(item.BuId);
 
             //4.1点赞数
-            item.Like = await blogCommentLikeService.GetCommentLikeCountBy(item.Id);
+            item.Like = await blogCommentLikeService.CountAsync(item.Id);
 
             //4.2通过 wId != null && wId != Guid.Empty 当前网站登录的用户id是否对当前评论或回复【点赞】
             if (wId != null && wId != Guid.Empty)
             {
-                item.IsLike = await blogCommentLikeService.GetIsCommentLikeByUser(item.Id, wId.Value);
+                item.IsLike = await blogCommentLikeService.ExsitAsync(item.Id, wId.Value);
             }
 
             return item;
@@ -151,7 +151,7 @@ namespace Manager.API.Controllers
                 Status = (sbyte)Status.ENABLE
             };
             //2.增加评论
-            var res = await blogCommentService.AddBlogComment(blogComment);
+            var res = await blogCommentService.AddAsync(blogComment);
             return res ? Ok(Success("评论成功")) : Ok(Fail("评论失败"));
         }
 
@@ -165,7 +165,7 @@ namespace Manager.API.Controllers
         [HttpDelete("{type}/{grp}/{id}")]
         public async Task<IActionResult> DelComment(CommentType type, Guid grp, Guid id)
         {
-            var res = await blogCommentService.DeleteBlogComment(type, grp, id);
+            var res = await blogCommentService.DeleteAsync(type, grp, id);
             return Ok(res.Item1 ? Success(res.Item2) : Fail(res.Item2));
         }
 
@@ -178,7 +178,7 @@ namespace Manager.API.Controllers
         [HttpPost("{id}/likes")]
         public async Task<IActionResult> AddCommentLike(Guid id)
         {
-            var res = await blogCommentLikeService.AddBlogCommentLike(id, UId);
+            var res = await blogCommentLikeService.AddAsync(id, UId);
             return res.Item1 ? Ok(Success()) : Ok(Fail(res.Item2));
         }
 
@@ -191,7 +191,7 @@ namespace Manager.API.Controllers
         [HttpDelete("{id}/likes")]
         public async Task<IActionResult> DeleteCommentLike(Guid id)
         {
-            var res = await blogCommentLikeService.DeleteBlogCommentLike(id, UId);
+            var res = await blogCommentLikeService.DeleteAsync(id, UId);
             return res.Item1 ? Ok(Success()) : Ok(Fail(res.Item2));
         }
     }

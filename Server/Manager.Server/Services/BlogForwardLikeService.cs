@@ -18,7 +18,7 @@ namespace Manager.Server.Services
             this.baseService = baseService;
         }
 
-        public async Task<Tuple<bool, string>> AddBlogForwadLike(Guid fId, Guid uId)
+        public async Task<Tuple<bool, string>> AddAsync(Guid fId, Guid uId)
         {
             try
             {
@@ -55,7 +55,7 @@ namespace Manager.Server.Services
             }
         }
 
-        public async Task<Tuple<bool, string>> DelBlogForwardLike(Guid fId, Guid uId)
+        public async Task<Tuple<bool, string>> DeleteAsync(Guid fId, Guid uId)
         {
             try
             {
@@ -90,7 +90,7 @@ namespace Manager.Server.Services
             }
         }
 
-        public async Task<long?> GetBlogForwardLikeCountBy(Guid fId)
+        public async Task<long?> CountAsync(Guid fId)
         {
             try
             {
@@ -117,7 +117,7 @@ namespace Manager.Server.Services
 
                     await cli.SetExAsync(keyName, 300, count);
 
-                    return await GetBlogForwardLikeCountBy(fId);
+                    return await CountAsync(fId);
                 }
             }
             catch (Exception ex)
@@ -127,7 +127,7 @@ namespace Manager.Server.Services
             }
         }
 
-        public async Task<bool?> GetIsBlogForwardLikeByUser(Guid fId, Guid uId)
+        public async Task<bool?> ExsitAsync(Guid fId, Guid uId)
         {
             try
             {

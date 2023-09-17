@@ -72,14 +72,14 @@ namespace Manager.API.Controllers
             //}
 
             //3.1 判定 手机号  是否存在
-            var curAccPhone = await accountService.GetAccountBy(x => x.Phone == req.Phone, false);
+            var curAccPhone = await accountService.FirstOrDefaultAsync(x => x.Phone == req.Phone, false);
             if (curAccPhone != null)
             {
                 return Ok(Fail("手机号已存在"));
             }
 
             //3.2 判定 邮箱  是否存在
-            var curAccMail = await accountService.GetAccountBy(x => x.Mail == req.Mail, false);
+            var curAccMail = await accountService.FirstOrDefaultAsync(x => x.Mail == req.Mail, false);
             if (curAccMail != null)
             {
                 return Ok(Fail("邮箱已存在"));
@@ -126,7 +126,7 @@ namespace Manager.API.Controllers
 
 
             //4.创建账号信息【Account,AccountInfo】
-            var res = await accountService.CreateAccount(req.Pwd, req.Phone, req.NickName, req.Mail);
+            var res = await accountService.AddAsync(req.Pwd, req.Phone, req.NickName, req.Mail);
 
             return res ? Ok(Success("注册成功")) : Ok(Fail("注册失败"));
         }

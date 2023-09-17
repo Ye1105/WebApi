@@ -7,7 +7,7 @@ namespace Manager.Server.IServices
 {
     public interface IBlogVideoService
     {
-        Task<BlogVideo?> GetBlogVideoById(Guid id);
+        Task<BlogVideo?> FirstOrDefaultAsync(Guid id);
 
         /// <summary>
         /// 查询博客的视频信息
@@ -15,7 +15,7 @@ namespace Manager.Server.IServices
         /// <param name="expression">LINQ</param>
         /// <param name="isTrack">是否跟踪</param>
         /// <returns></returns>
-        Task<BlogVideo?> GetBlogVideoBy(Expression<Func<BlogVideo, bool>> expression, bool isTrack = true);
+        Task<BlogVideo?> FirstOrDefaultAsync(Expression<Func<BlogVideo, bool>> expression, bool isTrack = true);
 
         /// <summary>
         /// 查询博客的视频列表
@@ -23,7 +23,7 @@ namespace Manager.Server.IServices
         /// <param name="expression"></param>
         /// <param name="isTrack"></param>
         /// <returns></returns>
-        Task<List<BlogVideo>> GetBlogVideoListBy(Expression<Func<BlogVideo, bool>> expression, bool isTrack = true);
+        Task<List<BlogVideo>> QueryAsync(Expression<Func<BlogVideo, bool>> expression, bool isTrack = true);
 
         /// <summary>
         /// 查询博客视频分页列表
@@ -42,6 +42,6 @@ namespace Manager.Server.IServices
         /// <param name="endTime"></param>
         /// <param name="Status"></param>
         /// <returns></returns>
-        public Task<PagedList<BlogVideo>?> GetPagedList(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "", Guid? bId = null, Guid? uId = null, string? title = "", string? channel = null, string? collection = null, string? type = null, DateTime? startTime = null, DateTime? endTime = null, Status status = Status.ENABLE);
+        public Task<PagedList<BlogVideo>?> PagedAsync(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "", Guid? bId = null, Guid? uId = null, string? title = "", string? channel = null, string? collection = null, string? type = null, DateTime? startTime = null, DateTime? endTime = null, Status status = Status.ENABLE);
     }
 }

@@ -19,12 +19,12 @@ namespace Manager.Server.Services
             this.baseService = baseService;
         }
 
-        public async Task<UserGroup?> GetUserGroupBy(Expression<Func<UserGroup, bool>> expression, bool isTrack = true)
+        public async Task<UserGroup?> FirstOrDefaultAsync(Expression<Func<UserGroup, bool>> expression, bool isTrack = true)
         {
             return await baseService.FirstOrDefaultAsync(expression, isTrack);
         }
 
-        public async Task<bool> ModifyUserGroup(UserGroup userGroup)
+        public async Task<bool> UpdateAsync(UserGroup userGroup)
         {
             var res = await baseService.UpdateAsync(userGroup) > 0;
 
@@ -40,7 +40,7 @@ namespace Manager.Server.Services
             return res;
         }
 
-        public async Task<UserGroup?> GetUserGroupByUId(Guid uId)
+        public async Task<UserGroup?> FirstOrDefaultAsync(Guid uId)
         {
             try
             {
@@ -68,7 +68,7 @@ namespace Manager.Server.Services
 
                     await cli.SetExAsync(keyName, 300, userGroup.SerObj());
 
-                    return await GetUserGroupByUId(uId);
+                    return await FirstOrDefaultAsync(uId);
                 }
             }
             catch (Exception ex)

@@ -18,17 +18,17 @@ namespace Manager.Server.Services
             this.baseService = baseService;
         }
 
-        public async Task<bool> AddUserFocus(UserFocus userFocus)
+        public async Task<bool> AddAsync(UserFocus userFocus)
         {
             return await baseService.AddAsync(userFocus) > 0;
         }
 
-        public async Task<UserFocus?> GetUserFocusBy(Expression<Func<UserFocus, bool>> expression, bool isTrack = true)
+        public async Task<UserFocus?> FirstOrDefaultAsync(Expression<Func<UserFocus, bool>> expression, bool isTrack = true)
         {
             return await baseService.FirstOrDefaultAsync(expression, isTrack);
         }
 
-        public async Task<PagedList<UserFocus>?> GetPagedList(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "", RelationType relationType = RelationType.FOCUS, Guid? uId = null, string? grp = null, sbyte? relation = null, sbyte? channel = null, DateTime? startTime = null, DateTime? endTime = null)
+        public async Task<PagedList<UserFocus>?> PagedAsync(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "", RelationType relationType = RelationType.FOCUS, Guid? uId = null, string? grp = null, sbyte? relation = null, sbyte? channel = null, DateTime? startTime = null, DateTime? endTime = null)
         {
             var query = baseService.Entities<UserFocus>();
 
@@ -54,22 +54,22 @@ namespace Manager.Server.Services
             return await PagedList<UserFocus>.CreateAsync(query, pageIndex, pageSize, offset);
         }
 
-        public async Task<bool> ModifyUserFocus(UserFocus userFocus)
+        public async Task<bool> UpdateAsync(UserFocus userFocus)
         {
             return await baseService.UpdateAsync(userFocus) > 0;
         }
 
-        public async Task<int> GetUserFocusCountBy(Expression<Func<UserFocus, bool>> expression)
+        public async Task<int> CountAsync(Expression<Func<UserFocus, bool>> expression)
         {
             return await baseService.Entities<UserFocus>().Where(expression).CountAsync();
         }
 
-        public async Task<bool> DelUserFocus(UserFocus userFocus)
+        public async Task<bool> DeleteAsync(UserFocus userFocus)
         {
             return await baseService.DelAsync(userFocus) > 0;
         }
 
-        public async Task<int> BatchDeleteUserFocus(Expression<Func<UserFocus, bool>> expression)
+        public async Task<int> BatchDeleteAsync(Expression<Func<UserFocus, bool>> expression)
         {
             return await baseService.DelAsync(expression);
         }

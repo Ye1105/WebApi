@@ -8,7 +8,7 @@
         /// <param name="expression"></param>
         /// <param name="isTrack"></param>
         /// <returns></returns>
-        Task<long?> GetCommentLikeCountBy(Guid cId);
+        Task<long?> CountAsync(Guid cId);
 
         /// <summary>
         /// 当前登录用户是否对评论点赞
@@ -16,7 +16,7 @@
         /// <param name="cId"></param>
         /// <param name="uId"></param>
         /// <returns></returns>
-        Task<bool?> GetIsCommentLikeByUser(Guid cId, Guid uId);
+        Task<bool?> ExsitAsync(Guid cId, Guid uId);
 
         /// <summary>
         /// 增加博客评论的点赞
@@ -25,7 +25,7 @@
         /// <param name="uId">当前网站登录的用户id</param>
         /// <returns></returns>
 
-        Task<Tuple<bool, string>> AddBlogCommentLike(Guid cId, Guid uId);
+        Task<Tuple<bool, string>> AddAsync(Guid cId, Guid uId);
 
         /// <summary>
         /// 取消博客评论的点赞
@@ -33,6 +33,6 @@
         /// <param name="cId"></param>
         /// <param name="uId">当前网站登录的用户id</param>
         /// <returns></returns>
-        Task<Tuple<bool, string>> DeleteBlogCommentLike(Guid cId, Guid uId);
+        Task<Tuple<bool, string>> DeleteAsync(Guid cId, Guid uId);
     }
 }

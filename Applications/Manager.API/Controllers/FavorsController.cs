@@ -32,7 +32,7 @@ namespace Manager.API.Controllers
         [HttpGet("blogs")]
         public async Task<IActionResult> GetBlogFavoriteList([FromQuery] GetBlogFavoriteListRequest req)
         {
-            var result = await blogFavoriteService.GetPagedList(UId, req.PageIndex, req.PageSize, req.OffSet, false);
+            var result = await blogFavoriteService.PagedAsync(UId, req.PageIndex, req.PageSize, req.OffSet, false);
 
             if (result != null && result.Any())
             {

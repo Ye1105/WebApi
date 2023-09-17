@@ -51,7 +51,7 @@ namespace Manager.Server.Services
             this.blogLikeService = blogLikeService;
         }
 
-        public async Task<bool> CreateBlogAsync(Blog blog, List<BlogTopic>? blogTopic, UserTopic? userTopic)
+        public async Task<bool> AddAsync(Blog blog, List<BlogTopic>? blogTopic, UserTopic? userTopic)
         {
             //blog表
             var dic = new Dictionary<object, CrudEnum>
@@ -81,7 +81,7 @@ namespace Manager.Server.Services
             return await baseService.BatchTransactionAsync(dic);
         }
 
-        public bool CreateBlogSync(Blog blog, List<BlogTopic>? blogTopic, UserTopic? userTopic)
+        public bool AddSync(Blog blog, List<BlogTopic>? blogTopic, UserTopic? userTopic)
         {
             //blog表
             var dic = new Dictionary<object, CrudEnum>
@@ -111,17 +111,17 @@ namespace Manager.Server.Services
             return baseService.BatchTransactionSync(dic);
         }
 
-        public async Task<int> GetBlogCountBy(Expression<Func<Blog, bool>> expression, bool isTrack = true)
+        public async Task<int> CountAsync(Expression<Func<Blog, bool>> expression, bool isTrack = true)
         {
             return await baseService.Entities<Blog>().Where(expression).CountAsync();
         }
 
-        public int GetBlogCountBySync(Expression<Func<Blog, bool>> expression, bool isTrack = true)
+        public int CountSync(Expression<Func<Blog, bool>> expression, bool isTrack = true)
         {
             return baseService.Entities<Blog>().Where(expression).Count();
         }
 
-        public async Task<PagedList<Blog>?> GetPagedList(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "", Guid? id = null, Guid? wId = null, Guid? uId = null, sbyte? sort = null, sbyte? type = null, BlogForwardType? fId = null, DateTime? startTime = null, DateTime? endTime = null, int? scope = null, string? grp = null, Status? status = null)
+        public async Task<PagedList<Blog>?> PagedAsync(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "", Guid? id = null, Guid? wId = null, Guid? uId = null, sbyte? sort = null, sbyte? type = null, BlogForwardType? fId = null, DateTime? startTime = null, DateTime? endTime = null, int? scope = null, string? grp = null, Status? status = null)
         {
             var query = baseService.Entities<Blog>();
 
@@ -438,41 +438,41 @@ namespace Manager.Server.Services
             //1.1 关联 images
             if (blog.Type == (int)BlogType.IMAGE)
             {
-                blog.Images = await blogImageService.GetBlogImageListById(blog.Id);
+                blog.Images = await blogImageService.QueryAsync(blog.Id);
             }
 
             //1.2 关联 video 表
             if (blog.Type == (int)BlogType.VIDEO)
             {
-                blog.Video = await blogVideoService.GetBlogVideoById(blog.Id);
+                blog.Video = await blogVideoService.FirstOrDefaultAsync(blog.Id);
             }
 
             //2.获取 accountInfo 表
             blog.AccountInfo = await accountInfoService.FirstOrDefaultAsync(blog.UId, isCache: false);
 
             //3.获取博客评论数
-            blog.Comment = await blogCommentService.GetCommentCountBy(x => x.BId == blog.Id);
+            blog.Comment = await blogCommentService.CountAsync(x => x.BId == blog.Id);
 
             //4.获取博客转发数
             //判定当前blog是原创blog
-            blog.Forward = blog.FId == Guid.Empty ? await blogForwardService.GetBlogForwardCountBy(x => x.BaseBId == blog.Id) : await blogForwardService.GetBlogForwardCountBy(x => x.PrevBId == blog.Id);
+            blog.Forward = blog.FId == Guid.Empty ? await blogForwardService.CountAsync(x => x.BaseBId == blog.Id) : await blogForwardService.CountAsync(x => x.PrevBId == blog.Id);
 
             //6.获取博客点赞数量
-            blog.Like = await blogLikeService.GetBlogLikeCountBy(blog.Id);
+            blog.Like = await blogLikeService.CountAsync(blog.Id);
 
             //7.获取博客收藏数量
-            blog.Favorite = await blogFavoriteService.GetBlogFavoriteCountBy(blog.Id);
+            blog.Favorite = await blogFavoriteService.CountAsync(blog.Id);
 
             if (wId != null && wId != Guid.Empty)
             {
                 //8.获取当前登录用户是否点赞博客
-                blog.IsLike = await blogLikeService.GetIsBlogLikeByUser(blog.Id, wId.Value);
+                blog.IsLike = await blogLikeService.ExsitAsync(blog.Id, wId.Value);
 
                 //9.获取当前登录用户是否收藏博客
-                blog.IsFavorite = await blogFavoriteService.GetIsBlogFavoriteByUser(blog.Id, wId.Value);
+                blog.IsFavorite = await blogFavoriteService.ExsitAsync(blog.Id, wId.Value);
 
                 //10.关系
-                blog.UserFocus = await userFocus.GetUserFocusBy(x => x.BuId == blog.UId && x.UId == wId);
+                blog.UserFocus = await userFocus.FirstOrDefaultAsync(x => x.BuId == blog.UId && x.UId == wId);
             }
             //通过  blog.FId == Guid.Empty 判断
             if (blog.FId != null && blog.FId != Guid.Empty)
@@ -480,7 +480,7 @@ namespace Manager.Server.Services
                 /*
                  * 11.获取关联的 blog
                  */
-                blog.FBlog = (await GetPagedList(pageIndex: 1, pageSize: 1, offset: 0, isTrack: false, orderBy: "", id: blog.FId))?.FirstOrDefault();
+                blog.FBlog = (await PagedAsync(pageIndex: 1, pageSize: 1, offset: 0, isTrack: false, orderBy: "", id: blog.FId))?.FirstOrDefault();
                 if (blog.FBlog != null) await GetBlogRelation(blog.FBlog, wId);
             }
         }
@@ -517,17 +517,17 @@ namespace Manager.Server.Services
             return await baseService.FirstOrDefaultAsync(expression, isTrack);
         }
 
-        public Blog? GetBlogBySync(Expression<Func<Blog, bool>> expression, bool isTrack = true)
+        public Blog? FirstOrDefaultSync(Expression<Func<Blog, bool>> expression, bool isTrack = true)
         {
             return baseService.FirstOrDefault(expression, isTrack);
         }
 
-        public async Task<bool> ModifyBlog(Blog blog)
+        public async Task<bool> UpdateAsync(Blog blog)
         {
             return await baseService.UpdateAsync(blog) > 0;
         }
 
-        public async Task<Tuple<bool, string>> DelBlog(Blog blog)
+        public async Task<Tuple<bool, string>> DeleteAsync(Blog blog)
         {
             try
             {
@@ -555,7 +555,7 @@ namespace Manager.Server.Services
                     // 2.1 事务删除【博客、视频】
                     if (blog.Type == (sbyte)BlogType.VIDEO)
                     {
-                        var blogVideo = await blogVideoService.GetBlogVideoBy(x => x.BId == blog.Id && x.Status == (int)Status.ENABLE);
+                        var blogVideo = await blogVideoService.FirstOrDefaultAsync(x => x.BId == blog.Id && x.Status == (int)Status.ENABLE);
                         if (blogVideo == null)
                         {
                             return Tuple.Create(false, "博客关联的视频不存在");
@@ -583,7 +583,7 @@ namespace Manager.Server.Services
                     // 2.2 事务删除【博客、图片】
                     else if (blog.Type == (sbyte)BlogType.IMAGE)
                     {
-                        var blogImages = await blogImageService.GetBlogImageListBy(x => x.BId == blog.Id && x.Status == (int)Status.ENABLE);
+                        var blogImages = await blogImageService.QueryAsync(x => x.BId == blog.Id && x.Status == (int)Status.ENABLE);
                         if (blogImages != null && blogImages.Any())
                         {
                             foreach (var item in blogImages)

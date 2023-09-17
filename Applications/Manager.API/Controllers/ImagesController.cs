@@ -33,16 +33,16 @@ namespace Manager.API.Controllers
         [HttpGet]
         public async Task<IActionResult> Paged([FromQuery] GetBlogImageListRequest req)
         {
-            var result = await blogImageService.GetPagedList(req.PageIndex, req.PageSize, req.OffSet, isTrack: false, req.OrderBy, req.BId, req.UId, req.StartTime, req.EndTime, Status.ENABLE);
+            var result = await blogImageService.PagedAsync(req.PageIndex, req.PageSize, req.OffSet, isTrack: false, req.OrderBy, req.BId, req.UId, req.StartTime, req.EndTime, Status.ENABLE);
 
             if (result != null && result.Any())
             {
                 foreach (var item in result)
                 {
                     //当前图片点赞数
-                    item.Like = await blogImageLikeService.GetBlogImageLikeCountBy(item.Id);
+                    item.Like = await blogImageLikeService.CountAsync(item.Id);
                     //关联当前用户是否点赞
-                    item.IsLike = await blogImageLikeService.GetIsBlogImageLikeByUser(item.Id, UId);
+                    item.IsLike = await blogImageLikeService.ExsitAsync(item.Id, UId);
                 }
 
                 var JsonData = new
@@ -70,7 +70,7 @@ namespace Manager.API.Controllers
         [HttpPost("{iId}/likes")]
         public async Task<IActionResult> AddBlogImageLike(Guid iId)
         {
-            var res = await blogImageLikeService.AddBlogImageLike(iId, UId);
+            var res = await blogImageLikeService.AddAsync(iId, UId);
             return res.Item1 ? Ok(Success()) : Ok(Fail(res.Item2));
         }
 
@@ -85,7 +85,7 @@ namespace Manager.API.Controllers
         [HttpDelete("{iId}/likes")]
         public async Task<IActionResult> DeleteBlogImageLike(Guid iId)
         {
-            var res = await blogImageLikeService.DelBlogImageLike(iId, UId);
+            var res = await blogImageLikeService.DeleteAsync(iId, UId);
             return res.Item1 ? Ok(Success()) : Ok(Fail(res.Item2));
         }
     }
