@@ -1,12 +1,9 @@
-﻿using Manager.API.Utility.Filters;
-using Manager.API.Utility;
+﻿using Manager.API.Utility;
+using Manager.API.Utility.Filters;
 using Manager.Core;
-using Microsoft.AspNetCore.Mvc;
-using Manager.Core.Page;
-using Manager.Server.Services;
-using Manager.Server.IServices;
 using Manager.Core.Enums;
-using Manager.Core.Models.Logs;
+using Manager.Server.IServices;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Manager.API.Controllers
 {
@@ -46,7 +43,7 @@ namespace Manager.API.Controllers
                 orderBy: "created desc"
             );
 
-            return Ok(Success(new { topics }));
+            return Ok(Success(new { list = topics }));
         }
     }
 }
