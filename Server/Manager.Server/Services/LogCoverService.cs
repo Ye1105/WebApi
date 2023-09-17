@@ -17,8 +17,6 @@ namespace Manager.Server.Services
     {
         private readonly IBase baseService;
 
-
-
         public LogCoverService(IBase baseService)
         {
             this.baseService = baseService;

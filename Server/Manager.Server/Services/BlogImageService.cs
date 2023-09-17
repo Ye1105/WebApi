@@ -78,7 +78,6 @@ namespace Manager.Server.Services
                 query = query.Where(x => x.Created < endTime);
             }
 
-
             query = query.Where(x => x.Status == (sbyte)status);
 
             query = query.ApplySort(orderBy);

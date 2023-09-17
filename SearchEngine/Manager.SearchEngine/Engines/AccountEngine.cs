@@ -78,18 +78,18 @@ namespace Manager.SearchEngine.Engines
                            {
                                var VERSION = Lucene.Net.Util.LuceneVersion.LUCENE_48;
 
-                               Analyzer analyzer = new Analyzers.JieBaAnalyzer(TokenizerMode.Search, base.jiebaConfigCustomDictDir);
+                               Analyzer analyzer = new Analyzers.JieBaAnalyzer(TokenizerMode.Search, base.jiebaTextDir);
 
-                               QueryParser parser = new(VERSION, "", analyzer);
+                               QueryParser queryParser = new(VERSION, "", analyzer);
 
                                var stringBuilder = new StringBuilder();
 
-                               if (string.IsNullOrWhiteSpace(req.Name))
+                               if (string.IsNullOrWhiteSpace(req.Mail))
                                {
-                                   stringBuilder.Append($"Name:{req.Name}");
+                                   stringBuilder.Append($"mail:{req.Mail}");
                                }
 
-                               Query query = parser.Parse(stringBuilder.ToString());//+(title:lucene content:lucene)+time:[20060101 TO 20060130]
+                               Query query = queryParser.Parse(stringBuilder.ToString());//+(title:lucene content:lucene)+time:[20060101 TO 20060130]
 
                                return query;
                            },

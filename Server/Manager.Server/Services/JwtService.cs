@@ -1,6 +1,5 @@
 ﻿using Manager.Core.Settings;
 using Manager.Extensions;
-using NPOI.SS.Formula.Functions;
 using static Manager.Redis.Infrastructure.RedisClient;
 
 namespace Manager.Server.Services

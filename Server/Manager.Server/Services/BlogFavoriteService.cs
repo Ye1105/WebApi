@@ -17,8 +17,6 @@ namespace Manager.Server.Services
         private readonly IBase baseService;
         private readonly IProcedure procService;
 
-
-
         public BlogFavoriteService(IBase baseService, IProcedure procService)
         {
             this.baseService = baseService;

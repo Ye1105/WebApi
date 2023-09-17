@@ -18,7 +18,6 @@ namespace Manager.Server.Services
         private readonly IBase baseService;
         private readonly IProcedure procService;
 
-
         public BlogLikeService(IBase baseService, IProcedure procService)
         {
             this.baseService = baseService;
@@ -183,7 +182,7 @@ namespace Manager.Server.Services
                 /*
                  * 1.是否命中缓存
                  * 2.命中缓存
-                 * 2.1 获取键的类型 【string 类型代表没有数据，zset 类型戴白点赞列表有数据】
+                 * 2.1 获取键的类型 【string 类型代表没有数据，zset 类型代表点赞列表有数据】
                  * 2.2 zset ZRevRangeAsync 分页
                  * 3.未命中缓存
                  * 3.1 没有数据 设置 string key

@@ -11,11 +11,6 @@ namespace Manager.Core.RequestModels
         [JsonProperty("uId")]
         public Guid UId { get; set; }
 
-        /// <summary>
-        /// 名字
-        /// </summary>
-        [JsonProperty("name")]
-        public string Name { get; set; }
 
         /// <summary>
         /// 邮箱

@@ -16,7 +16,6 @@ namespace Manager.Server.IServices
         /// <param name="sms">发送的内容</param>
         public Task<bool> AddAsync(string authorizationCode, string host, string displayName, string mailSender, string mailRecipient, string sms, Manager.Core.Enums.MailType mailType);
 
-
         /// <summary>
         /// 查询用户信息
         /// </summary>

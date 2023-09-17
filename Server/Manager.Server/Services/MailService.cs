@@ -20,7 +20,7 @@ namespace Manager.Server.Services
 
         public async Task<LogMailSMS?> FirstOrDefaultAsync(Expression<Func<LogMailSMS, bool>> expression, bool isTrack = true, string orderBy = "")
         {
-            var mail = await baseService.FirstOrDefaultAsync(expression, orderBy, isTrack);
+            var mail = await baseService.FirstOrDefaultAsync(expression, isTrack, orderBy);
             return mail;
         }
 

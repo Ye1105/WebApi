@@ -235,7 +235,7 @@ namespace Manager.Infrastructure.Repositoies
             }
         }
 
-        public async Task<T> FirstOrDefaultAsync<T>(Expression<Func<T, bool>> whereLambda, string orderBy = "", bool isTrack = true) where T : class
+        public async Task<T> FirstOrDefaultAsync<T>(Expression<Func<T, bool>> whereLambda, bool isTrack = true, string orderBy = "") where T : class
         {
             var query = db.Set<T>().Where(whereLambda);
 
