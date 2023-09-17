@@ -22,7 +22,7 @@ namespace Manager.Core.RequestModels
         public BlogSort? Sort { get; set; }
 
         /// <summary>
-        /// 类型  -1.全部  0.图片  1.视频   2.头条文章  3.音乐  4.普通文字(表情)
+        /// 类型    0.全部  1.文本   2.头条文章  3.图片   4.音乐   4.视频
         /// </summary>
         [JsonProperty("type")]
         public BlogType? Type { get; set; }

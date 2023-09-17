@@ -12,7 +12,7 @@ namespace Manager.Server.IServices
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<List<BlogImage>?> GetBlogImageListById(Guid id);
+        Task<List<BlogImage>?> QueryAsync(Guid id);
 
         /// <summary>
         /// 查询博客的图片信息
@@ -20,7 +20,7 @@ namespace Manager.Server.IServices
         /// <param name="expression">LINQ</param>
         /// <param name="isTrack">是否跟踪</param>
         /// <returns></returns>
-        Task<List<BlogImage>> GetBlogImageListBy(Expression<Func<BlogImage, bool>> expression, bool isTrack = true);
+        Task<List<BlogImage>> QueryAsync(Expression<Func<BlogImage, bool>> expression, bool isTrack = true);
 
         /// <summary>
         /// 分页列表
@@ -36,13 +36,13 @@ namespace Manager.Server.IServices
         /// <param name="endTime"></param>
         /// <param name="status"></param>
         /// <returns></returns>
-        Task<PagedList<BlogImage>?> GetPagedList(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "", Guid? bId = null, Guid? uId = null, DateTime? startTime = null, DateTime? endTime = null, Status status = Status.ENABLE);
+        Task<PagedList<BlogImage>?> PagedAsync(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "", Guid? bId = null, Guid? uId = null, DateTime? startTime = null, DateTime? endTime = null, Status status = Status.ENABLE);
 
         /// <summary>
         /// 更新博客图片
         /// </summary>
         /// <param name="blogImage"></param>
         /// <returns></returns>
-        Task<bool> UpdateBlogImage(BlogImage blogImage);
+        Task<bool> UpdateAsync(BlogImage blogImage);
     }
 }

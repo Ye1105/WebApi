@@ -77,7 +77,7 @@ namespace Manager.API.Controllers
             }
 
             //2.账号是否存在
-            var account = await accountService.GetAccountBy(phone, pwd, isTrack: false);
+            var account = await accountService.FirstOrDefaultAsync(phone, pwd, isTrack: false);
             if (account == null)
             {
                 return Ok(Fail("账号或密码不正确"));
@@ -98,7 +98,7 @@ namespace Manager.API.Controllers
                 }
 
                 /* RefreshToken 存入 Redis */
-                var tokenRes = jWTService.AddRefreshToken(account.UId, RefreshToken);
+                var tokenRes = jWTService.AddAsync(account.UId, RefreshToken);
                 if (!tokenRes.Item1)
                 {
                     return Ok(Fail(tokenRes.Item2));
@@ -141,7 +141,7 @@ namespace Manager.API.Controllers
                 var dt = DateTime.Now;
 
                 //2.限定时间间隔5分钟内是否存在对应的sms
-                var res = tencentService.GetTencentSms(phone, sms, dt.AddMinutes(-5), dt);
+                var res = tencentService.ExsitAsync(phone, sms, dt.AddMinutes(-5), dt);
                 if (!res)
                 {
                     return Ok(Fail("验证码过期"));
@@ -149,7 +149,7 @@ namespace Manager.API.Controllers
             }
 
             //账号是否存在
-            var account = await accountService.GetAccountBy(x => x.Phone == phone, false);
+            var account = await accountService.FirstOrDefaultAsync(x => x.Phone == phone, false);
             if (account == null)
             {
                 return Ok(Fail("手机号不存在"));
@@ -169,7 +169,7 @@ namespace Manager.API.Controllers
                 }
 
                 /* RefreshToken 存入 Redis */
-                var tokenRes = jWTService.AddRefreshToken(account.UId, RefreshToken);
+                var tokenRes = jWTService.AddAsync(account.UId, RefreshToken);
                 if (!tokenRes.Item1)
                 {
                     return Ok(Fail(tokenRes.Item2));
@@ -204,7 +204,7 @@ namespace Manager.API.Controllers
 
             var password = Md5Helper.MD5(pwd);
             //账号是否存在
-            var account = await accountService.GetAccountBy(x => x.Mail == mail, false);
+            var account = await accountService.FirstOrDefaultAsync(x => x.Mail == mail, false);
             if (account == null)
             {
                 return Ok(Fail("邮箱不存在"));
@@ -229,7 +229,7 @@ namespace Manager.API.Controllers
                 }
 
                 /* RefreshToken 存入 Redis */
-                var tokenRes = jWTService.AddRefreshToken(account.UId, RefreshToken);
+                var tokenRes = jWTService.AddAsync(account.UId, RefreshToken);
                 if (!tokenRes.Item1)
                 {
                     return Ok(Fail(tokenRes.Item2));
@@ -287,7 +287,7 @@ namespace Manager.API.Controllers
                 }
             }
             //账号是否存在
-            var account = await accountService.GetAccountBy(x => x.Mail == mail, false);
+            var account = await accountService.FirstOrDefaultAsync(x => x.Mail == mail, false);
             if (account == null)
             {
                 return Ok(Fail("邮箱号不存在"));
@@ -307,7 +307,7 @@ namespace Manager.API.Controllers
                 }
 
                 /* RefreshToken 存入 Redis */
-                var tokenRes = jWTService.AddRefreshToken(account.UId, RefreshToken);
+                var tokenRes = jWTService.AddAsync(account.UId, RefreshToken);
                 if (!tokenRes.Item1)
                 {
                     return Ok(Fail(tokenRes.Item2));

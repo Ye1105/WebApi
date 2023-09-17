@@ -11,7 +11,7 @@ namespace Manager.Server.IServices
         /// <param name="phone"></param>
         /// <param name="sms"></param>
         /// <returns></returns>
-        LogTencentSMS? GetTencentSms(string phone, string sms);
+        LogTencentSMS? FirstOrDefaultAsync(string phone, string sms);
 
         /// <summary>
         /// 是否超过当日的腾讯Sms数量上限
@@ -27,7 +27,7 @@ namespace Manager.Server.IServices
         /// <param name="phone"></param>
         /// <param name="afterTime"></param>
         /// <returns></returns>
-        bool GetTencentSms(string phone, DateTime afterTime);
+        bool FirstOrDefaultAsync(string phone, DateTime afterTime);
 
         /// <summary>
         /// 是否存在此时间之后发送的sms
@@ -37,13 +37,13 @@ namespace Manager.Server.IServices
         /// <param name="afterTime"></param>
         /// <param name="beforeTime"></param>
         /// <returns></returns>
-        bool GetTencentSms(string phone, string sms, DateTime afterTime, DateTime? beforeTime);
+        bool ExsitAsync(string phone, string sms, DateTime afterTime, DateTime? beforeTime);
 
         /// <summary>
         /// 发送腾讯Sms
         /// </summary>
         /// <param name="tencentSendSmsConfig"></param>
         /// <returns></returns>
-        Task<(bool, object?)> SendSMS(TencentSendSmsConfig tencentSendSmsConfig);
+        Task<(bool, object?)> AddAsync(TencentSendSmsConfig tencentSendSmsConfig);
     }
 }

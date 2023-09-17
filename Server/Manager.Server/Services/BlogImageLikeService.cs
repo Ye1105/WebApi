@@ -18,7 +18,7 @@ namespace Manager.Server.Services
             this.baseService = baseService;
         }
 
-        public async Task<Tuple<bool, string>> AddBlogImageLike(Guid iId, Guid uId)
+        public async Task<Tuple<bool, string>> AddAsync(Guid iId, Guid uId)
         {
             try
             {
@@ -55,7 +55,7 @@ namespace Manager.Server.Services
             }
         }
 
-        public async Task<Tuple<bool, string>> DelBlogImageLike(Guid iId, Guid uId)
+        public async Task<Tuple<bool, string>> DeleteAsync(Guid iId, Guid uId)
         {
             try
             {
@@ -90,7 +90,7 @@ namespace Manager.Server.Services
             }
         }
 
-        public async Task<long?> GetBlogImageLikeCountBy(Guid iId)
+        public async Task<long?> CountAsync(Guid iId)
         {
             try
             {
@@ -117,7 +117,7 @@ namespace Manager.Server.Services
 
                     await cli.SetExAsync(keyName, 300, count);
 
-                    return await GetBlogImageLikeCountBy(iId);
+                    return await CountAsync(iId);
                 }
             }
             catch (Exception ex)
@@ -127,7 +127,7 @@ namespace Manager.Server.Services
             }
         }
 
-        public async Task<bool?> GetIsBlogImageLikeByUser(Guid iId, Guid uId)
+        public async Task<bool?> ExsitAsync(Guid iId, Guid uId)
         {
             try
             {

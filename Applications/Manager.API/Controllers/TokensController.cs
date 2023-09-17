@@ -66,14 +66,14 @@ namespace Manager.API.Controllers
             Guid Id = myJwtData["id"];
 
             //3.uId 和 RefreshToken, 判定对应的 redis hash 是否存在
-            var refreshToken = await jWTService.ExsitRefreshToken(uId, req.RefreshToken);
+            var refreshToken = await jWTService.ExsitAsync(uId, req.RefreshToken);
             if (!refreshToken.Item1)
             {
                 return Ok(Fail(refreshToken.Item2));
             }
 
             //4.重新获取用户信息
-            var account = await accountService.GetAccountBy(x => x.Id == Id, false);
+            var account = await accountService.FirstOrDefaultAsync(x => x.Id == Id, false);
             if (account != null)
             {
                 /* 账号状态 */
@@ -90,7 +90,7 @@ namespace Manager.API.Controllers
                 }
 
                 //将生成refreshToken的原始信息存到数据库/redis中
-                var tokenRes = jWTService.AddRefreshToken(account.UId, RefreshToken);
+                var tokenRes = jWTService.AddAsync(account.UId, RefreshToken);
                 if (!tokenRes.Item1)
                 {
                     return Ok(Fail(tokenRes.Item2));

@@ -40,7 +40,7 @@ namespace Manager.Core.Models.Blogs
             {
                 if (string.IsNullOrWhiteSpace(_FullUrl))
                 {
-                    return $"{Configurations.AppSettings["TencentCosTwo"].DesObj<TencentCosTwoConfig>().BucketURL}{Url}";
+                    return $"{Configurations.AppSettings["TencentCosTwo"].DesObj<TencentCosTwoConfig>().BucketURL}/{UId}/{BId}/{Url}";
                 }
                 return _FullUrl;
             }

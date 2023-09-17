@@ -25,7 +25,7 @@ namespace Manager.Server.Services
             this.procService = procService;
         }
 
-        public async Task<Tuple<bool, string>> AddBlogFavorite(Guid bId, Guid uId)
+        public async Task<Tuple<bool, string>> AddAsync(Guid bId, Guid uId)
         {
             try
             {
@@ -64,7 +64,7 @@ namespace Manager.Server.Services
             }
         }
 
-        public async Task<Tuple<bool, string>> DelBlogFavorite(Guid bId, Guid uId)
+        public async Task<Tuple<bool, string>> DeleteAsync(Guid bId, Guid uId)
         {
             try
             {
@@ -101,7 +101,7 @@ namespace Manager.Server.Services
             }
         }
 
-        public async Task<long?> GetBlogFavoriteCountBy(Guid bId)
+        public async Task<long?> CountAsync(Guid bId)
         {
             try
             {
@@ -128,7 +128,7 @@ namespace Manager.Server.Services
 
                     await cli.SetExAsync(keyName, 300, count);
 
-                    return await GetBlogFavoriteCountBy(bId);
+                    return await CountAsync(bId);
                 }
             }
             catch (Exception ex)
@@ -138,7 +138,7 @@ namespace Manager.Server.Services
             }
         }
 
-        public async Task<bool?> GetIsBlogFavoriteByUser(Guid bId, Guid uId)
+        public async Task<bool?> ExsitAsync(Guid bId, Guid uId)
         {
             try
             {
@@ -176,7 +176,7 @@ namespace Manager.Server.Services
             }
         }
 
-        public async Task<PagedList<Blog?>?> GetPagedList(Guid wId, int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true)
+        public async Task<PagedList<Blog?>?> PagedAsync(Guid wId, int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true)
         {
             try
             {
@@ -262,7 +262,7 @@ namespace Manager.Server.Services
 
                         object[] ret = pipe.EndPipe();
 
-                        return await GetPagedList(wId, pageIndex, pageSize, offset);
+                        return await PagedAsync(wId, pageIndex, pageSize, offset);
                     }
                     else
                     {

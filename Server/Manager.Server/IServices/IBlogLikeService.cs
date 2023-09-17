@@ -11,7 +11,7 @@ namespace Manager.Server.IServices
         /// <param name="bId"></param>
         /// <param name="uId"></param>
         /// <returns></returns>
-        Task<Tuple<bool, string>> AddBlogLike(Guid bId, Guid uId);
+        Task<Tuple<bool, string>> AddAsync(Guid bId, Guid uId);
 
         /// <summary>
         /// 博客：用户取消赞
@@ -20,14 +20,14 @@ namespace Manager.Server.IServices
         /// <param name="uId"></param>
         /// <returns></returns>
 
-        Task<Tuple<bool, string>> DelBlogLike(Guid bId, Guid uId);
+        Task<Tuple<bool, string>> DeleteAsync(Guid bId, Guid uId);
 
         /// <summary>
         /// 博客点赞数
         /// </summary>
         /// <param name="bId"></param>
         /// <returns></returns>
-        Task<long?> GetBlogLikeCountBy(Guid bId);
+        Task<long?> CountAsync(Guid bId);
 
         /// <summary>
         /// 当前用户是否点赞博客
@@ -35,7 +35,7 @@ namespace Manager.Server.IServices
         /// <param name="bId"></param>
         /// <param name="uId"></param>
         /// <returns></returns>
-        Task<bool?> GetIsBlogLikeByUser(Guid bId, Guid uId);
+        Task<bool?> ExsitAsync(Guid bId, Guid uId);
 
         /// <summary>
         /// 点赞博客分页列表
@@ -45,6 +45,6 @@ namespace Manager.Server.IServices
         /// <param name="pageSize"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        Task<PagedList<Blog?>?> GetPagedList(Guid wId, int pageIndex = 1, int pageSize = 10, int offset = 0);
+        Task<PagedList<Blog?>?> PagedAsync(Guid wId, int pageIndex = 1, int pageSize = 10, int offset = 0);
     }
 }

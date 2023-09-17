@@ -45,18 +45,18 @@ namespace Manager.API.Controllers
             var wId = UId;
 
             //1.Account AccountInfo
-            var account = await accountService.GetAccountBy(x => x.UId == wId, false);
+            var account = await accountService.FirstOrDefaultAsync(x => x.UId == wId, false);
 
             var accountInfo = await accountInfoService.FirstOrDefaultAsync(wId, isCache: true);
 
             //2.1 博客数量
-            var blogCount = await blogService.GetBlogCountBy(x => x.UId == wId && x.Status == (sbyte)Status.ENABLE);
+            var blogCount = await blogService.CountAsync(x => x.UId == wId && x.Status == (sbyte)Status.ENABLE);
 
             //2.2 关注数
-            var focusCount = await userFocusService.GetUserFocusCountBy(x => x.UId == wId);
+            var focusCount = await userFocusService.CountAsync(x => x.UId == wId);
 
             //2.3 粉丝数
-            var fanCount = await userFocusService.GetUserFocusCountBy(x => x.BuId == wId);
+            var fanCount = await userFocusService.CountAsync(x => x.BuId == wId);
 
             return Ok(Success("用户信息获取成功", new { account, accountInfo, blogCount, focusCount, fanCount }));
         }
@@ -83,16 +83,16 @@ namespace Manager.API.Controllers
             var accountInfo = await accountInfoService.FirstOrDefaultAsync(uId, false);
 
             //2.1 博客数量
-            var blogCount = await blogService.GetBlogCountBy(x => x.UId == uId && x.Status == (sbyte)Status.ENABLE);
+            var blogCount = await blogService.CountAsync(x => x.UId == uId && x.Status == (sbyte)Status.ENABLE);
 
             //2.2 关注数
-            var focusCount = await userFocusService.GetUserFocusCountBy(x => x.UId == uId);
+            var focusCount = await userFocusService.CountAsync(x => x.UId == uId);
 
             //2.3 粉丝数
-            var fanCount = await userFocusService.GetUserFocusCountBy(x => x.BuId == uId);
+            var fanCount = await userFocusService.CountAsync(x => x.BuId == uId);
 
             //3.关注关系
-            var relation = await userFocusService.GetUserFocusBy(x => x.BuId == uId && x.UId == wId);
+            var relation = await userFocusService.FirstOrDefaultAsync(x => x.BuId == uId && x.UId == wId);
 
             return Ok(Success("用户信息获取成功", new { accountInfo, blogCount, focusCount, fanCount, relation }));
         }

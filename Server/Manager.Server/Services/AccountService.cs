@@ -17,7 +17,7 @@ namespace Manager.Server.Services
             this.baseService = baseService;
         }
 
-        public async Task<bool> CreateAccount(string password, string phone, string nickName, string mail)
+        public async Task<bool> AddAsync(string password, string phone, string nickName, string mail)
         {
             /*
              * 1.创建账号信息相关表
@@ -72,13 +72,13 @@ namespace Manager.Server.Services
             return res;
         }
 
-        public async Task<Account> GetAccountBy(Expression<Func<Account, bool>> expression, bool isTrack = true)
+        public async Task<Account> FirstOrDefaultAsync(Expression<Func<Account, bool>> expression, bool isTrack = true)
         {
             var account = await baseService.FirstOrDefaultAsync(expression, isTrack);
             return account;
         }
 
-        public async Task<Account> GetAccountBy(string phone, string password, bool isTrack = true)
+        public async Task<Account> FirstOrDefaultAsync(string phone, string password, bool isTrack = true)
         {
             password = Md5Helper.MD5(password);
 
@@ -87,12 +87,12 @@ namespace Manager.Server.Services
             return account;
         }
 
-        public async Task<bool> ModifyAccount(Account account)
+        public async Task<bool> UpdateAsync(Account account)
         {
             return await baseService.UpdateAsync(account) > 0;
         }
 
-        public async Task<bool> ModifyAccountPassword(Expression<Func<Account, bool>> expression, string password)
+        public async Task<bool> UpdateAsync(Expression<Func<Account, bool>> expression, string password)
         {
             var account = await baseService.FirstOrDefaultAsync(expression, true);
             if (account == null)

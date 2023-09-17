@@ -15,7 +15,7 @@ namespace Manager.Server.IServices
         /// <param name="blogTopic"></param>
         /// <param name="topic"></param>
         /// <returns></returns>
-        Task<bool> CreateBlogAsync(Blog blog, List<BlogTopic>? blogTopic, UserTopic? topic);
+        Task<bool> AddAsync(Blog blog, List<BlogTopic>? blogTopic, UserTopic? topic);
 
         /// <summary>
         /// 发表博客
@@ -24,7 +24,7 @@ namespace Manager.Server.IServices
         /// <param name="blogTopic"></param>
         /// <param name="topic"></param>
         /// <returns></returns>
-        bool CreateBlogSync(Blog blog, List<BlogTopic>? blogTopic, UserTopic? topic);
+        bool AddSync(Blog blog, List<BlogTopic>? blogTopic, UserTopic? topic);
 
         /// <summary>
         /// 获取博客
@@ -40,14 +40,14 @@ namespace Manager.Server.IServices
         /// <param name="expression"></param>
         /// <param name="isTrack"></param>
         /// <returns></returns>
-        Blog? GetBlogBySync(Expression<Func<Blog, bool>> expression, bool isTrack = true);
+        Blog? FirstOrDefaultSync(Expression<Func<Blog, bool>> expression, bool isTrack = true);
 
         /// <summary>
         /// 更新博客
         /// </summary>
         /// <param name="account"></param>
         /// <returns></returns>
-        Task<bool> ModifyBlog(Blog blog);
+        Task<bool> UpdateAsync(Blog blog);
 
         /// <summary>
         /// 返回符合的数据条数
@@ -55,7 +55,7 @@ namespace Manager.Server.IServices
         /// <param name="expression"></param>
         /// <param name="isTrack"></param>
         /// <returns></returns>
-        Task<int> GetBlogCountBy(Expression<Func<Blog, bool>> expression, bool isTrack = true);
+        Task<int> CountAsync(Expression<Func<Blog, bool>> expression, bool isTrack = true);
 
         /// <summary>
         /// 返回符合的数据条数
@@ -63,7 +63,7 @@ namespace Manager.Server.IServices
         /// <param name="expression"></param>
         /// <param name="isTrack"></param>
         /// <returns></returns>
-        int GetBlogCountBySync(Expression<Func<Blog, bool>> expression, bool isTrack = true);
+        int CountSync(Expression<Func<Blog, bool>> expression, bool isTrack = true);
 
         /// <summary>
         /// 查询博客分页列表
@@ -84,7 +84,7 @@ namespace Manager.Server.IServices
         /// <param name="scope">范围  null：不筛选 1.[主页的博客]=>我自己+朋友圈+我是粉丝的博客 2.[朋友圈的博客]=>只查询朋友圈的博客  3.[特别关注的博客]=>只查询特别关注的博客  4.[自定义分组的博客]=>只查询自定义分组的博客</param>
         /// <param name="grp">分组 null：不筛选 </param>
         /// <returns></returns>
-        Task<PagedList<Blog>?> GetPagedList(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "", Guid? id = null, Guid? wId = null, Guid? uId = null, sbyte? sort = null, sbyte? type = null, BlogForwardType? fId = null, DateTime? startTime = null, DateTime? endTime = null, int? scope = null, string? grp = null, Status? status = null);
+        Task<PagedList<Blog>?> PagedAsync(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "", Guid? id = null, Guid? wId = null, Guid? uId = null, sbyte? sort = null, sbyte? type = null, BlogForwardType? fId = null, DateTime? startTime = null, DateTime? endTime = null, int? scope = null, string? grp = null, Status? status = null);
 
         /// <summary>
         /// 获取 blog 的关联信息
@@ -107,7 +107,7 @@ namespace Manager.Server.IServices
         /// </summary>
         /// <param name="blog"></param>
         /// <returns></returns>
-        Task<Tuple<bool, string>> DelBlog(Blog blog);
+        Task<Tuple<bool, string>> DeleteAsync(Blog blog);
 
         /// <summary>
         /// 同时转发和评论博客

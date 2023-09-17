@@ -24,7 +24,7 @@ namespace Manager.Server.Services
             this.baseService = baseService;
         }
 
-        public async Task<Tuple<bool, string>> AddLogCover(LogCover logCover)
+        public async Task<Tuple<bool, string>> AddAsync(LogCover logCover)
         {
             try
             {
@@ -63,7 +63,7 @@ namespace Manager.Server.Services
             }
         }
 
-        public async Task<PagedList<LogCover?>?> GetPagedList(Guid uId, int pageIndex = 1, int pageSize = 10, int offset = 0, string orderBy = "")
+        public async Task<PagedList<LogCover?>?> PagedAsync(Guid uId, int pageIndex = 1, int pageSize = 10, int offset = 0, string orderBy = "")
         {
             try
             {
@@ -138,7 +138,7 @@ namespace Manager.Server.Services
 
                         object[] ret = pipe.EndPipe();
 
-                        return await GetPagedList(uId, pageIndex, pageSize, offset);
+                        return await PagedAsync(uId, pageIndex, pageSize, offset);
                     }
                 }
                 return null;

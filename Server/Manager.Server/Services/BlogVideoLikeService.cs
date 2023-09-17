@@ -18,7 +18,7 @@ namespace Manager.Server.Services
             this.baseService = baseService;
         }
 
-        public async Task<Tuple<bool, string>> AddBlogVideoLike(Guid vId, Guid uId)
+        public async Task<Tuple<bool, string>> AddAsync(Guid vId, Guid uId)
         {
             try
             {
@@ -55,7 +55,7 @@ namespace Manager.Server.Services
             }
         }
 
-        public async Task<Tuple<bool, string>> DelBlogVideoLike(Guid vId, Guid uId)
+        public async Task<Tuple<bool, string>> DeleteAsync(Guid vId, Guid uId)
         {
             try
             {
@@ -90,7 +90,7 @@ namespace Manager.Server.Services
             }
         }
 
-        public async Task<long?> GetBlogVideoLikeCountBy(Guid vId)
+        public async Task<long?> CountAsync(Guid vId)
         {
             try
             {
@@ -117,7 +117,7 @@ namespace Manager.Server.Services
 
                     await cli.SetExAsync(keyName, 300, count);
 
-                    return await GetBlogVideoLikeCountBy(vId);
+                    return await CountAsync(vId);
                 }
             }
             catch (Exception ex)
@@ -127,7 +127,7 @@ namespace Manager.Server.Services
             }
         }
 
-        public async Task<bool?> GetIsBlogVideoLikeByUser(Guid vId, Guid uId)
+        public async Task<bool?> ExsitAsync(Guid vId, Guid uId)
         {
             try
             {

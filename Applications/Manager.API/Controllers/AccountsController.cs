@@ -52,13 +52,13 @@ namespace Manager.API.Controllers
 
 
             //1.账号是否存在
-            var account = await accountService.GetAccountBy(x => x.UId == UId);
+            var account = await accountService.FirstOrDefaultAsync(x => x.UId == UId);
             if (account == null)
             {
                 return Ok(Fail("账号不存在"));
             }
 
-            var accountMail = await accountService.GetAccountBy(x => x.Mail.ToLower() == mail.ToLower() && x.UId != UId, false);
+            var accountMail = await accountService.FirstOrDefaultAsync(x => x.Mail.ToLower() == mail.ToLower() && x.UId != UId, false);
             if (accountMail != null)
             {
                 return Ok(Fail("邮箱已存在"));
@@ -68,7 +68,7 @@ namespace Manager.API.Controllers
             //account.Name = req.Name;
             account.Mail = mail;
 
-            return await accountService.ModifyAccount(account) ? Ok(Success("修改成功")) : Ok(Fail("修改失败"));
+            return await accountService.UpdateAsync(account) ? Ok(Success("修改成功")) : Ok(Fail("修改失败"));
         }
 
 
@@ -94,13 +94,13 @@ namespace Manager.API.Controllers
             }
 
             //1.账号是否存在
-            var account = await accountService.GetAccountBy(x => x.UId == UId);
+            var account = await accountService.FirstOrDefaultAsync(x => x.UId == UId);
             if (account == null)
             {
                 return Ok(Fail("账号不存在"));
             }
 
-            var accountPhone = await accountService.GetAccountBy(x => x.Phone == phone && x.UId != UId, false);
+            var accountPhone = await accountService.FirstOrDefaultAsync(x => x.Phone == phone && x.UId != UId, false);
             if (accountPhone != null)
             {
                 return Ok(Fail("手机号已存在"));
@@ -109,7 +109,7 @@ namespace Manager.API.Controllers
             //3.修改账号信息
             account.Phone = phone;
 
-            return await accountService.ModifyAccount(account) ? Ok(Success("修改成功")) : Ok(Fail("修改失败"));
+            return await accountService.UpdateAsync(account) ? Ok(Success("修改成功")) : Ok(Fail("修改失败"));
         }
     }
 }

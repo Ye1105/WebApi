@@ -73,7 +73,7 @@ namespace Manager.API.Controllers
             }
 
             //2.分页数据
-            var result = await userFocusService.GetPagedList(req.PageIndex, req.PageSize, req.OffSet, false, req.OrderBy, RelationType.FOCUS, UId, req.Grp, req.Relation, req.Channel, req.StartTime, req.EndTime);
+            var result = await userFocusService.PagedAsync(req.PageIndex, req.PageSize, req.OffSet, false, req.OrderBy, RelationType.FOCUS, UId, req.Grp, req.Relation, req.Channel, req.StartTime, req.EndTime);
 
             if (result != null && result.Any())
             {
@@ -120,7 +120,7 @@ namespace Manager.API.Controllers
                 return Ok(Fail(errorMessages, "参数错误"));
             }
 
-            var result = await userFocusService.GetPagedList(req.PageIndex, req.PageSize, req.OffSet, false, req.OrderBy, RelationType.FAN, UId, req.Grp, req.Relation, req.Channel, req.StartTime, req.EndTime);
+            var result = await userFocusService.PagedAsync(req.PageIndex, req.PageSize, req.OffSet, false, req.OrderBy, RelationType.FAN, UId, req.Grp, req.Relation, req.Channel, req.StartTime, req.EndTime);
 
             if (result != null && result.Any())
             {
@@ -170,18 +170,18 @@ namespace Manager.API.Controllers
             }
 
             //1.数据是否存在
-            var userFocus = await userFocusService.GetUserFocusBy(x => x.UId == UId && x.BuId == uId);
+            var userFocus = await userFocusService.FirstOrDefaultAsync(x => x.UId == UId && x.BuId == uId);
             if (userFocus != null)
             {
                 //2.判断备注名是否存在
-                var count = await userFocusService.GetUserFocusCountBy(x => x.UId == UId && x.BuId != uId && x.RemarkName == remarkName);
+                var count = await userFocusService.CountAsync(x => x.UId == UId && x.BuId != uId && x.RemarkName == remarkName);
                 if (count > 0)
                 {
                     return Ok(Fail("备注名已存在"));
                 }
                 //3.编辑操作
                 userFocus.RemarkName = remarkName;
-                var res = await userFocusService.ModifyUserFocus(userFocus);
+                var res = await userFocusService.UpdateAsync(userFocus);
                 return res ? Ok(Success("修改备注名成功")) : Ok(Fail("修改备注名失败"));
             }
             else
@@ -206,12 +206,12 @@ namespace Manager.API.Controllers
              */
 
             //1.数据是否存在
-            var userFocus = await userFocusService.GetUserFocusBy(x => x.UId == UId && x.BuId == uId);
+            var userFocus = await userFocusService.FirstOrDefaultAsync(x => x.UId == UId && x.BuId == uId);
             if (userFocus != null)
             {
                 //2.编辑操作
                 userFocus.Relation = (sbyte)relation;
-                var res = await userFocusService.ModifyUserFocus(userFocus);
+                var res = await userFocusService.UpdateAsync(userFocus);
                 return res ? Ok(Success("修改关注关系成功")) : Ok(Fail("修改关注关系失败"));
             }
             else
@@ -247,7 +247,7 @@ namespace Manager.API.Controllers
             }
 
             //1.数据是否存在
-            var userFocus = await userFocusService.GetUserFocusBy(x => x.UId == UId && x.BuId == uId, true);
+            var userFocus = await userFocusService.FirstOrDefaultAsync(x => x.UId == UId && x.BuId == uId, true);
             if (userFocus != null)
             {
                 //2.编辑操作
@@ -255,7 +255,7 @@ namespace Manager.API.Controllers
                     null || req.Grps.Length == 0 ? "[]"
                     :
                     req.Grps.SerObj();
-                var res = await userFocusService.ModifyUserFocus(userFocus);
+                var res = await userFocusService.UpdateAsync(userFocus);
                 return res ? Ok(Success()) : Ok(Fail("编辑用户关系分组失败"));
             }
             else
@@ -277,13 +277,13 @@ namespace Manager.API.Controllers
         [HttpPost("{uId}/{channel}")]
         public async Task<IActionResult> Add(Guid uId, FocusChannel channel)
         {
-            var account = await accountService.GetAccountBy(x => x.UId == uId);
+            var account = await accountService.FirstOrDefaultAsync(x => x.UId == uId);
             if (account == null)
             {
                 return Ok(Fail("用户不存在"));
             }
 
-            var exsit = await userFocusService.GetUserFocusCountBy(x => x.UId == UId && x.BuId == uId);
+            var exsit = await userFocusService.CountAsync(x => x.UId == UId && x.BuId == uId);
             if (exsit > 0)
             {
                 return Ok(Fail("已关注"));
@@ -301,7 +301,7 @@ namespace Manager.API.Controllers
                 Relation = (sbyte)FocusRelation.FOCUS
             };
 
-            var res = await userFocusService.AddUserFocus(userFocus);
+            var res = await userFocusService.AddAsync(userFocus);
             return res ? Ok(Success("关注成功")) : Ok(Fail("关注失败"));
         }
 
@@ -320,7 +320,7 @@ namespace Manager.API.Controllers
                 return Ok(Fail("分组不能为空"));
             }
 
-            var userFocus = await userFocusService.GetUserFocusBy(x => x.UId == UId && x.BuId == uId, true);
+            var userFocus = await userFocusService.FirstOrDefaultAsync(x => x.UId == UId && x.BuId == uId, true);
             if (userFocus != null)
             {
                 dynamic groupArray = userFocus.Grp.DesObj();
@@ -334,7 +334,7 @@ namespace Manager.API.Controllers
                 groupArray.Add(grp);
                 userFocus.Grp = JsonHelper.SerJArray(groupArray);
                 //4.新增用户分组
-                var res = await userFocusService.ModifyUserFocus(userFocus);
+                var res = await userFocusService.UpdateAsync(userFocus);
                 return res ? Ok(Success()) : Ok(Fail("新增用户分组失败"));
             }
             else
@@ -355,10 +355,10 @@ namespace Manager.API.Controllers
         [HttpDelete("{uId}")]
         public async Task<IActionResult> DeleteFocus(Guid uId)
         {
-            var userFocus = await userFocusService.GetUserFocusBy(x => x.UId == UId && x.BuId == uId);
+            var userFocus = await userFocusService.FirstOrDefaultAsync(x => x.UId == UId && x.BuId == uId);
             if (userFocus != null)
             {
-                var res = await userFocusService.DelUserFocus(userFocus);
+                var res = await userFocusService.DeleteAsync(userFocus);
                 return res ? Ok(Success("")) : Ok(Fail("删除用户关系失败"));
             }
             else
@@ -375,7 +375,7 @@ namespace Manager.API.Controllers
         [HttpDelete("batch")]
         public async Task<IActionResult> BatchDeleteFocus([FromBody] BatchDeleteUserFocusRequest req)
         {
-            var res = await userFocusService.BatchDeleteUserFocus(x => req.UIds.Contains(x.BuId.Value) && x.UId == UId) > 0;
+            var res = await userFocusService.BatchDeleteAsync(x => req.UIds.Contains(x.BuId.Value) && x.UId == UId) > 0;
             return res ? Ok(Success("")) : Ok(Fail("删除用户关系失败或无需删除"));
         }
 

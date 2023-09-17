@@ -33,7 +33,7 @@ namespace Manager.API.Controllers
         [HttpGet("blogs")]
         public async Task<IActionResult> LikeBlogPaged([FromQuery] GetBlogLikeListRequest req)
         {
-            var result = await blogLikeService.GetPagedList(UId, req.PageIndex, req.PageSize, req.OffSet);
+            var result = await blogLikeService.PagedAsync(UId, req.PageIndex, req.PageSize, req.OffSet);
 
             if (result != null && result.Any())
             {

@@ -32,7 +32,7 @@ namespace Manager.API.Controllers
         [HttpGet("top")]
         public async Task<IActionResult> GetTopRankList([FromQuery] GetTopRankListRequest req)
         {
-            var result = await rankService.GetPagedList(req.PageIndex, req.PageSize, req.OffSet, false, req.WId);
+            var result = await rankService.PagedAsync(req.PageIndex, req.PageSize, req.OffSet, false, req.WId);
             if (result != null && result.Any())
             {
                 foreach (var item in result)

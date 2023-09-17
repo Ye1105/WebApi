@@ -10,7 +10,7 @@ namespace Manager.Server.IServices
         /// </summary>
         /// <param name="logCover"></param>
         /// <returns></returns>
-        Task<Tuple<bool, string>> AddLogCover(LogCover logCover);
+        Task<Tuple<bool, string>> AddAsync(LogCover logCover);
 
         /// <summary>
         /// 封面分页列表
@@ -21,6 +21,6 @@ namespace Manager.Server.IServices
         /// <param name="offset"></param>
         /// <param name="orderBy"></param>
         /// <returns></returns>
-        Task<PagedList<LogCover?>?> GetPagedList(Guid uId, int pageIndex = 1, int pageSize = 10, int offset = 0, string orderBy = "");
+        Task<PagedList<LogCover?>?> PagedAsync(Guid uId, int pageIndex = 1, int pageSize = 10, int offset = 0, string orderBy = "");
     }
 }

@@ -33,16 +33,16 @@ namespace Manager.API.Controllers
         [HttpGet]
         public async Task<IActionResult> Paged([FromQuery] GetBlogVideoListRequest req)
         {
-            var result = await blogVideoService.GetPagedList(req.PageIndex, req.PageSize, req.OffSet, false, req.OrderBy, req.BId, req.UId, req.Title, req.Channel, req.Collection, req.Type, req.StartTime, req.EndTime, Status.ENABLE);
+            var result = await blogVideoService.PagedAsync(req.PageIndex, req.PageSize, req.OffSet, false, req.OrderBy, req.BId, req.UId, req.Title, req.Channel, req.Collection, req.Type, req.StartTime, req.EndTime, Status.ENABLE);
 
             if (result != null && result.Any())
             {
                 foreach (var item in result)
                 {
                     //当前视频点赞数
-                    item.Like = await blogVideoLikeService.GetBlogVideoLikeCountBy(item.Id);
+                    item.Like = await blogVideoLikeService.CountAsync(item.Id);
                     //关联当前用户是否点赞
-                    item.IsLike = await blogVideoLikeService.GetIsBlogVideoLikeByUser(item.Id, UId);
+                    item.IsLike = await blogVideoLikeService.ExsitAsync(item.Id, UId);
                 }
 
                 var JsonData = new
@@ -69,7 +69,7 @@ namespace Manager.API.Controllers
         [HttpPost("{vId}/likes")]
         public async Task<IActionResult> AddBlogVideoLike(Guid vId)
         {
-            var res = await blogVideoLikeService.AddBlogVideoLike(vId, UId);
+            var res = await blogVideoLikeService.AddAsync(vId, UId);
             return res.Item1 ? Ok(Success()) : Ok(Fail(res.Item2));
         }
 
@@ -82,7 +82,7 @@ namespace Manager.API.Controllers
         [HttpDelete("{vId}/likes")]
         public async Task<IActionResult> DeleteBlogVideoLike(Guid vId)
         {
-            var res = await blogVideoLikeService.DelBlogVideoLike(vId, UId);
+            var res = await blogVideoLikeService.DeleteAsync(vId, UId);
             return res.Item1 ? Ok(Success()) : Ok(Fail(res.Item2));
         }
     }

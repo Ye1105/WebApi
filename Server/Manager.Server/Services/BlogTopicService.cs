@@ -14,12 +14,12 @@ namespace Manager.Server.Services
             this.baseService = baseService;
         }
 
-        public async Task<BlogTopic> GetBlogTopicBy(Expression<Func<BlogTopic, bool>> expression, bool isTrack = true)
+        public async Task<BlogTopic> FirstOrDefaultAsync(Expression<Func<BlogTopic, bool>> expression, bool isTrack = true)
         {
             return await baseService.FirstOrDefaultAsync(expression, isTrack);
         }
 
-        public BlogTopic GetBlogTopicBySync(Expression<Func<BlogTopic, bool>> expression, bool isTrack = true)
+        public BlogTopic FirstOrDefaultSync(Expression<Func<BlogTopic, bool>> expression, bool isTrack = true)
         {
             return baseService.FirstOrDefault(expression, isTrack);
         }

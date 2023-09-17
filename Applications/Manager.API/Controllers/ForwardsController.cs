@@ -47,7 +47,7 @@ namespace Manager.API.Controllers
              * 6.当前网站的登录用户是否对当前的转发记录点赞
              */
 
-            var result = await blogForwardService.GetPagedList(req.PageIndex, req.PageSize, req.OffSet, isTrack: false, req.OrderBy, req.Id, req.UId, req.BaseBId, req.PrevBId, req.BuId, req.PrevCId, req.StartTime, req.EndTime, UId, req.Scope, Status.ENABLE);
+            var result = await blogForwardService.PagedAsync(req.PageIndex, req.PageSize, req.OffSet, isTrack: false, req.OrderBy, req.Id, req.UId, req.BaseBId, req.PrevBId, req.BuId, req.PrevCId, req.StartTime, req.EndTime, UId, req.Scope, Status.ENABLE);
 
             if (result != null && result.Any())
             {
@@ -67,9 +67,9 @@ namespace Manager.API.Controllers
                         }
                     }
                     //5.当前转发记录的点赞数
-                    item.Like = await blogForwardLikeService.GetBlogForwardLikeCountBy(item.Id.Value);
+                    item.Like = await blogForwardLikeService.CountAsync(item.Id.Value);
                     //6,当前网站的登录用户是否对当前的转发记录点赞
-                    item.IsLike = await blogForwardLikeService.GetIsBlogForwardLikeByUser(item.Id.Value, UId);
+                    item.IsLike = await blogForwardLikeService.ExsitAsync(item.Id.Value, UId);
                 }
                 var JsonData = new
                 {
@@ -132,7 +132,7 @@ namespace Manager.API.Controllers
                 Status = status
             };
 
-            var res = await blogForwardService.AddBlogForward(blog, blogForward);
+            var res = await blogForwardService.AddAsync(blog, blogForward);
             return res ? Ok(Success("转发博客成功")) : Ok(Fail("转发博客失败"));
         }
 
@@ -143,7 +143,7 @@ namespace Manager.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBlogForward(Guid id)
         {
-            var res = await blogForwardService.DeleteBlogForward(id, UId);
+            var res = await blogForwardService.DeleteAsync(id, UId);
             return res.Item1 ? Ok(Success("删除转发成功")) : Ok(Fail(res.Item2));
         }
 
@@ -156,7 +156,7 @@ namespace Manager.API.Controllers
         [HttpPost("{fId}/likes")]
         public async Task<IActionResult> AddBlogForwardLike(Guid fId)
         {
-            var res = await blogForwardLikeService.AddBlogForwadLike(fId, UId);
+            var res = await blogForwardLikeService.AddAsync(fId, UId);
             return res.Item1 ? Ok(Success("博客转发点赞成功")) : Ok(Fail(res.Item2));
         }
 
@@ -169,7 +169,7 @@ namespace Manager.API.Controllers
         [HttpDelete("{fId}/likes")]
         public async Task<IActionResult> DeleteBlogForwardLike(Guid fId)
         {
-            var res = await blogForwardLikeService.DelBlogForwardLike(fId, UId);
+            var res = await blogForwardLikeService.DeleteAsync(fId, UId);
 
             return res.Item1 ? Ok(Success("取消博客转发点赞成功")) : Ok(Fail(res.Item2));
         }

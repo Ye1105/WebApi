@@ -36,7 +36,7 @@ namespace Manager.API.Controllers
         [HttpGet]
         public async Task<IActionResult> AvatarPaged([FromQuery] QueryParameters req)
         {
-            var result = await logAvatarService.GetPagedList(UId, req.PageIndex, req.PageSize, req.OffSet, req.OrderBy);
+            var result = await logAvatarService.PagedAsync(UId, req.PageIndex, req.PageSize, req.OffSet, req.OrderBy);
 
             if (result != null && result.Any())
             {
@@ -101,7 +101,7 @@ namespace Manager.API.Controllers
                 Status = (sbyte)Status.UNDER_REVIEW
             };
 
-            var res = await logAvatarService.AddLogAvatar(logAvatar);
+            var res = await logAvatarService.AddAsync(logAvatar);
 
             return res.Item1 ? Ok(Success(new { avatar = logAvatar })) : Ok(Fail(res.Item2));
         }

@@ -19,7 +19,7 @@ namespace Manager.Server.Services
             this.baseService = baseService;
         }
 
-        public async Task<bool> AddBlogForward(Blog blog, BlogForward blogForward)
+        public async Task<bool> AddAsync(Blog blog, BlogForward blogForward)
         {
             var dic = new Dictionary<object, CrudEnum>
             {
@@ -29,7 +29,7 @@ namespace Manager.Server.Services
             return await baseService.BatchTransactionAsync(dic);
         }
 
-        public async Task<Tuple<bool, string>> DeleteBlogForward(Guid id, Guid uId)
+        public async Task<Tuple<bool, string>> DeleteAsync(Guid id, Guid uId)
         {
             /*
              * 1.判断blog blogforward 中是否存在
@@ -60,12 +60,12 @@ namespace Manager.Server.Services
             return res ? Tuple.Create(true, "") : Tuple.Create(false, "删除转发失败");
         }
 
-        public async Task<int> GetBlogForwardCountBy(Expression<Func<BlogForward, bool>> expression, bool isTrack = true)
+        public async Task<int> CountAsync(Expression<Func<BlogForward, bool>> expression, bool isTrack = true)
         {
             return await baseService.Entities<BlogForward>().Where(expression).CountAsync();
         }
 
-        public async Task<PagedList<BlogForward>?> GetPagedList(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "", Guid? id = null, Guid? uId = null, Guid? baseBId = null, Guid? prevBId = null, Guid? buId = null, Guid? prevCId = null, DateTime? startTime = null, DateTime? endTime = null, Guid? wId = null, ForwardScope? scope = null, Status? status = null)
+        public async Task<PagedList<BlogForward>?> PagedAsync(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "", Guid? id = null, Guid? uId = null, Guid? baseBId = null, Guid? prevBId = null, Guid? buId = null, Guid? prevCId = null, DateTime? startTime = null, DateTime? endTime = null, Guid? wId = null, ForwardScope? scope = null, Status? status = null)
         {
             var query = baseService.Entities<BlogForward>();
 

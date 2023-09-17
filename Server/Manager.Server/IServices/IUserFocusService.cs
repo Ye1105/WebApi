@@ -13,21 +13,21 @@ namespace Manager.Server.IServices
         /// <param name="expression"></param>
         /// <param name="isTrack"></param>
         /// <returns></returns>
-        Task<UserFocus?> GetUserFocusBy(Expression<Func<UserFocus, bool>> expression, bool isTrack = true);
+        Task<UserFocus?> FirstOrDefaultAsync(Expression<Func<UserFocus, bool>> expression, bool isTrack = true);
 
         /// <summary>
         /// 关注数量
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
-        Task<int> GetUserFocusCountBy(Expression<Func<UserFocus, bool>> expression);
+        Task<int> CountAsync(Expression<Func<UserFocus, bool>> expression);
 
         /// <summary>
         /// 增加用户关注关系
         /// </summary>
         /// <param name="userFocus"></param>
         /// <returns></returns>
-        Task<bool> AddUserFocus(UserFocus userFocus);
+        Task<bool> AddAsync(UserFocus userFocus);
 
         /// <summary>
         /// 关注关系分页查询列表
@@ -45,27 +45,27 @@ namespace Manager.Server.IServices
         /// <param name="startTime">开始时间 null:不筛选</param>
         /// <param name="endTime">结束时间 null:不筛选</param>
         /// <returns></returns>
-        Task<PagedList<UserFocus>?> GetPagedList(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "", RelationType relationType = RelationType.FOCUS, Guid? uId = null, string? grp = null, sbyte? relation = null, sbyte? channel = null, DateTime? startTime = null, DateTime? endTime = null);
+        Task<PagedList<UserFocus>?> PagedAsync(int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "", RelationType relationType = RelationType.FOCUS, Guid? uId = null, string? grp = null, sbyte? relation = null, sbyte? channel = null, DateTime? startTime = null, DateTime? endTime = null);
 
         /// <summary>
         /// 修改关注关系
         /// </summary>
         /// <param name="userFocus"></param>
         /// <returns></returns>
-        Task<bool> ModifyUserFocus(UserFocus userFocus);
+        Task<bool> UpdateAsync(UserFocus userFocus);
 
         /// <summary>
         /// 删除关注关系
         /// </summary>
         /// <param name="userFocus"></param>
         /// <returns></returns>
-        Task<bool> DelUserFocus(UserFocus userFocus);
+        Task<bool> DeleteAsync(UserFocus userFocus);
 
         /// <summary>
         /// 批量删除关注关系
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
-        Task<int> BatchDeleteUserFocus(Expression<Func<UserFocus, bool>> expression);
+        Task<int> BatchDeleteAsync(Expression<Func<UserFocus, bool>> expression);
     }
 }

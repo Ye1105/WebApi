@@ -83,14 +83,14 @@ namespace Manager.API.Controllers
                 var bId = Guid.NewGuid();
 
                 //3.1 重复性校验：1分钟内是否发布超过10条博客
-                var filterCount = blogService.GetBlogCountBySync(x => x.UId == UId && x.Created > dt.AddMinutes(-1), false);
+                var filterCount = blogService.CountSync(x => x.UId == UId && x.Created > dt.AddMinutes(-1), false);
                 if (filterCount > 10)
                 {
                     return Ok(Fail("1分钟内发布超过10条博客", "您发布博客的频率过高，请稍后重试"));
                 }
 
                 //3.2 重复性校验：10分钟内是否存在相同的博客
-                var filterBody = blogService.GetBlogCountBySync(x => x.UId == UId && x.Created > dt.AddMinutes(-10) && x.Body == req.Body, false);
+                var filterBody = blogService.CountSync(x => x.UId == UId && x.Created > dt.AddMinutes(-10) && x.Body == req.Body, false);
                 if (filterCount > 0)
                 {
                     return Ok(Fail("10分钟内有已有重复博客", "文本内容相同，请隔10分钟后发布"));
@@ -198,7 +198,7 @@ namespace Manager.API.Controllers
                     tags.ForEach(t =>
                     {
                         //判定是否已经存在话题 blog_topic user_topic
-                        var topic = blogTopicService.GetBlogTopicBySync(x => x.Title == t, false);
+                        var topic = blogTopicService.FirstOrDefaultSync(x => x.Title == t, false);
                         if (topic == null)
                         {
                             var Id = Guid.NewGuid();
@@ -237,7 +237,7 @@ namespace Manager.API.Controllers
                 }
 
                 //6.写入数据
-                if (await blogService.CreateBlogAsync(blog, blogTopics, userTopic))
+                if (await blogService.AddAsync(blog, blogTopics, userTopic))
                 {
                     // 6. 返回数据
                     var newBlog = await blogService.FirstOrDefaultAsync(x => x.Id == bId);
@@ -274,7 +274,7 @@ namespace Manager.API.Controllers
              * 2. 返回数据
              */
 
-            var result = await blogService.GetPagedList(req.PageIndex, req.PageSize, req.OffSet, false, req.OrderBy, req.Id, UId, req.UId, req.Sort == null ? null : (sbyte)req.Sort.Value, req.Type == null ? null : (sbyte)req.Type.Value, req.FId, req.StartTime, req.EndTime, req.Scope == null ? null : (sbyte)req.Scope.Value, req.Grp, Status.ENABLE);
+            var result = await blogService.PagedAsync(req.PageIndex, req.PageSize, req.OffSet, false, req.OrderBy, req.Id, UId, req.UId, req.Sort == null ? null : (sbyte)req.Sort.Value, req.Type == null ? null : (sbyte)req.Type.Value, req.FId, req.StartTime, req.EndTime, req.Scope == null ? null : (sbyte)req.Scope.Value, req.Grp, Status.ENABLE);
 
             if (result != null && result.Any())
             {
@@ -329,7 +329,7 @@ namespace Manager.API.Controllers
 
             blog.Sort = (sbyte)sort;
 
-            if (await blogService.ModifyBlog(blog))
+            if (await blogService.UpdateAsync(blog))
             {
                 return Ok(Success("修改成功"));
             }
@@ -353,7 +353,7 @@ namespace Manager.API.Controllers
              * 1.没有则置顶
              */
 
-            var count = await blogService.GetBlogCountBy(x => x.UId == UId && x.Top == (sbyte)BoolType.YES && x.Status == (sbyte)Status.ENABLE);
+            var count = await blogService.CountAsync(x => x.UId == UId && x.Top == (sbyte)BoolType.YES && x.Status == (sbyte)Status.ENABLE);
             if (count > 0)
             {
                 return Ok(Fail("已存在置顶博客", "已存在置顶博客，请先取消置顶"));
@@ -365,7 +365,7 @@ namespace Manager.API.Controllers
             {
                 blog.Top = (sbyte)BoolType.YES;
 
-                var res = await blogService.ModifyBlog(blog);
+                var res = await blogService.UpdateAsync(blog);
 
                 return res ? Ok(Success("博客置顶成功")) : Ok(Fail("博客置顶失败"));
             }
@@ -388,7 +388,7 @@ namespace Manager.API.Controllers
             {
                 blog.Top = (sbyte)BoolType.NO;
 
-                var res = await blogService.ModifyBlog(blog);
+                var res = await blogService.UpdateAsync(blog);
 
                 return res ? Ok(Success("取消置顶成功")) : Ok(Fail("取消置顶失败"));
             }
@@ -421,7 +421,7 @@ namespace Manager.API.Controllers
                 return Ok(Fail("博客不存在"));
             }
 
-            var res = await blogService.DelBlog(blog);
+            var res = await blogService.DeleteAsync(blog);
 
             return res.Item1 ? Ok(Success("删除成功")) : Ok(Fail(res.Item2));
         }
@@ -431,11 +431,11 @@ namespace Manager.API.Controllers
         /// </summary>
         /// <param name="bId"></param>
         /// <returns></returns>
-        [Authorize(Policy = Policys.VIP)]
+        //[Authorize(Policy = Policys.VIP)]
         [HttpPost("{bId}/likes")]
         public async Task<IActionResult> AddBlogLike(Guid bId)
         {
-            var res = await blogLikeService.AddBlogLike(bId, UId);
+            var res = await blogLikeService.AddAsync(bId, UId);
             return res.Item1 ? Ok(Success()) : Ok(Fail(res.Item2));
         }
 
@@ -447,7 +447,7 @@ namespace Manager.API.Controllers
         [HttpDelete("{bId}/likes")]
         public async Task<IActionResult> DeleteBlogLike(Guid bId)
         {
-            var res = await blogLikeService.DelBlogLike(bId, UId);
+            var res = await blogLikeService.DeleteAsync(bId, UId);
             return res.Item1 ? Ok(Success()) : Ok(Fail(res.Item2));
         }
 
@@ -460,7 +460,7 @@ namespace Manager.API.Controllers
         public async Task<IActionResult> AddBlogFavorite(Guid bId)
         {
             //2.增加博客收藏
-            var res = await blogFavoriteService.AddBlogFavorite(bId, UId);
+            var res = await blogFavoriteService.AddAsync(bId, UId);
             return res.Item1 ? Ok(Success()) : Ok(Fail(res.Item2));
         }
 
@@ -472,7 +472,7 @@ namespace Manager.API.Controllers
         [HttpDelete("{bId}/favors/{uId}")]
         public async Task<IActionResult> DeleteBlogFavorite(Guid bId)
         {
-            var res = await blogFavoriteService.DelBlogFavorite(bId, UId);
+            var res = await blogFavoriteService.DeleteAsync(bId, UId);
             return res.Item1 ? Ok(Success()) : Ok(Fail(res.Item2));
         }
     }
