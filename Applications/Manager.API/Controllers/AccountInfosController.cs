@@ -3,9 +3,11 @@ using Manager.API.Utility.Filters;
 using Manager.API.Utility.Schemas;
 using Manager.Core;
 using Manager.Core.Enums;
+using Manager.Core.Models.Accounts;
 using Manager.Core.RequestModels;
 using Manager.Extensions;
 using Manager.Server.IServices;
+using Manager.Server.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -28,6 +30,20 @@ namespace Manager.API.Controllers
         public AccountInfosController(IAccountInfoService accountInfoService)
         {
             this.accountInfoService = accountInfoService;
+        }
+
+        /// <summary>
+        /// 搜索匹配关键字前十的用户
+        /// </summary>
+        /// <param name="keyword"></param>
+        /// <returns></returns>
+        [HttpGet("search")]
+        public IActionResult Search([FromQuery] string keyword)
+        {
+            /*
+             * FIX：目前测试，后期使用全文索引器的检索接口
+             */
+            return Ok(Success(new { list = new List<AccountInfo>() { } }));
         }
 
         /// <summary>
