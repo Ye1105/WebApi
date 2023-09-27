@@ -5,8 +5,11 @@ using Manager.Core.Enums;
 using Manager.Core.Models.Blogs;
 using Manager.Core.RequestModels;
 using Manager.Server.IServices;
+using Manager.Server.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TencentCloud.Ame.V20190916.Models;
+using TencentCloud.Tbm.V20180129.Models;
 
 namespace Manager.API.Controllers
 {
@@ -20,12 +23,14 @@ namespace Manager.API.Controllers
         private readonly IBlogCommentService blogCommentService;
         private readonly IAccountInfoService accountInfoService;
         private readonly IBlogCommentLikeService blogCommentLikeService;
+        private readonly IBlogService blogService;
 
-        public CommentsController(IBlogCommentService blogCommentService, IAccountInfoService accountInfoService, IBlogCommentLikeService blogCommentLikeService)
+        public CommentsController(IBlogCommentService blogCommentService, IAccountInfoService accountInfoService, IBlogCommentLikeService blogCommentLikeService, IBlogService blogService)
         {
             this.blogCommentService = blogCommentService;
             this.accountInfoService = accountInfoService;
             this.blogCommentLikeService = blogCommentLikeService;
+            this.blogService = blogService;
         }
 
         /// <summary>
@@ -144,15 +149,96 @@ namespace Manager.API.Controllers
                 Message = req.Message,
                 Like = 0,
                 Type = (sbyte)req.Type,
-                PId = req.PId,
-                Grp = req.Grp,
+                PId = req.Type == CommentType.COMMENT ? Guid.Empty : req.PId,
+                Grp = req.Type == CommentType.COMMENT ? Guid.NewGuid() : req.Grp,
                 Created = DateTime.Now,
                 Top = (sbyte)BoolType.NO,
                 Status = (sbyte)Status.ENABLE
             };
             //2.增加评论
             var res = await blogCommentService.AddAsync(blogComment);
-            return res ? Ok(Success("评论成功")) : Ok(Fail("评论失败"));
+
+            return res ? Ok(Success("评论成功", new { comment = blogComment })) : Ok(Fail("评论失败"));
+        }
+
+
+        /// <summary>
+        /// 评论并转发博客
+        /// </summary>
+        /// <param name="req"></param>
+        /// <returns></returns>
+        [HttpPost("forward")]
+        public async Task<IActionResult> AddBlogCommentAndForward([FromBody] AddBlogCommentAndForwardRequest req)
+        {
+            /*
+             * 0.Json Schema 参数校验
+             * 1.判断 blog 是否存在
+             * 2.新增【blog、blogComment、blogForward】事务
+             */
+
+            //0.参数校验
+            //bool validator = JsonSchemaHelper.Validator<AddBlogCommentAndForwardRequest>(req, out IList<string> errorMessages);
+            //if (!validator)
+            //{
+            //    return Ok(ApiResult.Fail(errorMessages, "参数错误"));
+            //}
+
+            var id = Guid.NewGuid();
+            var dt = DateTime.Now;
+            var status = (sbyte)Status.ENABLE;
+
+            //1.判断 blog 是否存在
+            var v = await blogService.FirstOrDefaultAsync(x => x.Id == req.BlogComment.BId && x.Status == (sbyte)Status.ENABLE, false);
+            if (v == null)
+            {
+                return Ok(Fail("博客不存在"));
+            }
+
+            // 2.新增【blog、blogComment、blogForward】事务
+            var blog = new Blog()
+            {
+                Id = id,
+                UId = UId,
+                Sort = (sbyte)BlogSort.PUBLIC,
+                Type = (sbyte)BlogType.TEXT,
+                Body = req.Blog.Body,
+                Top = (sbyte)BoolType.NO,
+                Created = dt,
+                Status = status,
+                FId = req.Blog.FId
+            };
+
+            var blogComment = new BlogComment()
+            {
+                Id = id,
+                BId = req.BlogComment.BId,
+                UId = UId,
+                BuId = req.BlogComment.BuId,
+                Message = req.BlogComment.Message,
+                Type = (sbyte)req.BlogComment.Type,
+                PId = req.BlogComment.Type == CommentType.COMMENT ? Guid.Empty : req.BlogComment.PId,
+                Grp = req.BlogComment.Type == CommentType.COMMENT ? Guid.NewGuid() : req.BlogComment.Grp,
+                Created = dt,
+                Top = (sbyte)BoolType.NO,
+                Status = status
+            };
+
+            var blogForward = new BlogForward()
+            {
+                Id = id,
+                UId = UId,
+                Message = req.BlogForward.Message,
+                BaseBId = req.BlogForward.BaseBId,
+                PrevBId = req.BlogForward.PrevBId,
+                BuId = req.BlogForward.BuId,
+                PrevCId = req.BlogForward.PrevCId,
+                Created = dt,
+                Status = status
+            };
+
+            var res = await blogService.AddBlogCommentAndForward(blog, blogComment, blogForward);
+
+            return res ? Ok(Success("评论转发成功", new { comment = blogComment })) : Ok(Fail("评论转发失败"));
         }
 
         /// <summary>

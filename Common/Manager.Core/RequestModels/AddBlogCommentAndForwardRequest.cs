@@ -23,13 +23,13 @@ namespace Manager.Core.RequestModels
         /// 种类： 0.公开  1.仅自己可见  2.好友圈  3.粉丝  4.热推  5.广告
         /// </summary>
         [JsonProperty("sort")]
-        public BlogSort Sort { get; set; }
+        public BlogSort? Sort { get; set; }
 
         /// <summary>
         /// 类型  -1.全部  0.图片  1.视频   2.头条文章  3.音乐  4.普通文字(表情)
         /// </summary>
         [JsonProperty("type")]
-        public BlogType Type { get; set; }
+        public BlogType? Type { get; set; }
 
         /// <summary>
         /// 内容

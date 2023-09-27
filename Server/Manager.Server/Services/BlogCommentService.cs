@@ -80,9 +80,9 @@ namespace Manager.Server.Services
             return await PagedList<BlogComment>.CreateAsync(query, pageIndex, pageSize, offset);
         }
 
-        public Task<PagedList<BlogComment>> PagedAsync(Expression<Func<BlogComment, bool>> whereLambda, int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "")
+        public async Task<PagedList<BlogComment>> PagedAsync(Expression<Func<BlogComment, bool>> whereLambda, int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "")
         {
-            return baseService.QueryPagedAsync(whereLambda, pageIndex, pageSize, offset, isTrack, orderBy);
+            return await baseService.QueryPagedAsync(whereLambda, pageIndex, pageSize, offset, isTrack, orderBy);
         }
 
         public async Task<bool> AddAsync(BlogComment blogComment)

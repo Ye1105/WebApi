@@ -1,4 +1,6 @@
 ﻿using Manager.Core.Models.Accounts;
+using Manager.Core.Models.Blogs;
+using Manager.Core.Page;
 using Manager.Core.Settings;
 using Manager.Extensions;
 using Manager.Infrastructure.IRepositoies;
@@ -88,6 +90,12 @@ namespace Manager.Server.Services
                 Log.Error("GetAccount:{0}", ex.ToString());
                 return null;
             }
+        }
+
+
+        public async Task<PagedList<AccountInfo>> PagedAsync(Expression<Func<AccountInfo, bool>> whereLambda, int pageIndex = 1, int pageSize = 10, int offset = 0, bool isTrack = true, string orderBy = "")
+        {
+            return await baseService.QueryPagedAsync(whereLambda, pageIndex, pageSize, offset, isTrack, orderBy);
         }
 
         public async Task<bool> UpdateAsync(AccountInfo accountInfo)
