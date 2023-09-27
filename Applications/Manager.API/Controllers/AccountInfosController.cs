@@ -38,12 +38,20 @@ namespace Manager.API.Controllers
         /// <param name="keyword"></param>
         /// <returns></returns>
         [HttpGet("search")]
-        public IActionResult Search([FromQuery] string keyword)
+        public async Task<IActionResult> Search([FromQuery] string keyword)
         {
             /*
-             * FIX：目前测试，后期使用全文索引器的检索接口
+             * FIX：目前 MySQL，后期使用全文索引器的检索接口
              */
-            return Ok(Success(new { list = new List<AccountInfo>() { } }));
+            var result = await accountInfoService.PagedAsync(
+                    x => x.NickName.Contains(keyword),
+                    pageIndex: 1,
+                    pageSize: 10,
+                    offset: 0,
+                    isTrack: false,
+                    orderBy: "vip desc,uid desc"
+                );
+            return Ok(Success(new { list = result }));
         }
 
         /// <summary>

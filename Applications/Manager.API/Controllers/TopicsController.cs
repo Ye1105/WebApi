@@ -34,16 +34,16 @@ namespace Manager.API.Controllers
             /*
              * FIX：目前测试，后期使用全文索引器的检索接口
              */
-            var topics = await blogTopicService.PagedAsync(x =>
-               x.Status == (sbyte)Status.ENABLE,
+            var result = await blogTopicService.PagedAsync(x =>
+               x.Status == (sbyte)Status.ENABLE && x.Title.Contains(keyword),
                 pageIndex: 1,
                 pageSize: 10,
                 offset: 0,
                 isTrack: false,
-                orderBy: "created desc"
+                orderBy: "readcount desc,created desc"
             );
 
-            return Ok(Success(new { list = topics }));
+            return Ok(Success(new { list = result }));
         }
     }
 }
