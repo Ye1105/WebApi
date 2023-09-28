@@ -51,8 +51,6 @@ namespace Manager.API.Controllers
              *
              */
 
-            var Uddd = UId;
-
             //1.评论列表
             var result = await blogCommentService.PagedAsync(req.PageIndex, req.PageSize, req.OffSet, isTrack: false, req.OrderBy, req.Id, req.BId, req.UId, req.Types, req.PId, req.Grp, req.StartTime, req.EndTime, Status.ENABLE);
 

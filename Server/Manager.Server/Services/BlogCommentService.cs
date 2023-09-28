@@ -74,7 +74,7 @@ namespace Manager.Server.Services
             }
 
             //排序
-            //query = query.ApplySort(orderBy);
+            query = query.ApplySort(orderBy);
 
             //整合分页数据
             return await PagedList<BlogComment>.CreateAsync(query, pageIndex, pageSize, offset);
