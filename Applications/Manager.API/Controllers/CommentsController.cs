@@ -137,6 +137,8 @@ namespace Manager.API.Controllers
             //    return Ok(ApiResult.Fail(errorMessages, "参数错误"));
             //}
 
+            //FIX: 重复性校验，短时间内不能重复提交多条相同的评论
+
             //1.参数组合
             var blogComment = new BlogComment()
             {
