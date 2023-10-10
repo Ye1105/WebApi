@@ -90,7 +90,7 @@ namespace Manager.API.Controllers
                 }
 
                 //3.2 重复性校验：10分钟内是否存在相同的博客
-                var filterBody = blogService.CountSync(x => x.UId == UId && x.Created > dt.AddMinutes(-10) && x.Body == req.Body, false);
+                var filterBody = blogService.CountSync(x => x.UId == UId && x.Created > dt.AddMinutes(-10) && x.Type == (sbyte)req.Type && x.Body == req.Body, false);
                 if (filterCount > 0)
                 {
                     return Ok(Fail("10分钟内有已有重复博客", "文本内容相同，请隔10分钟后发布"));
@@ -107,7 +107,7 @@ namespace Manager.API.Controllers
                     FId = Guid.Empty,
                     Created = dt,
                     Top = (sbyte)BoolType.NO,
-                    Status = req.Type == BlogType.TEXT ? (sbyte)Status.ENABLE : (sbyte)Status.UNDER_REVIEW
+                    Status = req.Type == BlogType.TEXT ? (sbyte)Status.ENABLE : (sbyte)Status.ENABLE  //Status.UNDER_REVIEW
                 };
 
                 //4.2 如果发布的是图片blog，创建图片实例
@@ -128,7 +128,7 @@ namespace Manager.API.Controllers
                                 Width = item.Width,
                                 Height = item.Height,
                                 Created = dt,
-                                Status = (sbyte)Status.UNDER_REVIEW,
+                                Status = (sbyte)Status.ENABLE,  //Status.UNDER_REVIEW   
                             });
                         };
                     }
@@ -157,7 +157,7 @@ namespace Manager.API.Controllers
                             Url = v.Url,
                             Duration = v.Duration,
                             Created = dt,
-                            Status = (sbyte)Status.UNDER_REVIEW,
+                            Status = (sbyte)Status.ENABLE,  //Status.UNDER_REVIEW 
                             Cover = new
                             {
                                 v.Cover.Width,

@@ -100,7 +100,7 @@ namespace Manager.API.Controllers
                 Height = height,
                 Width = width,
                 Created = DateTime.Now,
-                Status = (sbyte)Status.UNDER_REVIEW
+                Status = (sbyte)Status.ENABLE,  //Status.UNDER_REVIEW 
             };
 
             var res = await logCoverService.AddAsync(logCover);
