@@ -382,7 +382,7 @@ namespace Manager.Server.Services
                 query = query.Where(x => x.Sort == sort);
             }
             // 类型  0.全部 1.普通文字(表情) 2.头条文章 3.图片 4.音乐 5.视频
-            if (type != null)
+            if (type != null && type != (sbyte)BlogType.ALL)
             {
                 query = query.Where(x => x.Type == type);
             }
