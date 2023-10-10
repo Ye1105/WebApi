@@ -90,7 +90,7 @@ namespace Manager.API.Controllers
                 }
 
                 //3.2 重复性校验：10分钟内是否存在相同的博客
-                var filterBody = blogService.CountSync(x => x.UId == UId && x.Created > dt.AddMinutes(-10) && x.Type == (sbyte)req.Type && x.Body == req.Body, false);
+                filterCount = blogService.CountSync(x => x.UId == UId && x.Created > dt.AddMinutes(-10) && x.Type == (sbyte)req.Type && x.Body == req.Body, false);
                 if (filterCount > 0)
                 {
                     return Ok(Fail("10分钟内有已有重复博客", "文本内容相同，请隔10分钟后发布"));
