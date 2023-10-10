@@ -70,7 +70,7 @@ namespace Manager.Core.Models.Logs
             {
                 if (string.IsNullOrWhiteSpace(_FullUrl))
                 {
-                    return $"{Configurations.AppSettings["TencentCosTwo"].DesObj<TencentCosTwoConfig>().BucketURL}{Url}";
+                    return $"{Configurations.AppSettings["TencentCosTwo"].DesObj<TencentCosTwoConfig>().BucketURL}/{UId}/head/{Url}";
                 }
                 return _FullUrl;
             }
