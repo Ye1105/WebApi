@@ -359,7 +359,7 @@ namespace Manager.API.Controllers
             if (userFocus != null)
             {
                 var res = await userFocusService.DeleteAsync(userFocus);
-                return res ? Ok(Success("")) : Ok(Fail("删除用户关系失败"));
+                return res ? Ok(Success()) : Ok(Fail("删除用户关系失败"));
             }
             else
             {

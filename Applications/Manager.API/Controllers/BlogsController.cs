@@ -317,14 +317,19 @@ namespace Manager.API.Controllers
         /// <param name="sort"></param>
         /// <param name="req"></param>
         /// <returns></returns>
-        [Authorize(Policy = Policys.VIP)]
+        //[Authorize(Policy = Policys.VIP)]
         [HttpPatch("{id}/sort/{sort}")]
         public async Task<IActionResult> UpdateSort(Guid id, BlogSort sort)
         {
-            var blog = await blogService.FirstOrDefaultAsync(x => x.Id == id && x.Status == (sbyte)Status.ENABLE && x.Sort != (sbyte)sort);
+            var blog = await blogService.FirstOrDefaultAsync(x => x.Id == id && x.UId == UId && x.Status == (sbyte)Status.ENABLE);
             if (blog == null)
             {
                 return Ok(Fail("博客不存在"));
+            }
+
+            if (blog.Sort == (sbyte)sort)
+            {
+                return Ok(Success("修改成功"));
             }
 
             blog.Sort = (sbyte)sort;
@@ -415,10 +420,15 @@ namespace Manager.API.Controllers
              * 1.2  事务删除转发
              */
 
-            var blog = await blogService.FirstOrDefaultAsync(x => x.Id == id && x.UId == UId && x.Status == (sbyte)Status.ENABLE);
+            var blog = await blogService.FirstOrDefaultAsync(x => x.Id == id && x.Status == (sbyte)Status.ENABLE);
             if (blog == null)
             {
                 return Ok(Fail("博客不存在"));
+            }
+
+            if (blog.UId != UId)
+            {
+                return Ok(Fail("非博客作者，无法删除"));
             }
 
             var res = await blogService.DeleteAsync(blog);
@@ -469,7 +479,7 @@ namespace Manager.API.Controllers
         /// </summary>
         /// <param name="bId"></param>
         /// <returns></returns>
-        [HttpDelete("{bId}/favors/{uId}")]
+        [HttpDelete("{bId}/favors")]
         public async Task<IActionResult> DeleteBlogFavorite(Guid bId)
         {
             var res = await blogFavoriteService.DeleteAsync(bId, UId);
