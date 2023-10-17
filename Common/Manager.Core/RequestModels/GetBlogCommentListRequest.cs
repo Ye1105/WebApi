@@ -28,7 +28,10 @@ namespace Manager.Core.RequestModels
         /// 0.评论 1.【回复】来评论->评论 2.【回复】来评论->回复
         /// </summary>
         [JsonProperty("types")]
-        public CommentType[]? Types { get; set; }
+        public string? Types { get; set; }
+
+        [JsonProperty("games")]
+        public int[]? Games { get; set; }
 
         /// <summary>
         /// 父节点
