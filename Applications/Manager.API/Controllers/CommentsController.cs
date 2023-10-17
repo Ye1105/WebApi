@@ -51,8 +51,19 @@ namespace Manager.API.Controllers
              *
              */
 
+            var typeList = new List<CommentType>();
+            if (!string.IsNullOrEmpty(req.Types))
+            {
+                var arary = req.Types.Split(',');
+                foreach (var type in arary)
+                {
+                    typeList.Add((CommentType)Convert.ToInt16(type));
+                }
+            }
+            var types = typeList.ToArray();
+
             //1.评论列表
-            var result = await blogCommentService.PagedAsync(req.PageIndex, req.PageSize, req.OffSet, isTrack: false, req.OrderBy, req.Id, req.BId, req.UId, req.Types, req.PId, req.Grp, req.StartTime, req.EndTime, Status.ENABLE);
+            var result = await blogCommentService.PagedAsync(req.PageIndex, req.PageSize, req.OffSet, isTrack: false, req.OrderBy, req.Id, req.BId, req.UId, types, req.PId, req.Grp, req.StartTime, req.EndTime, Status.ENABLE);
 
             if (result != null && result.Any())
             {
