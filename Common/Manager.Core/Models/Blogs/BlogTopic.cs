@@ -25,19 +25,19 @@ namespace Manager.Core.Models.Blogs
         /// 阅读数量
         /// </summary>
         [JsonProperty("readCount")]
-        public int ReadCount { get; set; }
+        public int ReadCount { get; set; } = 0;
 
         /// <summary>
         /// 讨论数量
         /// </summary>
         [JsonProperty("discussCount")]
-        public int DiscussCount { get; set; }
+        public int DiscussCount { get; set; } = 0;
 
         /// <summary>
         /// 搜索数量
         /// </summary>
         [JsonProperty("searchCount")]
-        public int SearchCount { get; set; }
+        public int SearchCount { get; set; } = 0;
 
         /// <summary>
         /// 创建时间
