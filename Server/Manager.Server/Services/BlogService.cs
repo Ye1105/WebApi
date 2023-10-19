@@ -629,7 +629,7 @@ namespace Manager.Server.Services
                     else
                     {
                         blogForward.Status = (sbyte)Status.DISABLE;
-                        dic.Add(blogForward, CrudEnum.CREATE);
+                        dic.Add(blogForward, CrudEnum.UPDATE);
                         var res = await baseService.BatchTransactionAsync(dic);
                         return res ? Tuple.Create(true, "") : Tuple.Create(false, "删除博客失败");
                     }
