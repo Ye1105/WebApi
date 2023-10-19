@@ -72,12 +72,11 @@ namespace Manager.Core.Models.Blogs
         [JsonProperty("status")]
         public sbyte? Status { get; set; } = (sbyte)Enums.Status.ENABLE;
 
-        /// <summary>
-        /// 点赞数
-        /// </summary>
+
         [NotMapped]
         [JsonProperty("like")]
-        public long? Like { get; set; }
+        public long? Like { get; set; } = 0;
+
 
         /// <summary>
         /// 评论用户信息

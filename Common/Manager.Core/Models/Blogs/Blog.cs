@@ -101,28 +101,28 @@ namespace Manager.Core.Models.Blogs
         /// </summary>
         [NotMapped]
         [JsonProperty("comment")]
-        public int? Comment { get; set; }
+        public int? Comment { get; set; } = 0;
 
         /// <summary>
         /// 转发数
         /// </summary>
         [NotMapped]
         [JsonProperty("forward")]
-        public int? Forward { get; set; }
+        public int? Forward { get; set; } = 0;
 
         /// <summary>
         /// 点赞数
         /// </summary>
         [NotMapped]
         [JsonProperty("like")]
-        public long? Like { get; set; }
+        public long? Like { get; set; } = 0;
 
         /// <summary>
         /// 收藏数
         /// </summary>
         [NotMapped]
         [JsonProperty("favorite")]
-        public long? Favorite { get; set; }
+        public long? Favorite { get; set; } = 0;
 
         /// <summary>
         /// 当前网站的登录用户是否点赞

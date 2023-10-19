@@ -455,7 +455,7 @@ namespace Manager.Server.Services
 
             //4.获取博客转发数
             //判定当前blog是原创blog
-            blog.Forward = blog.FId == Guid.Empty ? await blogForwardService.CountAsync(x => x.BaseBId == blog.Id) : await blogForwardService.CountAsync(x => x.PrevBId == blog.Id);
+            blog.Forward = blog.FId == Guid.Empty ? await blogForwardService.CountAsync(x => x.BaseBId == blog.Id && x.Status == (sbyte)Status.ENABLE) : await blogForwardService.CountAsync(x => x.PrevBId == blog.Id && x.Status == (sbyte)Status.ENABLE);
 
             //6.获取博客点赞数量
             blog.Like = await blogLikeService.CountAsync(blog.Id);
@@ -629,7 +629,7 @@ namespace Manager.Server.Services
                     else
                     {
                         blogForward.Status = (sbyte)Status.DISABLE;
-                        dic.Add(blogForward, CrudEnum.CREATE);
+                        dic.Add(blogForward, CrudEnum.UPDATE);
                         var res = await baseService.BatchTransactionAsync(dic);
                         return res ? Tuple.Create(true, "") : Tuple.Create(false, "删除博客失败");
                     }

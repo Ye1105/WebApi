@@ -249,7 +249,9 @@ namespace Manager.API.Controllers
 
             var res = await blogService.AddBlogCommentAndForward(blog, blogComment, blogForward);
 
-            return res ? Ok(Success("评论转发成功", new { comment = blogComment })) : Ok(Fail("评论转发失败"));
+            await blogService.GetBlogRelation(blog, UId);
+
+            return res ? Ok(Success("评论转发成功", new { comment = blogComment, blog })) : Ok(Fail("评论转发失败"));
         }
 
         /// <summary>
