@@ -7,6 +7,7 @@ using Manager.Extensions;
 using Manager.Infrastructure.IRepositoies;
 using Manager.Server.IServices;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 using MySqlConnector;
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
@@ -480,7 +481,7 @@ namespace Manager.Server.Services
                 /*
                  * 11.获取关联的 blog
                  */
-                blog.FBlog = (await PagedAsync(pageIndex: 1, pageSize: 1, offset: 0, isTrack: false, orderBy: "", id: blog.FId))?.FirstOrDefault();
+                blog.FBlog = (await PagedAsync(pageIndex: 1, pageSize: 1, offset: 0, isTrack: false, orderBy: "", blog.FId, wId, null, null, null, null, null, null, null, null, Status.ENABLE))?.FirstOrDefault();
                 if (blog.FBlog != null) await GetBlogRelation(blog.FBlog, wId);
             }
         }
