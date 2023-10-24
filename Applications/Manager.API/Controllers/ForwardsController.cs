@@ -111,8 +111,10 @@ namespace Manager.API.Controllers
             {
                 Id = id,
                 UId = UId,
-                Sort = (sbyte)req.Blog.Sort,
-                Type = (sbyte)req.Blog.Type,
+                //Sort = (sbyte)req.Blog.Sort,
+                //Type = (sbyte)req.Blog.Type,
+                Sort = (sbyte)BlogSort.PUBLIC,
+                Type = (sbyte)BlogType.TEXT,
                 FId = req.Blog.FId,
                 Body = req.Blog.Body,
                 Created = dt,
@@ -133,7 +135,10 @@ namespace Manager.API.Controllers
             };
 
             var res = await blogForwardService.AddAsync(blog, blogForward);
-            return res ? Ok(Success("转发博客成功")) : Ok(Fail("转发博客失败"));
+
+            await blogService.GetBlogRelation(blog, UId);
+
+            return res ? Ok(Success("转发博客成功", new { blog })) : Ok(Fail("转发博客失败"));
         }
 
         /// <summary>
