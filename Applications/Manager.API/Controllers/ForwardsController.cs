@@ -60,7 +60,7 @@ namespace Manager.API.Controllers
                     //4.当 scope 不为 null 时关联 blog 查询
                     if (req.Scope != null)
                     {
-                        item.Blog = await blogService.FirstOrDefaultAsync(x => x.Id == item.Id, false);
+                        item.Blog = await blogService.FirstOrDefaultAsync(x => x.Id == item.BaseBId, false);
                         if (item.Blog != null)
                         {
                             await blogService.GetBlogRelation(item.Blog, UId);
