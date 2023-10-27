@@ -3,17 +3,14 @@ using Manager.API.Utility.Filters;
 using Manager.API.Utility.Schemas;
 using Manager.Core;
 using Manager.Core.Enums;
-using Manager.Core.Models.Accounts;
 using Manager.Core.RequestModels;
 using Manager.Extensions;
 using Manager.Server.IServices;
-using Manager.Server.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
-using Org.BouncyCastle.Ocsp;
 using System.Text.RegularExpressions;
 
 namespace Manager.API.Controllers
@@ -67,7 +64,6 @@ namespace Manager.API.Controllers
                 return Ok(Fail("邮箱格式不正确", "参数错误"));
             }
 
-
             //1.1 判断表用户信息是否存在
             var accountInfo = await accountInfoService.FirstOrDefaultAsync(x => x.UId == UId, true);
             if (accountInfo == null)
@@ -96,7 +92,6 @@ namespace Manager.API.Controllers
         [HttpPatch("describe")]
         public async Task<IActionResult> UpdateDescribe([FromForm] string? describe)
         {
-
             if (describe != null)
             {
                 if (!Regex.IsMatch(describe, RegexHelper.DescriptionPattern))
@@ -126,8 +121,6 @@ namespace Manager.API.Controllers
         [HttpPatch("sex")]
         public async Task<IActionResult> UpdateSex([FromForm] Sex sex)
         {
-
-
             //1.1 判断表用户信息是否存在
             var accountInfo = await accountInfoService.FirstOrDefaultAsync(x => x.UId == UId, true);
             if (accountInfo == null)
@@ -149,7 +142,6 @@ namespace Manager.API.Controllers
         [HttpPatch("birthday")]
         public async Task<IActionResult> UpdateBirthday([FromForm] DateTime? birthday)
         {
-
             //1.1 判断表用户信息是否存在
             var accountInfo = await accountInfoService.FirstOrDefaultAsync(x => x.UId == UId, true);
             if (accountInfo == null)
@@ -162,7 +154,6 @@ namespace Manager.API.Controllers
 
             return await accountInfoService.UpdateAsync(accountInfo) ? Ok(Success("修改成功")) : Ok(Fail("修改失败"));
         }
-
 
         /// <summary>
         /// 修改感情状态
@@ -185,7 +176,6 @@ namespace Manager.API.Controllers
             return await accountInfoService.UpdateAsync(accountInfo) ? Ok(Success("修改成功")) : Ok(Fail("修改失败"));
         }
 
-
         /// <summary>
         /// 省市
         /// </summary>
@@ -194,7 +184,6 @@ namespace Manager.API.Controllers
         [HttpPatch("location")]
         public async Task<IActionResult> UpdateLocation([FromForm] UpdateProvinceCityRequest location)
         {
-
             //1.1 判断表用户信息是否存在
             var accountInfo = await accountInfoService.FirstOrDefaultAsync(x => x.UId == UId, true);
             if (accountInfo == null)
@@ -216,7 +205,6 @@ namespace Manager.API.Controllers
         [HttpPatch("hometown")]
         public async Task<IActionResult> UpdateHometown([FromForm] UpdateProvinceCityRequest location)
         {
-
             //1.1 判断表用户信息是否存在
             var accountInfo = await accountInfoService.FirstOrDefaultAsync(x => x.UId == UId, true);
             if (accountInfo == null)
@@ -229,8 +217,6 @@ namespace Manager.API.Controllers
 
             return await accountInfoService.UpdateAsync(accountInfo) ? Ok(Success("修改成功")) : Ok(Fail("修改失败"));
         }
-
-
 
         /// <summary>
         /// 修改学校
@@ -295,7 +281,6 @@ namespace Manager.API.Controllers
 
             return await accountInfoService.UpdateAsync(accountInfo) ? Ok(Success("修改成功")) : Ok(Fail("修改失败"));
         }
-
 
         /// <summary>
         /// 修改账号信息

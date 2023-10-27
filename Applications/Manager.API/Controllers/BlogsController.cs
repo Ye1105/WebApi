@@ -2,7 +2,6 @@
 using Manager.API.Utility.Filters;
 using Manager.API.Utility.Schemas;
 using Manager.Core;
-using Manager.Core.AuthorizationModels;
 using Manager.Core.Enums;
 using Manager.Core.Models.Blogs;
 using Manager.Core.Models.Users;
@@ -128,7 +127,7 @@ namespace Manager.API.Controllers
                                 Width = item.Width,
                                 Height = item.Height,
                                 Created = dt,
-                                Status = (sbyte)Status.ENABLE,  //Status.UNDER_REVIEW   
+                                Status = (sbyte)Status.ENABLE,  //Status.UNDER_REVIEW
                             });
                         };
                     }
@@ -157,7 +156,7 @@ namespace Manager.API.Controllers
                             Url = v.Url,
                             Duration = v.Duration,
                             Created = dt,
-                            Status = (sbyte)Status.ENABLE,  //Status.UNDER_REVIEW 
+                            Status = (sbyte)Status.ENABLE,  //Status.UNDER_REVIEW
                             Cover = new
                             {
                                 v.Cover.Width,
