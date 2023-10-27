@@ -138,7 +138,7 @@ namespace Manager.API.Controllers
 
             await blogService.GetBlogRelation(blog, UId);
 
-            return res ? Ok(Success("转发博客成功", new { blog })) : Ok(Fail("转发博客失败"));
+            return res ? Ok(Success("转发博客成功", new { blog, forward = blogForward })) : Ok(Fail("转发博客失败"));
         }
 
         /// <summary>
