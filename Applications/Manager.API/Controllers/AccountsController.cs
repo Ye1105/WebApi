@@ -1,16 +1,10 @@
 ﻿using Manager.API.Utility;
 using Manager.API.Utility.Filters;
-using Manager.API.Utility.Schemas;
 using Manager.Core;
-using Manager.Core.RequestModels;
 using Manager.Extensions;
 using Manager.Server.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Schema;
-using Org.BouncyCastle.Ocsp;
 using System.Text.RegularExpressions;
 
 namespace Manager.API.Controllers
@@ -50,7 +44,6 @@ namespace Manager.API.Controllers
                 return Ok(Fail("邮箱格式不正确", "参数错误"));
             }
 
-
             //1.账号是否存在
             var account = await accountService.FirstOrDefaultAsync(x => x.UId == UId);
             if (account == null)
@@ -70,7 +63,6 @@ namespace Manager.API.Controllers
 
             return await accountService.UpdateAsync(account) ? Ok(Success("修改成功")) : Ok(Fail("修改失败"));
         }
-
 
         /// <summary>
         /// 修改账号手机号

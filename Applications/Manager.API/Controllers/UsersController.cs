@@ -3,7 +3,6 @@ using Manager.API.Utility.Filters;
 using Manager.Core;
 using Manager.Core.Enums;
 using Manager.Server.IServices;
-using Manager.Server.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,7 +27,6 @@ namespace Manager.API.Controllers
             this.userFocusService = userFocusService;
             this.blogService = blogService;
         }
-
 
         /// <summary>
         /// 用户信息[当前登录用户]
@@ -60,7 +58,6 @@ namespace Manager.API.Controllers
 
             return Ok(Success("用户信息获取成功", new { account, accountInfo, blogCount, focusCount, fanCount }));
         }
-
 
         /// <summary>
         /// 用户信息

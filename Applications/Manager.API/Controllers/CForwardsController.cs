@@ -1,9 +1,6 @@
 ﻿using Manager.API.Utility;
 using Manager.API.Utility.Filters;
 using Manager.Core;
-using Manager.Core.Enums;
-using Manager.Core.Models.Blogs;
-using Manager.Core.RequestModels;
 using Manager.Server.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,6 +20,5 @@ namespace Manager.API.Controllers
         {
             this.blogService = blogService;
         }
-
     }
 }

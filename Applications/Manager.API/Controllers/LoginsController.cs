@@ -175,10 +175,9 @@ namespace Manager.API.Controllers
                     return Ok(Fail(tokenRes.Item2));
                 }
 
-                return Ok(Success("账号登录成功", new {AccessToken, RefreshToken }));
+                return Ok(Success("账号登录成功", new { AccessToken, RefreshToken }));
             }
         }
-
 
         /// <summary>
         /// 用户登录【邮箱+密码】
@@ -313,7 +312,7 @@ namespace Manager.API.Controllers
                     return Ok(Fail(tokenRes.Item2));
                 }
 
-                return Ok(Success("账号登录成功", new {  AccessToken, RefreshToken }));
+                return Ok(Success("账号登录成功", new { AccessToken, RefreshToken }));
             }
         }
     }

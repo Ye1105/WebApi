@@ -5,11 +5,8 @@ using Manager.Core.Enums;
 using Manager.Core.Models.Blogs;
 using Manager.Core.RequestModels;
 using Manager.Server.IServices;
-using Manager.Server.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TencentCloud.Ame.V20190916.Models;
-using TencentCloud.Tbm.V20180129.Models;
 
 namespace Manager.API.Controllers
 {
@@ -172,7 +169,6 @@ namespace Manager.API.Controllers
             return res ? Ok(Success("评论成功", new { comment = blogComment })) : Ok(Fail("评论失败"));
         }
 
-
         /// <summary>
         /// 评论并转发博客
         /// </summary>
@@ -249,9 +245,7 @@ namespace Manager.API.Controllers
 
             var res = await blogService.AddBlogCommentAndForward(blog, blogComment, blogForward);
 
-            await blogService.GetBlogRelation(blog, UId);
-
-            return res ? Ok(Success("评论转发成功", new { comment = blogComment, blog })) : Ok(Fail("评论转发失败"));
+            return res ? Ok(Success("评论转发成功", new { comment = blogComment, forward = blogForward })) : Ok(Fail("评论转发失败"));
         }
 
         /// <summary>

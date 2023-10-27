@@ -5,11 +5,8 @@ using Manager.Core;
 using Manager.Core.Enums;
 using Manager.Core.RequestModels;
 using Manager.Core.Settings;
-using Manager.Extensions;
 using Manager.Server.IServices;
-using Manager.Server.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -63,7 +60,6 @@ namespace Manager.API.Controllers
                 return Ok(Fail(errorMessages, "参数错误"));
             }
 
-
             //3.1 判定 账号  是否存在
             //var curAccName = await accountService.GetAccountBy(x => x.Name == req.Name, false);
             //if (curAccName != null)
@@ -92,11 +88,9 @@ namespace Manager.API.Controllers
                 return Ok(Fail("账号昵称已存在"));
             }
 
-
             //正式服环境
             if (appSettings.Value.ServerStatus == (sbyte)ServerType.F0RMAL)
             {
-
                 var dt = DateTime.Now;
 
                 var resExsit = await mailService.FirstOrDefaultAsync(x => x.Mail == req.Mail && x.Sms == req.Sms, false);
@@ -122,8 +116,6 @@ namespace Manager.API.Controllers
                 //    return Ok(Fail("验证码的存储时间和用户发送的注册时间间隔大于5分钟", "验证码过期"));
                 //}
             }
-
-
 
             //4.创建账号信息【Account,AccountInfo】
             var res = await accountService.AddAsync(req.Pwd, req.Phone, req.NickName, req.Mail);
