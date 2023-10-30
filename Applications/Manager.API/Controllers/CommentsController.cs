@@ -259,7 +259,7 @@ namespace Manager.API.Controllers
         public async Task<IActionResult> DelComment(CommentType type, Guid grp, Guid id)
         {
             var res = await blogCommentService.DeleteAsync(type, grp, id);
-            return Ok(res.Item1 ? Success(res.Item2) : Fail(res.Item2));
+            return Ok(res.Item1 ? Success(res.Item3, new { count = res.Item2 }) : Fail(res.Item3));
         }
 
         /// <summary>

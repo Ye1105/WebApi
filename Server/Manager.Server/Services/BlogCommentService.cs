@@ -90,7 +90,7 @@ namespace Manager.Server.Services
             return await baseService.AddAsync(blogComment) > 0;
         }
 
-        public async Task<Tuple<bool, string>> DeleteAsync(CommentType type, Guid grp, Guid id)
+        public async Task<Tuple<bool, int, string>> DeleteAsync(CommentType type, Guid grp, Guid id)
         {
             if (type == CommentType.COMMENT)
             {
@@ -101,12 +101,12 @@ namespace Manager.Server.Services
                     {
                         item.Status = (sbyte)Status.DISABLE;
                     }
-                    var res = await baseService.UpdateRangeAsync(collection) > 0;
-                    return res ? Tuple.Create(true, "删除评论成功") : Tuple.Create(false, "删除评论分组失败");
+                    var count = await baseService.UpdateRangeAsync(collection);
+                    return count > 0 ? Tuple.Create(true, count, "删除评论成功") : Tuple.Create(false, count, "删除评论分组失败");
                 }
                 else
                 {
-                    return Tuple.Create(false, "评论不存在");
+                    return Tuple.Create(false, 0, "评论不存在");
                 }
             }
             else
@@ -126,12 +126,12 @@ namespace Manager.Server.Services
                     {
                         item.Status = (sbyte)Status.DISABLE;
                     }
-                    var res = await baseService.UpdateRangeAsync(collection) > 0;
-                    return res ? Tuple.Create(true, "删除评论成功") : Tuple.Create(false, "删除评论分组失败");
+                    var count = await baseService.UpdateRangeAsync(collection);
+                    return count > 0 ? Tuple.Create(true, count, "删除评论成功") : Tuple.Create(false, count, "删除评论分组失败");
                 }
                 else
                 {
-                    return Tuple.Create(false, "评论不存在");
+                    return Tuple.Create(false, 0, "评论不存在");
                 }
             }
         }
