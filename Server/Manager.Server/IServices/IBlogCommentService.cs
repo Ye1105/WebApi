@@ -29,7 +29,7 @@ namespace Manager.Server.IServices
         /// <param name="grp">分组</param>
         /// <param name="id">评论id</param>
         /// <returns></returns>
-        Task<Tuple<bool, string>> DeleteAsync(CommentType type, Guid grp, Guid id);
+        Task<Tuple<bool, int, string>> DeleteAsync(CommentType type, Guid grp, Guid id);
 
         /// <summary>
         /// 查询博客评论分页列表
