@@ -72,8 +72,6 @@ namespace Manager.Core.Models.Blogs
         [JsonProperty("status")]
         public sbyte? Status { get; set; } = (sbyte)Enums.Status.ENABLE;
 
-
-        [NotMapped]
         [JsonProperty("like")]
         public long? Like { get; set; } = 0;
 

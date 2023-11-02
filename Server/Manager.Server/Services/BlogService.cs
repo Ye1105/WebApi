@@ -7,7 +7,6 @@ using Manager.Extensions;
 using Manager.Infrastructure.IRepositoies;
 using Manager.Server.IServices;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging.Abstractions;
 using MySqlConnector;
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
