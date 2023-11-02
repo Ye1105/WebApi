@@ -136,7 +136,9 @@ namespace Manager.API.Controllers
 
             var res = await blogForwardService.AddAsync(blog, blogForward);
 
-            return res ? Ok(Success("转发博客成功", new { forward = blogForward })) : Ok(Fail("转发博客失败"));
+            await blogService.GetBlogRelation(blog, UId);
+
+            return res ? Ok(Success("转发博客成功", new { forward = blogForward, blog })) : Ok(Fail("转发博客失败"));
         }
 
         /// <summary>

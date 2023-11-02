@@ -75,12 +75,12 @@
         /// <summary>
         ///【前缀】评论点赞数量
         /// </summary>
-        public static readonly string PREFIX_COMMENT_LIKE_COUNT = "comment_like_count:";
+        //public static readonly string PREFIX_COMMENT_LIKE_COUNT = "comment_like_count:";
 
         /// <summary>
         ///【前缀】当前用户是否点赞
         /// </summary>
-        public static readonly string PREFIX_COMMENT_ISLIKE = "comment_islike:";
+        //public static readonly string PREFIX_COMMENT_ISLIKE = "comment_islike:";
 
         //------------------------------------------------------------------------
 

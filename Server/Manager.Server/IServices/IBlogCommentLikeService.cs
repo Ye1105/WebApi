@@ -8,7 +8,7 @@
         /// <param name="expression"></param>
         /// <param name="isTrack"></param>
         /// <returns></returns>
-        Task<long?> CountAsync(Guid cId);
+        //Task<long?> CountAsync(Guid cId);
 
         /// <summary>
         /// 当前登录用户是否对评论点赞

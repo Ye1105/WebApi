@@ -112,9 +112,6 @@ namespace Manager.API.Controllers
             //3.被评论用户的个人信息
             item.BuInfo = await accountInfoService.FirstOrDefaultAsync(item.BuId);
 
-            //4.1点赞数
-            item.Like = await blogCommentLikeService.CountAsync(item.Id);
-
             //4.2通过 wId != null && wId != Guid.Empty 当前网站登录的用户id是否对当前评论或回复【点赞】
             if (wId != null && wId != Guid.Empty)
             {
