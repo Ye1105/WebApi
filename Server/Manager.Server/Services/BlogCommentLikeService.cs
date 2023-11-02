@@ -1,12 +1,9 @@
 ﻿using Manager.Core.Enums;
 using Manager.Core.Models.Blogs;
-using Manager.Core.Settings;
-using Manager.Extensions;
 using Manager.Infrastructure.IRepositoies;
 using Manager.Server.IServices;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using static Manager.Redis.Infrastructure.RedisClient;
 
 namespace Manager.Server.Services
 {
